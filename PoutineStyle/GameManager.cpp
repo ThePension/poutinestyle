@@ -1,4 +1,7 @@
 #include "GameManager.h"
+GameManager::GameManager() {
+
+}
 
 void GameManager::gameLoop() {
     sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
@@ -18,4 +21,17 @@ void GameManager::gameLoop() {
         window.draw(shape);
         window.display();
     }
+}
+
+void GameManager::pushState(GameState* state) {
+
+}
+void GameManager::popState() {
+
+}
+void GameManager::changeState(GameState* state) {
+
+}
+GameState* peekState() {
+    return nullptr;
 }
