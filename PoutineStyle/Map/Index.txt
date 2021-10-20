@@ -1,0 +1,14 @@
+1 Mur
+0 Sol
+T Entrer du niveau
+P Sortie du niveau
+E Ennemie
+P PNJ
+L Objet
+C Coffre legendaire
+d Verrou 		D porte 
+v Verrou 1		V Porte 1
+w Verrou 2 		W Porte 2
+x Verrou 3		X Porte 3
+y Verrou 4		Y Porte 4
+z Verrou 5		Z Porte 5
