@@ -1,7 +1,11 @@
 #pragma once
 #include <stack>
 #include "GameState.h"
+#include "StatePlayGame.h"
+#include "StateMainMenu.h"
+#include "StatePauseMenu.h"
 #include <SFML/Graphics.hpp>
+
 class GameManager
 {
 private:

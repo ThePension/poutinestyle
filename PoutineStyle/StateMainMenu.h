@@ -6,11 +6,13 @@ private:
 	sf::View view;
 	// Add buttons and more
 
+protected:
+	void handleInput() override;
+	void draw() override;
+
 public:
 	StateMainMenu();
 	~StateMainMenu();
-	void handleInput() override;
 	void update() override;
-	void draw() override;
 };
 
