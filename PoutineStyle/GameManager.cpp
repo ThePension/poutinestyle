@@ -32,6 +32,6 @@ void GameManager::popState() {
 void GameManager::changeState(GameState* state) {
 
 }
-GameState* peekState() {
+GameState* GameManager::peekState() {
     return nullptr;
 }
