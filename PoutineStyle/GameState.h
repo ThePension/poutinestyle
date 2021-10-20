@@ -1,14 +1,15 @@
 #pragma once
-#include "GameManager.h"
+// #include "GameManager.h"
+#include "SFML/Graphics.hpp"
 class GameState
 {
 private:
-	GameManager game;
+	// GameManager game;
 public:
 	GameState();
 	~GameState();
-	virtual void handleInput() = 0;
-	virtual void update() = 0;
-	virtual void draw() = 0;
+	virtual void handleInput() abstract;
+	virtual void update() abstract;
+	virtual void draw() abstract;
 };
 
