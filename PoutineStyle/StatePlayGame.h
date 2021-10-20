@@ -21,24 +21,29 @@ private:
 
 	std::list<Ennemy*> ennemies;	
 
-	sf::Vector2f startPosition = sf::Vector2f(100.f, 50.f);
-
-	std::string mapFileFolder = "D:\\HE_ARC\\Annee_2\\A2_S1\\INFO\\projet P2 SA\\learning\\TryRaycasting\\TryRaycasting\\"; // Needs to be changed and optimized. (ressource)
-	std::string mapFileName = "map_1.txt";
+	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
+	std::string mapFileName = "Map_Example.txt";
 	std::string mapLocation;
 	std::string tempText;
 
 	std::ifstream mapFile;
 
-	sf::RenderWindow windowGame;	
+	sf::RenderWindow windowGame;
 
 	sf::RectangleShape block;
 	sf::CircleShape player_circle;
+
+	sf::Vector2f playerPosition = sf::Vector2f(100.f, 50.f);
+	sf::Vector2f playerDir = sf::Vector2f(1.f, 0.f);
+	sf::Vector2f plane;
 
 protected:
 	void draw() override;
 	void handleInput() override;
 	void parseMap2D();
+	void drawMap2D();
+	void drawMap3D();
+	sf::Vector2f matrixMult(sf::Vector2f v, double angle);
 
 public:
 	StatePlayGame();
