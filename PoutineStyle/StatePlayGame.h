@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Ennemy.h"
 #include <list>
+#include <numbers>
 
 class StatePlayGame : public GameState
 {
@@ -11,7 +12,7 @@ private:
 
 	int mapSize = 32;
 	int windowWidth = 1032;
-	int windowHeight = 816;
+	int windowHeight = 1032;
 	int deplacement = 3;
 	int indexX = 0, indexY = 0;
 	int blockWidth;
@@ -33,9 +34,9 @@ private:
 	sf::RectangleShape block;
 	sf::CircleShape player_circle;
 
-	sf::Vector2f playerPosition = sf::Vector2f(100.f, 50.f);
+	sf::Vector2f playerPosition = sf::Vector2f(105.f, 55.f);
 	sf::Vector2f playerDir = sf::Vector2f(1.f, 0.f);
-	sf::Vector2f plane;
+	sf::Vector2f planeVec = sf::Vector2f(0.f, 0.66f); // Must be perpendicular to direction vector (2*atan(0.66/1) = 66° FOV)
 
 protected:
 	void draw() override;
