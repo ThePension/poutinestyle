@@ -1,6 +1,8 @@
 #include "StatePlayGame.h"
-StatePlayGame::StatePlayGame()
+StatePlayGame::StatePlayGame(GameManager* game)
 {
+    this->gameManager = game;
+
     map = new int*[mapSize];
     for (int i = 0; i < mapSize; i++)
     {
@@ -15,10 +17,10 @@ StatePlayGame::StatePlayGame()
 	mapFile.open(mapLocation);
 	parseMap2D();
 
-    windowGame.create(sf::VideoMode(windowWidth, windowHeight), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
+    // windowGame.create(sf::VideoMode(gameManager->getWindowWidth(), gameManager->getWindowHeight()), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
 
-    blockWidth = windowWidth / mapSize;
-    blockHeight = windowHeight / mapSize;
+    blockWidth = gameManager->getWindowWidth() / mapSize;
+    blockHeight = gameManager->getWindowHeight() / mapSize;
 
     block.setSize(sf::Vector2f(blockWidth, blockHeight));
     block.setOutlineThickness(1);
@@ -39,9 +41,9 @@ sf::Vector2f StatePlayGame::matrixMult(sf::Vector2f v, double a) {
     resVec.y = v.x * sin(a) + v.y * cos(a);
 
     // Need a unit vector --> Divide vector's components by the length of the vector
-    double vecLen = sqrt(pow(resVec.x, 2) + pow(resVec.y, 2));
+    /*double vecLen = sqrt(pow(resVec.x, 2) + pow(resVec.y, 2));
     resVec.x /= vecLen;
-    resVec.y /= vecLen;
+    resVec.y /= vecLen;*/
     return resVec;
 }
 StatePlayGame::~StatePlayGame() {
@@ -49,65 +51,61 @@ StatePlayGame::~StatePlayGame() {
 }
 void StatePlayGame::handleInput()
 {
-    while (windowGame.isOpen())
+    sf::Event event;
+    while (gameManager->getRenderWindow()->pollEvent(event))
     {
-        sf::Event event;
-        while (windowGame.pollEvent(event))
+        if (event.type == sf::Event::Closed)
         {
-            if (event.type == sf::Event::Closed)
-            {
-                windowGame.close();
-            }
-
-            /*if (event.type == sf::Event::MouseMoved)
-            {
-                std::cout << "new mouse x: " << event.mouseMove.x << std::endl;
-                std::cout << "new mouse y: " << event.mouseMove.y << std::endl;
-            }*/
-
-            if (event.type == sf::Event::KeyPressed)
-            {
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-                {
-                    // Move the player position (forward) depending on player direction
-                    playerPosition.x += playerDir.x * 5; // 5 is a random value, should be a constant
-                    playerPosition.y += playerDir.y * 5;
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-                {
-                    playerDir = matrixMult(playerDir, -0.1); // Rotate the player direction
-                    planeVec = matrixMult(planeVec, -0.1); // Rotate plane direction
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-                {
-                    // Move the player position (backward) depending on player direction
-                    playerPosition.x -= playerDir.x * 5; // 5 is a random value, should be a constant
-                    playerPosition.y -= playerDir.y * 5;
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-                {
-                    playerDir = matrixMult(playerDir, 0.1); // Rotate the player direction
-                    planeVec = matrixMult(planeVec, 0.1); // Rotate plane direction
-                }
-            }
+            gameManager->getRenderWindow()->close();
         }
 
-        player_circle.setPosition(playerPosition);
+        /*if (event.type == sf::Event::MouseMoved)
+        {
+            std::cout << "new mouse x: " << event.mouseMove.x << std::endl;
+            std::cout << "new mouse y: " << event.mouseMove.y << std::endl;
+        }*/
 
-        draw();
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            {
+                // Move the player position (forward) depending on player direction
+                playerPosition.x += playerDir.x * 5; // 5 is a random value, should be a constant
+                playerPosition.y += playerDir.y * 5;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            {
+                playerDir = matrixMult(playerDir, -0.1); // Rotate the player direction
+                planeVec = matrixMult(planeVec, -0.1); // Rotate plane direction
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            {
+                // Move the player position (backward) depending on player direction
+                playerPosition.x -= playerDir.x * 5; // 5 is a random value, should be a constant
+                playerPosition.y -= playerDir.y * 5;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            {
+                playerDir = matrixMult(playerDir, 0.1); // Rotate the player direction
+                planeVec = matrixMult(planeVec, 0.1); // Rotate plane direction
+            }
+        }
     }
+
+    player_circle.setPosition(playerPosition);    
 }
 void StatePlayGame::update()
 {
     handleInput();
-    // draw();
+    draw();
 }
 void StatePlayGame::draw()
 {
-    windowGame.clear();
-    // drawMap2D();
-    drawMap3D();
-    windowGame.display();
+    gameManager->getRenderWindow()->clear();
+    if(isMapDisplayed) drawMap2D();
+    else drawMap3D();
+    gameManager->getRenderWindow()->display();
 }
 
 void StatePlayGame::drawMap2D() {
@@ -126,10 +124,10 @@ void StatePlayGame::drawMap2D() {
                 block.setFillColor(sf::Color::Black);
             }
 
-            windowGame.draw(block);
+            gameManager->getRenderWindow()->draw(block);
         }
     }
-    windowGame.draw(player_circle);
+    gameManager->getRenderWindow()->draw(player_circle);
 
     // Draw player direction vector
     sf::Vertex playerDirLine[] =
@@ -137,11 +135,11 @@ void StatePlayGame::drawMap2D() {
         sf::Vertex(playerPosition + sf::Vector2f(player_circle.getRadius(), player_circle.getRadius())),
         sf::Vertex(sf::Vector2f(playerPosition.x + 32 * playerDir.x + player_circle.getRadius(), playerPosition.y + 32 * playerDir.y + player_circle.getRadius()))
     };
-    windowGame.draw(playerDirLine, 2, sf::Lines);
+    gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
 void StatePlayGame::drawMap3D() {
     // Number of rays (lines drawn on the screen) --> Must be a mutiple of 66
-    int w = 122;
+    int w = 660;
 
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
@@ -204,16 +202,16 @@ void StatePlayGame::drawMap3D() {
         if (side == 1) wallColor = sf::Color::Blue;
         else wallColor = sf::Color::Red;
 
-        int lineHeight = int(windowHeight / perpWallDist);
+        int lineHeight = int(gameManager->getWindowHeight() / perpWallDist);
 
-        int drawStart = -lineHeight / 2 + windowHeight / 2;
+        int drawStart = -lineHeight / 2 + gameManager->getWindowHeight() / 2;
         if (drawStart < 0) drawStart = 0;
-        int drawEnd = lineHeight / 2 + windowHeight / 2;
-        if (drawEnd >= windowHeight) drawEnd = windowHeight - 1;
+        int drawEnd = lineHeight / 2 + gameManager->getWindowHeight() / 2;
+        if (drawEnd >= gameManager->getWindowHeight()) drawEnd = gameManager->getWindowHeight() - 1;
 
         sf::ConvexShape line;
         line.setPointCount(4);
-        double lineW = windowWidth / double(w);
+        double lineW = gameManager->getWindowWidth() / double(w);
         line.setPoint(0, sf::Vector2f(x * lineW, drawStart));
         line.setPoint(1, sf::Vector2f(x * lineW + lineW, drawStart));
         line.setPoint(3, sf::Vector2f(x * lineW, drawEnd));
@@ -221,7 +219,7 @@ void StatePlayGame::drawMap3D() {
 
         line.setFillColor(wallColor);
 
-        windowGame.draw(line);
+        gameManager->getRenderWindow()->draw(line);
 
         // Draw rays
         /*sf::Vertex ray[] =

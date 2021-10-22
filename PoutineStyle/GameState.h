@@ -1,5 +1,5 @@
 #pragma once
-// #include "GameManager.h"
+#include "GameManager.h"
 #include "SFML/Graphics.hpp"
 #include <SFML/Window.hpp>
 #include <stdlib.h>
@@ -13,7 +13,7 @@
 class GameState
 {
 protected:
-	// GameManager game;
+	GameManager* gameManager;
 	virtual void draw() = 0;
 	virtual void handleInput() = 0;
 public:

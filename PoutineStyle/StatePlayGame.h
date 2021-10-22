@@ -10,9 +10,9 @@ class StatePlayGame : public GameState
 private:
 	Player player;
 
+	bool isMapDisplayed = false;
+
 	int mapSize = 32;
-	int windowWidth = 1032;
-	int windowHeight = 1032;
 	int deplacement = 3;
 	int indexX = 0, indexY = 0;
 	int blockWidth;
@@ -29,7 +29,7 @@ private:
 
 	std::ifstream mapFile;
 
-	sf::RenderWindow windowGame;
+	// sf::RenderWindow windowGame;
 
 	sf::RectangleShape block;
 	sf::CircleShape player_circle;
@@ -47,7 +47,7 @@ protected:
 	sf::Vector2f matrixMult(sf::Vector2f v, double angle);
 
 public:
-	StatePlayGame();
+	StatePlayGame(GameManager * game);
 	~StatePlayGame();
 	void update() override;
 };
