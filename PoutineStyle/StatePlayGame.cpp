@@ -3,6 +3,9 @@ StatePlayGame::StatePlayGame(GameManager* game)
 {
     this->gameManager = game;
 
+    blockWidth = gameManager->getWindowWidth() / mapSize;
+    blockHeight = gameManager->getWindowHeight() / mapSize;
+
     map = new int*[mapSize];
     for (int i = 0; i < mapSize; i++)
     {
@@ -19,15 +22,14 @@ StatePlayGame::StatePlayGame(GameManager* game)
 
     // windowGame.create(sf::VideoMode(gameManager->getWindowWidth(), gameManager->getWindowHeight()), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
 
-    blockWidth = gameManager->getWindowWidth() / mapSize;
-    blockHeight = gameManager->getWindowHeight() / mapSize;
+    
 
     block.setSize(sf::Vector2f(blockWidth, blockHeight));
     block.setOutlineThickness(1);
     block.setOutlineColor(sf::Color::Black);
 
     player_circle.setRadius(10.f);
-    player_circle.setPosition(playerPosition);
+    player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
     player_circle.setFillColor(sf::Color::Green);
 
     // planeVec = matrixMult(planeVec, -90.f * 3.1415 / 180.f);
@@ -74,7 +76,7 @@ void StatePlayGame::handleInput()
                 sf::Vector2f newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * 5, playerPosition.y + playerDir.y * 5);
                 int newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
                 int newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-                if(map[newPlayerPosOnMapX][newPlayerPosOnMapY] == 0){
+                if(map[newPlayerPosOnMapX][newPlayerPosOnMapY] != 1){
                     // Move the player position (forward) depending on player direction
                     playerPosition = newPlayerPos;
                 }
@@ -89,7 +91,7 @@ void StatePlayGame::handleInput()
                 sf::Vector2f newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * 5, playerPosition.y - playerDir.y * 5);
                 int newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
                 int newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-                if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] == 0) {
+                if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != 1) {
                     // Move the player position (backward) depending on player direction
                     playerPosition = newPlayerPos;
                 }
@@ -102,7 +104,7 @@ void StatePlayGame::handleInput()
         }
     }
 
-    player_circle.setPosition(playerPosition);    
+    player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
 }
 void StatePlayGame::update()
 {
@@ -128,9 +130,12 @@ void StatePlayGame::drawMap2D() {
             {
                 block.setFillColor(sf::Color::Red);
             }
-            else
+            else if(map[i][j] == 0)
             {
                 block.setFillColor(sf::Color::Black);
+            }
+            else {
+                block.setFillColor(sf::Color::Blue);
             }
 
             gameManager->getRenderWindow()->draw(block);
@@ -141,13 +146,13 @@ void StatePlayGame::drawMap2D() {
     // Draw player direction vector
     sf::Vertex playerDirLine[] =
     {
-        sf::Vertex(playerPosition + sf::Vector2f(player_circle.getRadius(), player_circle.getRadius())),
-        sf::Vertex(sf::Vector2f(playerPosition.x + 32 * playerDir.x + player_circle.getRadius(), playerPosition.y + 32 * playerDir.y + player_circle.getRadius()))
+        sf::Vertex(playerPosition),
+        sf::Vertex(sf::Vector2f(playerPosition.x + 32 * playerDir.x, playerPosition.y + 32 * playerDir.y))
     };
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
 void StatePlayGame::drawMap3D() {
-    // Number of rays (lines drawn on the screen) --> Must be a mutiple of 66
+    // Number of rays (lines drawn on the screen) --> Must be a multiple of 66
     int w = 660;
 
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
@@ -246,9 +251,10 @@ void StatePlayGame::parseMap2D()
     {
         for (auto it = tempText.cbegin(); it != tempText.cend(); ++it)
         {
-            if (*it == '1')
+            map[indexX][indexY] = *it - '0';
+            if (map[indexX][indexY] == 36) // Player spawn position
             {
-                map[indexX][indexY] = 1;
+                playerPosition = sf::Vector2f(indexY * blockWidth + blockWidth / 2, indexX * blockHeight + blockHeight / 2);
             }
             indexY++;
         }
