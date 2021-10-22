@@ -70,9 +70,14 @@ void StatePlayGame::handleInput()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
-                // Move the player position (forward) depending on player direction
-                playerPosition.x += playerDir.x * 5; // 5 is a random value, should be a constant
-                playerPosition.y += playerDir.y * 5;
+                // Check wall collision
+                sf::Vector2f newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * 5, playerPosition.y + playerDir.y * 5);
+                int newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
+                int newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
+                if(map[newPlayerPosOnMapX][newPlayerPosOnMapY] == 0){
+                    // Move the player position (forward) depending on player direction
+                    playerPosition = newPlayerPos;
+                }
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
@@ -81,9 +86,13 @@ void StatePlayGame::handleInput()
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
-                // Move the player position (backward) depending on player direction
-                playerPosition.x -= playerDir.x * 5; // 5 is a random value, should be a constant
-                playerPosition.y -= playerDir.y * 5;
+                sf::Vector2f newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * 5, playerPosition.y - playerDir.y * 5);
+                int newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
+                int newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
+                if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] == 0) {
+                    // Move the player position (backward) depending on player direction
+                    playerPosition = newPlayerPos;
+                }
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
