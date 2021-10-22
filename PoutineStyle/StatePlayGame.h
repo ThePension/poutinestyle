@@ -18,7 +18,7 @@ private:
 	int blockWidth;
 	int blockHeight;
 
-	int** map;
+	char** map;
 
 	std::list<Ennemy*> ennemies;	
 
