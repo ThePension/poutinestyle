@@ -196,7 +196,7 @@ void StatePlayGame::drawMap3D() {
         sf::Vector2i playerMapPos = sf::Vector2i(int(playerPosition.x / blockWidth), int(playerPosition.y / blockHeight));
 
         // Vector representing the direction of the actual ray
-        double cameraX = double(2 * x) / double(w) - 1;
+        double cameraX = double(2.f * x) / double(w) - 1;
 
         sf::Vector2f rayDir = playerDir + sf::Vector2f(planeVec.x * cameraX, planeVec.y * cameraX);
         double rayDirLen = std::sqrt(pow(rayDir.x, 2) + pow(rayDir.y, 2));
