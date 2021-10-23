@@ -6,7 +6,7 @@ StatePlayGame::StatePlayGame(GameManager* game)
     gameManager->getRenderWindow()->setMouseCursorVisible(false);
     gameManager->getRenderWindow()->setMouseCursorGrabbed(true); // The mouse can't leave the window
     oldMouseX = sf::Mouse::getPosition().x;
-
+    sf::Mouse::setPosition(sf::Vector2i(gameManager->getWindowWidth() / 2, gameManager->getWindowHeight() / 2));
 
     blockWidth = gameManager->getWindowWidth() / mapSize;
     blockHeight = gameManager->getWindowHeight() / mapSize;
@@ -60,7 +60,6 @@ void StatePlayGame::handleInput()
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
-            std::cout << oldMouseX << std::endl;
             if (oldMouseX > event.mouseMove.x || event.mouseMove.x == 0) {
                 playerDir = matrixMult(playerDir, -0.03); // Rotate the player direction
                 planeVec = matrixMult(planeVec, -0.03); // Rotate plane direction
@@ -77,35 +76,30 @@ void StatePlayGame::handleInput()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
-                // Check wall collision
-                sf::Vector2f newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * movingSpeed, playerPosition.y + playerDir.y * movingSpeed);
-                int newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
-                int newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-                if(map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1'){
-                    // Move the player position (forward) depending on player direction
-                    playerPosition = newPlayerPos;
-                }
+                isPlayerMoving = true;
+                keyPressed = sf::Keyboard::W;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
-                playerDir = matrixMult(playerDir, -0.1); // Rotate the player direction
-                planeVec = matrixMult(planeVec, -0.1); // Rotate plane direction
+                isPlayerMoving = true;
+                keyPressed = sf::Keyboard::A;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
-                sf::Vector2f newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * movingSpeed, playerPosition.y - playerDir.y * movingSpeed);
-                int newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
-                int newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-                if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
-                    // Move the player position (backward) depending on player direction
-                    playerPosition = newPlayerPos;
-                }
+                isPlayerMoving = true;
+                keyPressed = sf::Keyboard::S;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
-                playerDir = matrixMult(playerDir, 0.1); // Rotate the player direction
-                planeVec = matrixMult(planeVec, 0.1); // Rotate plane direction
+                isPlayerMoving = true;
+                keyPressed = sf::Keyboard::D;
             }
+        }
+        if (event.type == sf::Event::KeyReleased) {
+            if (event.key.code == sf::Keyboard::A) isPlayerMoving = false;
+            if (event.key.code == sf::Keyboard::D) isPlayerMoving = false;
+            if (event.key.code == sf::Keyboard::W) isPlayerMoving = false;
+            if (event.key.code == sf::Keyboard::S) isPlayerMoving = false;
         }
     }
 
@@ -114,6 +108,43 @@ void StatePlayGame::handleInput()
 void StatePlayGame::update()
 {
     handleInput();
+
+    // Player controls
+    sf::Vector2f newPlayerPos;
+    int newPlayerPosOnMapY, newPlayerPosOnMapX;
+    if (isPlayerMoving) {
+        switch (keyPressed)
+        {
+        case sf::Keyboard::A:
+            playerDir = matrixMult(playerDir, -0.1); // Rotate the player direction
+            planeVec = matrixMult(planeVec, -0.1); // Rotate plane direction
+            break;
+        case sf::Keyboard::D:
+            playerDir = matrixMult(playerDir, 0.1); // Rotate the player direction
+            planeVec = matrixMult(planeVec, 0.1); // Rotate plane direction
+            break;
+        case sf::Keyboard::W:
+            // Check wall collision
+            newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * movingSpeed, playerPosition.y + playerDir.y * movingSpeed);
+            newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
+            newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
+            if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
+                // Move the player position (forward) depending on player direction
+                playerPosition = newPlayerPos;
+            }
+            break;
+        case sf::Keyboard::S:
+            newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * movingSpeed, playerPosition.y - playerDir.y * movingSpeed);
+            newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
+            newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
+            if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
+                // Move the player position (backward) depending on player direction
+                playerPosition = newPlayerPos;
+            }
+            break;
+        }
+    }
+
     draw();
 }
 void StatePlayGame::draw()
@@ -171,11 +202,11 @@ void StatePlayGame::drawMap3D() {
         double rayDirLen = std::sqrt(pow(rayDir.x, 2) + pow(rayDir.y, 2));
 
         // Fisheye effect
-        // double deltaDistX = (rayDir.x == 0) ? 1e30 : abs(rayDirLen / rayDir.x); 
+        // double deltaDistX = (rayDir.x == 0) ? 1e30 : abs(rayDirLen / rayDir.x);
         // double deltaDistY = (rayDir.y == 0) ? 1e30 : abs(rayDirLen / rayDir.y);
 
-        double deltaDistX = (rayDir.x == 0) ? 1e30 : abs(1 / rayDir.x); // RayDir is a unit vector, length = 1
-        double deltaDistY = (rayDir.y == 0) ? 1e30 : abs(1 / rayDir.y);
+        double deltaDistX = (rayDir.x == 0) ? 0 : abs(1 / rayDir.x); // RayDir is a unit vector, length = 1
+        double deltaDistY = (rayDir.y == 0) ? 0 : abs(1 / rayDir.y);
 
         double sideDistX, sideDistY;
 

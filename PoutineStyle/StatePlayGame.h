@@ -10,6 +10,8 @@ class StatePlayGame : public GameState
 private:
 	Player player;
 
+	bool isPlayerMoving = false;
+	sf::Keyboard::Key keyPressed;
 	bool isMapDisplayed = false;
 
 	int mapSize = 32;
