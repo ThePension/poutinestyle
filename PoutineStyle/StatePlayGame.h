@@ -17,6 +17,8 @@ private:
 	int blockWidth;
 	int blockHeight;
 
+	int oldMouseX = 0, oldMouseY = 0;
+
 	char** map;
 
 	std::list<Ennemy*> ennemies;	

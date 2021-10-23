@@ -2,7 +2,8 @@
 StatePlayGame::StatePlayGame(GameManager* game)
 {
     this->gameManager = game;
-
+    game->getRenderWindow()->setMouseCursorVisible(false);
+    
     blockWidth = gameManager->getWindowWidth() / mapSize;
     blockHeight = gameManager->getWindowHeight() / mapSize;
 
@@ -53,11 +54,24 @@ void StatePlayGame::handleInput()
             gameManager->getRenderWindow()->close();
         }
 
-        /*if (event.type == sf::Event::MouseMoved)
+        if (event.type == sf::Event::MouseMoved)
         {
-            std::cout << "new mouse x: " << event.mouseMove.x << std::endl;
-            std::cout << "new mouse y: " << event.mouseMove.y << std::endl;
-        }*/
+            // Check if mouse pos is not in the window
+            if (event.mouseMove.x < 200 || event.mouseMove.x > gameManager->getWindowWidth() - 200) {
+                // Set the mouse pos in the middle of the window
+                sf::Mouse::setPosition(sf::Vector2i(gameManager->getRenderWindow()->getPosition().x + gameManager->getWindowWidth() / 2, gameManager->getWindowHeight() / 2));
+                int oldMouseX = gameManager->getWindowWidth() / 2;
+            }
+            if (oldMouseX > event.mouseMove.x) {
+                playerDir = matrixMult(playerDir, -0.03); // Rotate the player direction
+                planeVec = matrixMult(planeVec, -0.03); // Rotate plane direction
+            }
+            else {
+                playerDir = matrixMult(playerDir, 0.03); // Rotate the player direction
+                planeVec = matrixMult(planeVec, 0.03); // Rotate plane direction
+            }
+            oldMouseX = event.mouseMove.x;
+        }
 
         if (event.type == sf::Event::KeyPressed)
         {
