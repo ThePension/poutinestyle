@@ -15,12 +15,8 @@ StatePlayGame::StatePlayGame(GameManager* game)
             map[i][j] = '0';
         }
     }
-
-    mapLocation = mapFileFolder + mapFileName;
-	mapFile.open(mapLocation);
+    
 	parseMap2D();
-
-    // windowGame.create(sf::VideoMode(gameManager->getWindowWidth(), gameManager->getWindowHeight()), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
 
     block.setSize(sf::Vector2f(blockWidth, blockHeight));
     block.setOutlineThickness(1);
@@ -29,8 +25,6 @@ StatePlayGame::StatePlayGame(GameManager* game)
     player_circle.setRadius(10.f);
     player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
     player_circle.setFillColor(sf::Color::Green);
-
-    // planeVec = matrixMult(planeVec, -90.f * 3.1415 / 180.f);
 }
 sf::Vector2f StatePlayGame::matrixMult(sf::Vector2f v, double a) {
     // Rotation matrix (used to rotate vector by an angle)
@@ -71,7 +65,7 @@ void StatePlayGame::handleInput()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
                 // Check wall collision
-                sf::Vector2f newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * 5, playerPosition.y + playerDir.y * 5);
+                sf::Vector2f newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * movingSpeed, playerPosition.y + playerDir.y * movingSpeed);
                 int newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
                 int newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
                 if(map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1'){
@@ -86,7 +80,7 @@ void StatePlayGame::handleInput()
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
-                sf::Vector2f newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * 5, playerPosition.y - playerDir.y * 5);
+                sf::Vector2f newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * movingSpeed, playerPosition.y - playerDir.y * movingSpeed);
                 int newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
                 int newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
                 if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
@@ -151,7 +145,7 @@ void StatePlayGame::drawMap2D() {
 }
 void StatePlayGame::drawMap3D() {
     // Number of rays (lines drawn on the screen) --> Must be a multiple of 66
-    int w = 660;
+    int w = gameManager->getWindowWidth();
 
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
@@ -211,8 +205,8 @@ void StatePlayGame::drawMap3D() {
         else perpWallDist = sideDistY - deltaDistY;
 
         sf::Color wallColor;
-        if (side == 1) wallColor = sf::Color::Blue;
-        else wallColor = sf::Color::Red;
+        if (side == 1) wallColor = sf::Color::Red;
+        else wallColor = sf::Color(255 / 2, 0, 0); 
 
         int lineHeight = int(gameManager->getWindowHeight() / perpWallDist);
 
@@ -245,6 +239,12 @@ void StatePlayGame::drawMap3D() {
 
 void StatePlayGame::parseMap2D()
 {
+    std::string tempText;
+    std::ifstream mapFile;
+    std::string mapLocation = mapFileFolder + mapFileName;
+    mapFile.open(mapLocation);
+
+    int indexX = 0, indexY = 0;
     while (std::getline(mapFile, tempText))
     {
         for (auto it = tempText.cbegin(); it != tempText.cend(); ++it)

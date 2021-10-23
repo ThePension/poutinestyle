@@ -13,8 +13,7 @@ private:
 	bool isMapDisplayed = false;
 
 	int mapSize = 32;
-	int deplacement = 3;
-	int indexX = 0, indexY = 0;
+	int movingSpeed = 3;
 	int blockWidth;
 	int blockHeight;
 
@@ -24,19 +23,13 @@ private:
 
 	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
 	std::string mapFileName = "Map_Example.txt";
-	std::string mapLocation;
-	std::string tempText;
-
-	std::ifstream mapFile;
-
-	// sf::RenderWindow windowGame;
 
 	sf::RectangleShape block;
 	sf::CircleShape player_circle;
 
-	sf::Vector2f playerPosition = sf::Vector2f(50.f, 50.f);
-	sf::Vector2f playerDir = sf::Vector2f(1.f, 0.f);
-	sf::Vector2f planeVec = sf::Vector2f(0.f, 0.66f); // Must be perpendicular to direction vector (2*atan(0.66/1) = 66° FOV)
+	sf::Vector2f playerPosition = sf::Vector2f(50.f, 50.f); // Default player position
+	sf::Vector2f playerDir = sf::Vector2f(0.f, 0.75f);
+	sf::Vector2f planeVec = sf::Vector2f(-0.495f, 0.f); // Must be perpendicular to direction vector (2*atan(0.495/0.75) = 66° FOV)
 
 protected:
 	void draw() override;
