@@ -1,17 +1,19 @@
 #pragma once
 #include "GameState.h"
+#include "Button.h"
 class StateMainMenu  : public GameState
 {
 private:
-	sf::View view;
-	// Add buttons and more
+	Button playButton;
+	Button quitButton;
+	Button settingsButton;
 
 protected:
 	void handleInput() override;
 	void draw() override;
 
 public:
-	StateMainMenu();
+	StateMainMenu(GameManager * game);
 	~StateMainMenu();
 	void update() override;
 };

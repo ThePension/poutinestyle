@@ -7,12 +7,15 @@ private:
 	sf::Vector2i position;
 	int width, height;
 	sf::Color color;
-	std::string text;
+	std::wstring text;
+	sf::RectangleShape topBorder, bottomBorder, leftBorder, rightBorder, background;
+	sf::Text sfText;
+	sf::Font font;
 	bool isHovering();
 public:
-	Button(sf::Vector2i pos, int width, int height, sf::Color color, std::string text, sf::RenderWindow *);
+	Button();
+	Button(sf::Vector2i pos, int width, int height, sf::Color color, std::wstring text, sf::RenderWindow *);
 	void draw();
 	bool isClicked();
-
 };
 
