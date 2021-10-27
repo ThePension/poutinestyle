@@ -35,9 +35,6 @@ private:
 	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
 	std::string mapFileName = "Map_Example.txt";
 
-	sf::RectangleShape block;
-	sf::CircleShape player_circle;
-
 	sf::Vector2f playerPosition = sf::Vector2f(50.f, 50.f); // Default player position
 	sf::Vector2f playerDir = sf::Vector2f(0.f, 0.75f);
 	sf::Vector2f planeVec = sf::Vector2f(-0.495f, 0.f); // Must be perpendicular to direction vector (2*atan(0.495/0.75) = 66° FOV)

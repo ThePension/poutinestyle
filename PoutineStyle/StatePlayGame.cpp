@@ -23,14 +23,6 @@ StatePlayGame::StatePlayGame(GameManager* game)
     }
     
 	parseMap2D();
-
-    block.setSize(sf::Vector2f(blockWidth, blockHeight));
-    block.setOutlineThickness(1);
-    block.setOutlineColor(sf::Color::Black);
-
-    player_circle.setRadius(10.f);
-    player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
-    player_circle.setFillColor(sf::Color::Green);
 }
 sf::Vector2f StatePlayGame::matrixMult(sf::Vector2f v, double a) {
     // Rotation matrix (used to rotate vector by an angle)
@@ -52,6 +44,7 @@ StatePlayGame::~StatePlayGame() {
 void StatePlayGame::handleInput()
 {
     sf::Event event;
+
     while (gameManager->getRenderWindow()->pollEvent(event))
     {
         if (event.type == sf::Event::Closed)
@@ -113,6 +106,7 @@ void StatePlayGame::handleInput()
                 dPressed = true;
             }
         }
+
         if (event.type == sf::Event::KeyReleased)
         {
             if (event.key.code == sf::Keyboard::A) aPressed = false;
@@ -121,8 +115,6 @@ void StatePlayGame::handleInput()
             if (event.key.code == sf::Keyboard::S) sPressed = false;
         }
     }
-
-    player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
 }
 void StatePlayGame::update()
 {
@@ -177,7 +169,18 @@ void StatePlayGame::draw()
     gameManager->getRenderWindow()->display();
 }
 
-void StatePlayGame::drawMap2D() {
+void StatePlayGame::drawMap2D()
+{
+    sf::RectangleShape block;
+    block.setSize(sf::Vector2f(blockWidth, blockHeight));
+    block.setOutlineThickness(1);
+    block.setOutlineColor(sf::Color::Black);
+
+    sf::CircleShape player_circle;
+    player_circle.setRadius(10.f);
+    player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
+    player_circle.setFillColor(sf::Color::Green);
+
     for (int i = 0; i < mapSize; i++)
     {
         for (int j = 0; j < mapSize; j++)
