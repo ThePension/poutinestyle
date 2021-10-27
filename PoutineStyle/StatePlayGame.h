@@ -4,6 +4,7 @@
 #include "Ennemy.h"
 #include <list>
 #include <numbers>
+#include <math.h>
 
 class StatePlayGame : public GameState
 {
@@ -11,7 +12,13 @@ private:
 	Player player;
 
 	bool isPlayerMoving = false;
-	sf::Keyboard::Key keyPressed;
+	sf::Keyboard::Key keysPressed;
+
+	bool aPressed = false;
+	bool dPressed = false;
+	bool wPressed = false;
+	bool sPressed = false;
+
 	bool isMapDisplayed = false;
 
 	int mapSize = 32;

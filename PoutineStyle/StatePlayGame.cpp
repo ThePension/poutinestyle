@@ -5,6 +5,7 @@ StatePlayGame::StatePlayGame(GameManager* game)
     
     gameManager->getRenderWindow()->setMouseCursorVisible(false);
     gameManager->getRenderWindow()->setMouseCursorGrabbed(true); // The mouse can't leave the window
+
     oldMouseX = sf::Mouse::getPosition().x;
     sf::Mouse::setPosition(sf::Vector2i(gameManager->getWindowWidth() / 2, gameManager->getWindowHeight() / 2));
 
@@ -60,13 +61,26 @@ void StatePlayGame::handleInput()
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
+            int deltaX = sqrt(pow(event.mouseMove.x - oldMouseX, 2));
+
+            std::cout << "delta : " << deltaX;
+
+            float speedFactor = 1.f;
+            speedFactor += log10(deltaX) / 2;
+
+            std::cout << " | speedfactor : " << speedFactor;
+
+            if(speedFactor < 1) speedFactor = 1.f;
+
+            std::cout << " | speedfactor2 : " << speedFactor << std::endl;
+
             if (oldMouseX > event.mouseMove.x || event.mouseMove.x == 0) {
-                playerDir = matrixMult(playerDir, -0.03); // Rotate the player direction
-                planeVec = matrixMult(planeVec, -0.03); // Rotate plane direction
+                playerDir = matrixMult(playerDir, -0.03 * speedFactor); // Rotate the player direction
+                planeVec = matrixMult(planeVec, -0.03 * speedFactor); // Rotate plane direction
             }
             else if (oldMouseX < event.mouseMove.x || event.mouseMove.x == gameManager->getWindowWidth() - 1) {
-                playerDir = matrixMult(playerDir, 0.03); // Rotate the player direction
-                planeVec = matrixMult(planeVec, 0.03); // Rotate plane direction
+                playerDir = matrixMult(playerDir, 0.03 * speedFactor); // Rotate the player direction
+                planeVec = matrixMult(planeVec, 0.03 * speedFactor); // Rotate plane direction
             }
             oldMouseX = event.mouseMove.x;
         }
@@ -76,30 +90,27 @@ void StatePlayGame::handleInput()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
-                isPlayerMoving = true;
-                keyPressed = sf::Keyboard::W;
+                wPressed = true;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
-                isPlayerMoving = true;
-                keyPressed = sf::Keyboard::A;
+                aPressed = true;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
-                isPlayerMoving = true;
-                keyPressed = sf::Keyboard::S;
+                sPressed = true;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
-                isPlayerMoving = true;
-                keyPressed = sf::Keyboard::D;
+                dPressed = true;
             }
         }
-        if (event.type == sf::Event::KeyReleased) {
-            if (event.key.code == sf::Keyboard::A) isPlayerMoving = false;
-            if (event.key.code == sf::Keyboard::D) isPlayerMoving = false;
-            if (event.key.code == sf::Keyboard::W) isPlayerMoving = false;
-            if (event.key.code == sf::Keyboard::S) isPlayerMoving = false;
+        if (event.type == sf::Event::KeyReleased)
+        {
+            if (event.key.code == sf::Keyboard::A) aPressed = false;
+            if (event.key.code == sf::Keyboard::D) dPressed = false;
+            if (event.key.code == sf::Keyboard::W) wPressed = false;
+            if (event.key.code == sf::Keyboard::S) sPressed = false;
         }
     }
 
@@ -112,36 +123,39 @@ void StatePlayGame::update()
     // Player controls
     sf::Vector2f newPlayerPos;
     int newPlayerPosOnMapY, newPlayerPosOnMapX;
-    if (isPlayerMoving) {
-        switch (keyPressed)
-        {
-        case sf::Keyboard::A:
-            playerDir = matrixMult(playerDir, -0.1); // Rotate the player direction
-            planeVec = matrixMult(planeVec, -0.1); // Rotate plane direction
-            break;
-        case sf::Keyboard::D:
-            playerDir = matrixMult(playerDir, 0.1); // Rotate the player direction
-            planeVec = matrixMult(planeVec, 0.1); // Rotate plane direction
-            break;
-        case sf::Keyboard::W:
-            // Check wall collision
-            newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * movingSpeed, playerPosition.y + playerDir.y * movingSpeed);
-            newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
-            newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-            if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
-                // Move the player position (forward) depending on player direction
-                playerPosition = newPlayerPos;
-            }
-            break;
-        case sf::Keyboard::S:
-            newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * movingSpeed, playerPosition.y - playerDir.y * movingSpeed);
-            newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
-            newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-            if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
-                // Move the player position (backward) depending on player direction
-                playerPosition = newPlayerPos;
-            }
-            break;
+
+    if (aPressed)
+    {
+        playerDir = matrixMult(playerDir, -0.1); // Rotate the player direction
+        planeVec = matrixMult(planeVec, -0.1); // Rotate plane direction
+    }
+
+    if (dPressed)
+    {
+        playerDir = matrixMult(playerDir, 0.1); // Rotate the player direction
+        planeVec = matrixMult(planeVec, 0.1); // Rotate plane direction
+    }
+
+    if (wPressed)
+    {
+        // Check wall collision
+        newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * movingSpeed, playerPosition.y + playerDir.y * movingSpeed);
+        newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
+        newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
+        if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
+            // Move the player position (forward) depending on player direction
+            playerPosition = newPlayerPos;
+        }
+    }
+
+    if (sPressed)
+    {
+        newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * movingSpeed, playerPosition.y - playerDir.y * movingSpeed);
+        newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
+        newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
+        if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
+            // Move the player position (backward) depending on player direction
+            playerPosition = newPlayerPos;
         }
     }
 
