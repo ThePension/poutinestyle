@@ -11,19 +11,27 @@ StateMainMenu::~StateMainMenu() {
 
 }
 void StateMainMenu::handleInput() {
-	if (playButton.isClicked()) {
-		std::cout << "Jouer" << std::endl;
-	}
-	else if (settingsButton.isClicked()) {
-		std::cout << "Paramètres" << std::endl;
-	}
-	else if (quitButton.isClicked()) {
-		std::cout << "Quitter" << std::endl;
+	sf::Event event;
+	while (gameManager->getRenderWindow()->pollEvent(event))
+	{
+		if (playButton.isClicked()) {
+			StatePlayGame* statePlayGame = new StatePlayGame(this->gameManager);
+			if (!this->gameManager->containsState(statePlayGame)) {
+				this->gameManager->pushState(statePlayGame);
+			}
+			else delete statePlayGame;
+		}
+		else if (settingsButton.isClicked()) {
+			// To do
+		}
+		else if (quitButton.isClicked()) {
+			// Quit application
+			exit(0);
+		}
 	}
 }
 void StateMainMenu::update() {
 	handleInput();
-
 	draw();
 }
 void StateMainMenu::draw() {

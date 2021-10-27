@@ -1,12 +1,12 @@
 #include "Button.h"
 #include <iostream>
 Button::Button() {
-	/*this->position = sf::Vector2i(0, 0);
+	this->position = sf::Vector2i(0, 0);
 	this->width = 200;
 	this->height = 100;
 	this->color = sf::Color::Blue;
-	this->text = "Default button";
-	this->window = NULL;*/
+	this->text = L"Default button";
+	this->window = NULL;
 }
 Button::Button(sf::Vector2i pos, int width, int height, sf::Color color, std::wstring text, sf::RenderWindow* window) {
 	this->position = pos;
@@ -51,6 +51,12 @@ void Button::draw() {
 	sfText.setFillColor(sf::Color::White);
 	sfText.setCharacterSize(30);
 	sfText.setPosition(this->position.x + width / 2 - (sfText.getCharacterSize() / 2) * (text.length() / 2) - 10, this->position.y + height / 2 - sfText.getCharacterSize() / 2);
+
+	// Background hovering
+	sf::Color colorT;
+	if (isHovering()) colorT = sf::Color(color.r, color.g, color.b, 190);
+	else colorT = sf::Color(color.r, color.g, color.b, 128);
+	background.setFillColor(colorT);
 
 	// Drawing everything on window
 	this->window->draw(background);
