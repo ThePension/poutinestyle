@@ -61,28 +61,36 @@ void StatePlayGame::handleInput()
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
-            int deltaX = sqrt(pow(event.mouseMove.x - oldMouseX, 2));
+            int mouseX = event.mouseMove.x;
 
-            std::cout << "delta : " << deltaX;
+            if (mouseX == 0)
+            {
+                mouseX = gameManager->getWindowWidth() - 1;
+                sf::Mouse::setPosition(sf::Vector2i(500 + mouseX, sf::Mouse::getPosition().y));
+            }
+            else if (mouseX == gameManager->getWindowWidth() - 1)
+            {
+                mouseX = 0;
+                sf::Mouse::setPosition(sf::Vector2i(500, sf::Mouse::getPosition().y));
+            }
+
+            int deltaX = sqrt(pow(mouseX - oldMouseX, 2));
 
             float speedFactor = 1.f;
-            speedFactor += log10(deltaX) / 2;
+            speedFactor += log10(deltaX);
 
-            std::cout << " | speedfactor : " << speedFactor;
-
-            if(speedFactor < 1) speedFactor = 1.f;
-
-            std::cout << " | speedfactor2 : " << speedFactor << std::endl;
-
-            if (oldMouseX > event.mouseMove.x || event.mouseMove.x == 0) {
+            if (oldMouseX > mouseX) 
+            {
                 playerDir = matrixMult(playerDir, -0.03 * speedFactor); // Rotate the player direction
                 planeVec = matrixMult(planeVec, -0.03 * speedFactor); // Rotate plane direction
             }
-            else if (oldMouseX < event.mouseMove.x || event.mouseMove.x == gameManager->getWindowWidth() - 1) {
+            else if (oldMouseX < mouseX) 
+            {
                 playerDir = matrixMult(playerDir, 0.03 * speedFactor); // Rotate the player direction
                 planeVec = matrixMult(planeVec, 0.03 * speedFactor); // Rotate plane direction
             }
-            oldMouseX = event.mouseMove.x;
+
+            oldMouseX = mouseX;
         }
 
         if (event.type == sf::Event::KeyPressed)

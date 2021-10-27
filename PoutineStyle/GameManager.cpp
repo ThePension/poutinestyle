@@ -9,6 +9,7 @@
 GameManager::GameManager()
 {
     window = new sf::RenderWindow(sf::VideoMode(windowWidth, windowHeight), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
+    window->setPosition(sf::Vector2i(500, 0));
 
     StatePlayGame *statePlayGame = new StatePlayGame(this);
     states.push(statePlayGame);
