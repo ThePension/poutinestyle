@@ -7,6 +7,7 @@ class StateGameOverMenu : public GameState
 private:
 	Button replayButton;
 	Button quitButton;
+	bool isReplayClicked = false;
 
 protected:
 	void handleInput() override;

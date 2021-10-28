@@ -16,10 +16,8 @@ void StateMainMenu::handleInput() {
 	{
 		if (playButton.isClicked()) {
 			StatePlayGame* statePlayGame = new StatePlayGame(this->gameManager);
-			if (!this->gameManager->containsState(statePlayGame)) {
-				this->gameManager->pushState(statePlayGame);
-			}
-			else delete statePlayGame;
+			this->gameManager->changeState(statePlayGame);
+			return;
 		}
 		else if (settingsButton.isClicked()) {
 			// To do
@@ -31,8 +29,8 @@ void StateMainMenu::handleInput() {
 	}
 }
 void StateMainMenu::update() {
-	handleInput();
 	draw();
+	handleInput();
 }
 void StateMainMenu::draw() {
 	this->gameManager->getRenderWindow()->clear();

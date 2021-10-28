@@ -24,7 +24,6 @@ public:
 	void pushState(GameState* state);
 	void popState();
 	void changeState(GameState* state);
-	bool containsState(GameState* state);
 	GameState* peekState();
 };
 
