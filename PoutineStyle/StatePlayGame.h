@@ -5,6 +5,7 @@
 #include "Button.h"
 #include <list>
 #include <numbers>
+#include <vector>
 
 class StatePlayGame : public GameState
 {
@@ -37,6 +38,7 @@ private:
 	sf::Vector2f playerDir = sf::Vector2f(0.f, 0.75f);
 	sf::Vector2f planeVec = sf::Vector2f(-0.495f, 0.f); // Must be perpendicular to direction vector (2*atan(0.495/0.75) = 66° FOV)
 	sf::Texture textures, spriteTextures;
+	double ZBuffer[1032];
 protected:
 	void draw() override;
 	void handleInput() override;

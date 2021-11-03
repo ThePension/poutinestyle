@@ -169,6 +169,7 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="StateGameOverMenu.h" />
     <ClInclude Include="StateMainMenu.h" />
     <ClInclude Include="StatePauseMenu.h" />

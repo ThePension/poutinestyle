@@ -1,4 +1,5 @@
 #include "StatePlayGame.h"
+#include "Sprite.h"
 StatePlayGame::StatePlayGame(GameManager* game)
 {
     this->gameManager = game;
@@ -197,7 +198,8 @@ void StatePlayGame::drawMap3D() {
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
     sf::VertexArray lines(sf::Lines, 2*gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
-    sf::VertexArray sprites(sf::Lines, 2*gameManager->getWindowWidth());
+    std::vector<Sprite> spritesArray = std::vector<Sprite>();
+    sf::VertexArray spritesVertex(sf::Lines, 2*gameManager->getWindowWidth());
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
         sf::Vector2i playerMapPos = sf::Vector2i(int(playerPosition.x / blockWidth), int(playerPosition.y / blockHeight));
@@ -250,6 +252,21 @@ void StatePlayGame::drawMap3D() {
                 isWallHitHorizontal = false;
             }
             if (map[playerMapPos.y][playerMapPos.x] == '1') wallHit = true; // Inversion des composantes car sinon rotation de 90° ! Pas compris pourquoi ?
+            else if (map[playerMapPos.y][playerMapPos.x] == 'E') {
+                bool isContained = false;
+                for(Sprite const& s : spritesArray) {
+                    if (s.mapX == playerMapPos.x && s.mapY == playerMapPos.y) isContained = true;
+                }
+                if (!isContained) {
+                    // std::cout << "True" << std::endl;
+                    Sprite sprite = Sprite();
+                    sprite.distance = sideDistX - deltaDistX;
+                    sprite.type = 'E';
+                    sprite.mapX = playerMapPos.x;
+                    sprite.mapY = playerMapPos.y;
+                    spritesArray.push_back(sprite);
+                }
+            }
         }
         double perpWallDist;
         if (isWallHitHorizontal) perpWallDist = sideDistX - deltaDistX;
@@ -293,12 +310,71 @@ void StatePlayGame::drawMap3D() {
         lines[x * 2 + 1].position = sf::Vector2f((float)x, (float)drawEnd);
         lines[x * 2 + 1].color = wallColor;
         lines[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
+
+        ZBuffer[x] = perpWallDist; // Needed with sprite rendering
     }
+
+    // Rendering sprites stuff
+    // To do : Sort sprites in spritesArray
+
+    // Sprites Projection
+    for (int i = 0; i < spritesArray.size(); i++) {
+        Sprite sprite = spritesArray.at(i);
+
+        // Translate sprite pos relative to the camera
+        double spriteX = (double)sprite.mapX - playerPosition.x / (double)blockWidth;
+        spriteX += 0.5; // Center the sprite in the cell
+        double spriteY = (double)sprite.mapY - playerPosition.y / (double)blockHeight;
+        spriteY += 0.5; // Center the sprite in the cell
+
+        // Projection values
+        double invDet = 1.0 / ((double)planeVec.x * (double)playerDir.y - (double)playerDir.x * (double)planeVec.y);
+
+        double transformX = invDet * (playerDir.y * spriteX - playerDir.x * spriteY);
+        double transformY = invDet * (-planeVec.y * spriteX + planeVec.x * spriteY);
+
+        int spriteScreenX = int((w / 2) * (1 + transformX / transformY));
+        int h = gameManager->getWindowHeight();
+        int spriteHeight = abs(int(h / transformY)) - 32;
+
+        // Where the sprite should be displayed (on screen y coordinates)
+        int drawStartY = -spriteHeight / 2 + h / 2;
+        int drawEndY = spriteHeight / 2 + h / 2;
+
+        //calculate width of the sprite
+        int spriteWidth = abs(int(h / (transformY))) - 32;
+
+        // Where the sprite should be displayed (on screen x coordinates)
+        int drawStartX = -spriteWidth / 2 + spriteScreenX;
+        if (drawStartX < 0) drawStartX = 0;
+        int drawEndX = spriteWidth / 2 + spriteScreenX;
+        if (drawEndX >= w) drawEndX = w - 1;
+
+        for (int j = drawStartX; j < drawEndX; j++) {
+            // X coordinates of the sprite on the texture (y is useless, because it's always 0)
+            int texX = int(256 * (j - (-spriteWidth / 2 + spriteScreenX)) * textureSize / spriteWidth) / 256;
+
+            if (transformY < ZBuffer[j]) {
+                // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
+                // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
+                spritesVertex[j * 2].position = sf::Vector2f((float)j, (float)drawStartY + abs(drawStartY - drawEndY) / 2);
+                spritesVertex[j * 2].color = sf::Color::White;
+                spritesVertex[j * 2].texCoords = sf::Vector2f((float)texX, (float)1);
+                // x * 2 + 1 are all the seconds points of the lines (bottom ones)
+                spritesVertex[j * 2 + 1].position = sf::Vector2f((float)j, (float)drawEndY + abs(drawStartY - drawEndY) / 2);
+                spritesVertex[j * 2 + 1].color = sf::Color::White;
+                spritesVertex[j * 2 + 1].texCoords = sf::Vector2f((float)texX, (float)(0 + textureSize - 1));
+            }
+        }
+    }
+    // Clean the spritesArray
+    spritesArray.clear();
+
     // Draw walls with textures
     gameManager->getRenderWindow()->draw(lines, &textures);
 
     // Draw sprites
-    gameManager->getRenderWindow()->draw(sprites, &spriteTextures);
+    gameManager->getRenderWindow()->draw(spritesVertex, &spriteTextures);
 }
 
 void StatePlayGame::parseMap2D()
