@@ -19,6 +19,7 @@ private:
 	bool dPressed = false;
 	bool wPressed = false;
 	bool sPressed = false;
+	bool shoot = false;
 
 	bool isMapDisplayed = false;
 

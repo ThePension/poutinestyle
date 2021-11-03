@@ -32,6 +32,9 @@ StatePlayGame::StatePlayGame(GameManager* game)
     // https://www.tilingtextures.com/stone-wall-with-mortar/
     //spriteTextures = sf::Texture();
     //spriteTextures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\sprite.png");
+
+    Weapon* w1 = new Weapon();
+    player.takeWeapon(w1);
 }
 sf::Vector2f StatePlayGame::matrixMult(sf::Vector2f v, double a) {
     // Rotation matrix (used to rotate vector by an angle)
@@ -118,6 +121,11 @@ void StatePlayGame::handleInput()
             if (event.key.code == sf::Keyboard::W) wPressed = false;
             if (event.key.code == sf::Keyboard::S) sPressed = false;
         }
+
+        if (event.type == sf::Event::MouseButtonPressed)
+        {
+            shoot = true;
+        }
     }
 }
 void StatePlayGame::update(float deltaTime)
@@ -202,7 +210,8 @@ void StatePlayGame::drawMap2D()
             {
                 block.setFillColor(sf::Color::Black);
             }
-            else {
+            else
+            {
                 block.setFillColor(sf::Color::Blue);
             }
 
@@ -336,6 +345,12 @@ void StatePlayGame::drawMap3D()
     // Draw sprites
     gameManager->getRenderWindow()->draw(weaponSprite);
     gameManager->getRenderWindow()->draw(sprites, &spriteTextures);
+
+    // Draw the shoot
+    if (shoot)
+    {
+        player.useWeapon(sf::Vector2f(200, 600), sf::Vector2f(200, 600), this->gameManager);
+    }
 }
 
 void StatePlayGame::parseMap2D()
