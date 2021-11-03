@@ -32,6 +32,9 @@ StatePlayGame::StatePlayGame(GameManager* game)
     player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
     player_circle.setFillColor(sf::Color::Green);
 
+    // Create vector containing one vertexArray per sprite to draw (to avoid overlapping sprites)
+    spritesToDraw = std::vector<sf::VertexArray>();
+
     textures = sf::Texture();
     textures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\textures.png");
     // https://www.tilingtextures.com/stone-wall-with-mortar/
@@ -199,7 +202,6 @@ void StatePlayGame::drawMap3D() {
     int w = gameManager->getWindowWidth();
     sf::VertexArray lines(sf::Lines, 2*gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
     std::vector<Sprite> spritesArray = std::vector<Sprite>();
-    sf::VertexArray spritesVertex(sf::Lines, 2*gameManager->getWindowWidth());
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
         sf::Vector2i playerMapPos = sf::Vector2i(int(playerPosition.x / blockWidth), int(playerPosition.y / blockHeight));
@@ -311,11 +313,15 @@ void StatePlayGame::drawMap3D() {
         lines[x * 2 + 1].color = wallColor;
         lines[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
 
-        ZBuffer[x] = perpWallDist; // Needed with sprite rendering
+        ZBuffer[x] = perpWallDist; // Needed for sprite rendering
     }
 
     // Rendering sprites stuff
-    // To do : Sort sprites in spritesArray
+    // Sort sprites in spritesArray by distance
+    if (spritesArray.size() > 1) std::sort(spritesArray.begin(), spritesArray.end(), compareSpriteDistance);
+
+    
+    // for(sf::VertexArray oneSprite : spritesToDraw) oneSprite = sf::VertexArray(sf::Lines, 2 * gameManager->getWindowWidth());
 
     // Sprites Projection
     for (int i = 0; i < spritesArray.size(); i++) {
@@ -349,23 +355,25 @@ void StatePlayGame::drawMap3D() {
         if (drawStartX < 0) drawStartX = 0;
         int drawEndX = spriteWidth / 2 + spriteScreenX;
         if (drawEndX >= w) drawEndX = w - 1;
-
+        sf::VertexArray oneVertexArray = sf::VertexArray(sf::Lines, 2 * gameManager->getWindowWidth());
         for (int j = drawStartX; j < drawEndX; j++) {
             // X coordinates of the sprite on the texture (y is useless, because it's always 0)
             int texX = int(256 * (j - (-spriteWidth / 2 + spriteScreenX)) * textureSize / spriteWidth) / 256;
 
-            if (transformY < ZBuffer[j]) {
+            if (transformY < ZBuffer[j]) { // Draw it only there isn't a wall in front of it
                 // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
                 // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
-                spritesVertex[j * 2].position = sf::Vector2f((float)j, (float)drawStartY + abs(drawStartY - drawEndY) / 2);
-                spritesVertex[j * 2].color = sf::Color::White;
-                spritesVertex[j * 2].texCoords = sf::Vector2f((float)texX, (float)1);
+                oneVertexArray[j * 2].position = sf::Vector2f((float)j, (float)drawStartY);
+                oneVertexArray[j * 2].color = sf::Color::White;
+                oneVertexArray[j * 2].texCoords = sf::Vector2f((float)texX + 0 * textureSize, (float)(1));
                 // x * 2 + 1 are all the seconds points of the lines (bottom ones)
-                spritesVertex[j * 2 + 1].position = sf::Vector2f((float)j, (float)drawEndY + abs(drawStartY - drawEndY) / 2);
-                spritesVertex[j * 2 + 1].color = sf::Color::White;
-                spritesVertex[j * 2 + 1].texCoords = sf::Vector2f((float)texX, (float)(0 + textureSize - 1));
+                oneVertexArray[j * 2 + 1].position = sf::Vector2f((float)j, (float)drawEndY);
+                oneVertexArray[j * 2 + 1].color = sf::Color::White;
+                oneVertexArray[j * 2 + 1].texCoords = sf::Vector2f((float)texX + 0 * textureSize, (float)(0 + textureSize - 1));
             }
         }
+        spritesToDraw.push_back(oneVertexArray);
+        oneVertexArray.clear();
     }
     // Clean the spritesArray
     spritesArray.clear();
@@ -373,8 +381,11 @@ void StatePlayGame::drawMap3D() {
     // Draw walls with textures
     gameManager->getRenderWindow()->draw(lines, &textures);
 
-    // Draw sprites
-    gameManager->getRenderWindow()->draw(spritesVertex, &spriteTextures);
+    // Draw all sprites
+    for (sf::VertexArray oneSprite : spritesToDraw) gameManager->getRenderWindow()->draw(oneSprite, &spriteTextures);
+
+    // Clear sprites vector
+    spritesToDraw.clear();
 }
 
 void StatePlayGame::parseMap2D()
