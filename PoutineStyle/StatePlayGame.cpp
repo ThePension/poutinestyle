@@ -54,6 +54,7 @@ void StatePlayGame::handleInput()
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
+            float speedFactor = 1.2;
             int mouseX = event.mouseMove.x;
 
             if (mouseX == 0)
@@ -66,23 +67,17 @@ void StatePlayGame::handleInput()
                 mouseX = 0;
                 sf::Mouse::setPosition(sf::Vector2i(500, sf::Mouse::getPosition().y));
             }
-
-            int deltaX = sqrt(pow(mouseX - oldMouseX, 2));
-
-            float speedFactor = 1.f;
-            speedFactor += log10(deltaX);
-
-            if (oldMouseX > mouseX) 
+            else if (oldMouseX > mouseX) // go to left | 0 --- mouseX ------ oldMouseX --- maxWidth
             {
                 playerDir = matrixMult(playerDir, -0.03 * speedFactor); // Rotate the player direction
                 planeVec = matrixMult(planeVec, -0.03 * speedFactor); // Rotate plane direction
             }
-            else if (oldMouseX < mouseX) 
+            else if (oldMouseX < mouseX)  // go to right | 0 --- oldMouseX ------ mouseX --- maxWidth
             {
                 playerDir = matrixMult(playerDir, 0.03 * speedFactor); // Rotate the player direction
                 planeVec = matrixMult(planeVec, 0.03 * speedFactor); // Rotate plane direction
             }
-
+            
             oldMouseX = mouseX;
         }
 
@@ -203,21 +198,6 @@ void StatePlayGame::drawMap2D()
             {
                 block.setFillColor(sf::Color::Red);
             }
-            else if(map[i][j] == '0')
-            {
-                block.setFillColor(sf::Color::Black);
-            }
-            else if (map[i][j] == '2')
-            {
-                block.setFillColor(sf::Color::Green);
-            }
-            else if (map[i][j] == '3')
-            {
-                block.setFillColor(sf::Color::White);
-            }
-            else {
-                block.setFillColor(sf::Color::Blue);
-            }
 
             gameManager->getRenderWindow()->draw(block);
         }
@@ -299,43 +279,9 @@ void StatePlayGame::drawMap3D() {
         else perpWallDist = sideDistY - deltaDistY;
 
         sf::Color wallColor;
-        
-        switch (wallType)
-        {
-        case '1':
-            if (side == 1)
-            {
-                wallColor = sf::Color::Red;
-            }
-            else
-            {
-                wallColor = sf::Color(255 / 2, 0, 0);
-            }
-            break;
-        case '2':
-            if (side == 1)
-            {
-                wallColor = sf::Color::Green;
-            }
-            else
-            {
-                wallColor = sf::Color(0, 255 / 2, 0);
-            }
-            break;
-        default:
-            if (side == 1)
-            {
-                wallColor = sf::Color::Blue;
-            }
-            else
-            {
-                wallColor = sf::Color(0, 0, 255 / 2);
-            }
-            break;
-        }
 
-        //if (side == 1) wallColor = sf::Color::Red;
-        //else wallColor = sf::Color(255 / 2, 0, 0); 
+        if (side == 1) wallColor = sf::Color::Red;
+        else wallColor = sf::Color(255 / 2, 0, 0); 
 
         int lineHeight = int(gameManager->getWindowHeight() / perpWallDist);
 
@@ -355,14 +301,6 @@ void StatePlayGame::drawMap3D() {
         line.setFillColor(wallColor);
 
         gameManager->getRenderWindow()->draw(line);
-
-        // Draw rays
-        /*sf::Vertex ray[] =
-        {
-            sf::Vertex(playerPosition),
-            sf::Vertex(sf::Vector2f(double(playerMapPos.x * blockWidth), double(playerMapPos.y * blockWidth)))
-        };
-        windowGame.draw(ray, 2, sf::Lines);*/
     }
 }
 

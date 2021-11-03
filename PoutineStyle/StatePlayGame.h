@@ -27,6 +27,7 @@ private:
 	int blockHeight;
 
 	int oldMouseX = 0, oldMouseY = 0;
+	int oldDelta = 0;
 
 	char** map;
 
