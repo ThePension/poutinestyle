@@ -67,12 +67,12 @@ void StatePlayGame::handleInput()
                 mouseX = 0;
                 sf::Mouse::setPosition(sf::Vector2i(500, sf::Mouse::getPosition().y));
             }
-            else if (oldMouseX > mouseX) // go to left | 0 --- mouseX ------ oldMouseX --- maxWidth
+            else if (oldMouseX > mouseX) // go to left | 0 --- mouseX -- < -- oldMouseX --- maxWidth
             {
                 playerDir = matrixMult(playerDir, -0.03 * speedFactor); // Rotate the player direction
                 planeVec = matrixMult(planeVec, -0.03 * speedFactor); // Rotate plane direction
             }
-            else if (oldMouseX < mouseX)  // go to right | 0 --- oldMouseX ------ mouseX --- maxWidth
+            else if (oldMouseX < mouseX)  // go to right | 0 --- oldMouseX -- < -- mouseX --- maxWidth
             {
                 playerDir = matrixMult(playerDir, 0.03 * speedFactor); // Rotate the player direction
                 planeVec = matrixMult(planeVec, 0.03 * speedFactor); // Rotate plane direction
@@ -117,57 +117,48 @@ void StatePlayGame::update()
 
     // Player controls
     sf::Vector2f newPlayerPos;
-    int newPlayerPosOnMapY, newPlayerPosOnMapX;
 
     if (aPressed)
     {
-        // Check wall collision
         newPlayerPos = sf::Vector2f(playerPosition.x - planeVec.x * movingSpeed, playerPosition.y - planeVec.y * movingSpeed);
-        newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
-        newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-        if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
-            // Move the player position (forward) depending on player direction
-            playerPosition = newPlayerPos;
-        }
+        updatePlayerPosition(newPlayerPos);
     }
 
     if (dPressed)
     {
-        // Check wall collision
         newPlayerPos = sf::Vector2f(playerPosition.x + planeVec.x * movingSpeed, playerPosition.y + planeVec.y * movingSpeed);
-        newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
-        newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-        if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
-            // Move the player position (forward) depending on player direction
-            playerPosition = newPlayerPos;
-        }
+        updatePlayerPosition(newPlayerPos);
     }
 
     if (wPressed)
     {
-        // Check wall collision
         newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * movingSpeed, playerPosition.y + playerDir.y * movingSpeed);
-        newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
-        newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-        if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
-            // Move the player position (forward) depending on player direction
-            playerPosition = newPlayerPos;
-        }
+        updatePlayerPosition(newPlayerPos);
     }
 
     if (sPressed)
     {
         newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * movingSpeed, playerPosition.y - playerDir.y * movingSpeed);
-        newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
-        newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-        if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
-            // Move the player position (backward) depending on player direction
-            playerPosition = newPlayerPos;
-        }
+        updatePlayerPosition(newPlayerPos);
     }
 
     draw();
 }
+
+void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
+{
+    int newPosMapY, newPosMapX;
+
+    newPosMapY = newPos.x / blockWidth;
+    newPosMapX = newPos.y / blockHeight;
+
+    if (map[newPosMapX][newPosMapY] != '1')
+    {
+        // Move the player position (backward) depending on player direction
+        playerPosition = newPos;
+    }
+}
+
 void StatePlayGame::draw()
 {
     gameManager->getRenderWindow()->clear();

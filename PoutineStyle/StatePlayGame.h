@@ -46,6 +46,7 @@ protected:
 	void parseMap2D();
 	void drawMap2D();
 	void drawMap3D();
+	void updatePlayerPosition(sf::Vector2f newPos);
 	sf::Vector2f matrixMult(sf::Vector2f v, double angle);
 
 public:
