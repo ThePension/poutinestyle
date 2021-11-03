@@ -126,14 +126,26 @@ void StatePlayGame::update()
 
     if (aPressed)
     {
-        playerDir = matrixMult(playerDir, -0.1); // Rotate the player direction
-        planeVec = matrixMult(planeVec, -0.1); // Rotate plane direction
+        // Check wall collision
+        newPlayerPos = sf::Vector2f(playerPosition.x - planeVec.x * movingSpeed, playerPosition.y - planeVec.y * movingSpeed);
+        newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
+        newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
+        if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
+            // Move the player position (forward) depending on player direction
+            playerPosition = newPlayerPos;
+        }
     }
 
     if (dPressed)
     {
-        playerDir = matrixMult(playerDir, 0.1); // Rotate the player direction
-        planeVec = matrixMult(planeVec, 0.1); // Rotate plane direction
+        // Check wall collision
+        newPlayerPos = sf::Vector2f(playerPosition.x + planeVec.x * movingSpeed, playerPosition.y + planeVec.y * movingSpeed);
+        newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
+        newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
+        if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
+            // Move the player position (forward) depending on player direction
+            playerPosition = newPlayerPos;
+        }
     }
 
     if (wPressed)
@@ -195,6 +207,14 @@ void StatePlayGame::drawMap2D()
             {
                 block.setFillColor(sf::Color::Black);
             }
+            else if (map[i][j] == '2')
+            {
+                block.setFillColor(sf::Color::Green);
+            }
+            else if (map[i][j] == '3')
+            {
+                block.setFillColor(sf::Color::White);
+            }
             else {
                 block.setFillColor(sf::Color::Blue);
             }
@@ -237,6 +257,7 @@ void StatePlayGame::drawMap3D() {
 
         int stepX, stepY, side;
         bool wallHit = false;
+        char wallType;
 
         if (rayDir.x < 0) {
             stepX = -1;
@@ -267,15 +288,54 @@ void StatePlayGame::drawMap3D() {
                 playerMapPos.y += stepY;
                 side = 1;
             }
-            if (map[playerMapPos.y][playerMapPos.x] == '1') wallHit = true; // Inversion des composantes car sinon rotation de 90° ! Pas compris pourquoi ?
+            if (map[playerMapPos.y][playerMapPos.x] != '0' && map[playerMapPos.y][playerMapPos.x] != 'T')
+            {
+                wallHit = true; // Inversion des composantes car sinon rotation de 90° ! Pas compris pourquoi ?
+                wallType = map[playerMapPos.y][playerMapPos.x]; // get the map character of the block
+            }
         }
         double perpWallDist;
         if (side == 0) perpWallDist = sideDistX - deltaDistX;
         else perpWallDist = sideDistY - deltaDistY;
 
         sf::Color wallColor;
-        if (side == 1) wallColor = sf::Color::Red;
-        else wallColor = sf::Color(255 / 2, 0, 0); 
+        
+        switch (wallType)
+        {
+        case '1':
+            if (side == 1)
+            {
+                wallColor = sf::Color::Red;
+            }
+            else
+            {
+                wallColor = sf::Color(255 / 2, 0, 0);
+            }
+            break;
+        case '2':
+            if (side == 1)
+            {
+                wallColor = sf::Color::Green;
+            }
+            else
+            {
+                wallColor = sf::Color(0, 255 / 2, 0);
+            }
+            break;
+        default:
+            if (side == 1)
+            {
+                wallColor = sf::Color::Blue;
+            }
+            else
+            {
+                wallColor = sf::Color(0, 0, 255 / 2);
+            }
+            break;
+        }
+
+        //if (side == 1) wallColor = sf::Color::Red;
+        //else wallColor = sf::Color(255 / 2, 0, 0); 
 
         int lineHeight = int(gameManager->getWindowHeight() / perpWallDist);
 
