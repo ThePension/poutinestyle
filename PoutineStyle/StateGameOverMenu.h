@@ -2,20 +2,20 @@
 #include "GameState.h"
 #include "StatePlayGame.h"
 #include "Button.h"
-class StateMainMenu  : public GameState
+class StateGameOverMenu : public GameState
 {
 private:
-	Button playButton;
+	Button replayButton;
 	Button quitButton;
-	Button settingsButton;
+	bool isReplayClicked = false;
 
 protected:
 	void handleInput() override;
 	void draw() override;
 
 public:
-	StateMainMenu(GameManager * game);
-	~StateMainMenu();
+	StateGameOverMenu(GameManager* game);
+	~StateGameOverMenu();
 	void update() override;
 };
 

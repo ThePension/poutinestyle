@@ -151,21 +151,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Ennemy.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="StateGameOverMenu.cpp" />
     <ClCompile Include="StateMainMenu.cpp" />
     <ClCompile Include="StatePauseMenu.cpp" />
     <ClCompile Include="StatePlayGame.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Ennemy.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="StateGameOverMenu.h" />
     <ClInclude Include="StateMainMenu.h" />
     <ClInclude Include="StatePauseMenu.h" />
     <ClInclude Include="StatePlayGame.h" />

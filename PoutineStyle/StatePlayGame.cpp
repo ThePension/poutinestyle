@@ -30,6 +30,12 @@ StatePlayGame::StatePlayGame(GameManager* game)
     player_circle.setRadius(10.f);
     player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
     player_circle.setFillColor(sf::Color::Green);
+
+    textures = sf::Texture();
+    textures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\textures.png");
+    // https://www.tilingtextures.com/stone-wall-with-mortar/
+    spriteTextures = sf::Texture();
+    spriteTextures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\sprite.png");
 }
 sf::Vector2f StatePlayGame::matrixMult(sf::Vector2f v, double a) {
     // Rotation matrix (used to rotate vector by an angle)
@@ -188,9 +194,10 @@ void StatePlayGame::drawMap2D() {
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
 void StatePlayGame::drawMap3D() {
-    // Number of rays (lines drawn on the screen) --> Must be a multiple of 66
+    // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
-
+    sf::VertexArray lines(sf::Lines, 2*gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
+    sf::VertexArray sprites(sf::Lines, 2*gameManager->getWindowWidth());
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
         sf::Vector2i playerMapPos = sf::Vector2i(int(playerPosition.x / blockWidth), int(playerPosition.y / blockHeight));
@@ -210,8 +217,8 @@ void StatePlayGame::drawMap3D() {
 
         double sideDistX, sideDistY;
 
-        int stepX, stepY, side;
-        bool wallHit = false;
+        int stepX, stepY;
+        bool wallHit = false, isWallHitHorizontal = false;
 
         if (rayDir.x < 0) {
             stepX = -1;
@@ -235,50 +242,63 @@ void StatePlayGame::drawMap3D() {
             if (sideDistX < sideDistY) {
                 sideDistX += deltaDistX; // Always the same
                 playerMapPos.x += stepX;
-                side = 0;
+                isWallHitHorizontal = true;
             }
             else {
                 sideDistY += deltaDistY;
                 playerMapPos.y += stepY;
-                side = 1;
+                isWallHitHorizontal = false;
             }
             if (map[playerMapPos.y][playerMapPos.x] == '1') wallHit = true; // Inversion des composantes car sinon rotation de 90° ! Pas compris pourquoi ?
         }
         double perpWallDist;
-        if (side == 0) perpWallDist = sideDistX - deltaDistX;
+        if (isWallHitHorizontal) perpWallDist = sideDistX - deltaDistX;
         else perpWallDist = sideDistY - deltaDistY;
 
         sf::Color wallColor;
-        if (side == 1) wallColor = sf::Color::Red;
-        else wallColor = sf::Color(255 / 2, 0, 0); 
+        if (isWallHitHorizontal) wallColor = sf::Color::White;
+        else wallColor = sf::Color(126, 126, 126);
 
         int lineHeight = int(gameManager->getWindowHeight() / perpWallDist);
 
         int drawStart = -lineHeight / 2 + gameManager->getWindowHeight() / 2;
-        if (drawStart < 0) drawStart = 0;
         int drawEnd = lineHeight / 2 + gameManager->getWindowHeight() / 2;
-        if (drawEnd >= gameManager->getWindowHeight()) drawEnd = gameManager->getWindowHeight() - 1;
 
-        sf::ConvexShape line;
-        line.setPointCount(4);
-        double lineW = gameManager->getWindowWidth() / double(w);
-        line.setPoint(0, sf::Vector2f(x * lineW, drawStart));
-        line.setPoint(1, sf::Vector2f(x * lineW + lineW, drawStart));
-        line.setPoint(3, sf::Vector2f(x * lineW, drawEnd));
-        line.setPoint(2, sf::Vector2f(x * lineW + lineW, drawEnd));
+        // Texture stuff
+        int wallTextureNum = 0; // Need to be set depending on wall type (char)
+        sf::Vector2i texture_coords(
+            wallTextureNum * textureSize,
+            0 // For the moment, all textures are on the same line (y coord) in textures.png file
+        );
 
-        line.setFillColor(wallColor);
+        // Calculate where the wall was hit
+        float wallX;
+        if (isWallHitHorizontal) wallX = (playerPosition.y / blockHeight) + perpWallDist * rayDir.y;
+        else wallX = (playerPosition.x / blockWidth) + perpWallDist * rayDir.x;
+        wallX -= floor(wallX);
 
-        gameManager->getRenderWindow()->draw(line);
+        // Get x coordinate on the wall texture
+        int texX = int(wallX * float(textureSize));
+        if ((isWallHitHorizontal && rayDir.x > 0) || (!isWallHitHorizontal && rayDir.y < 0))
+            texX = textureSize - texX - 1;
 
-        // Draw rays
-        /*sf::Vertex ray[] =
-        {
-            sf::Vertex(playerPosition),
-            sf::Vertex(sf::Vector2f(double(playerMapPos.x * blockWidth), double(playerMapPos.y * blockWidth)))
-        };
-        windowGame.draw(ray, 2, sf::Lines);*/
+        texture_coords.x += texX;
+
+        // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
+        // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
+        lines[x * 2].position = sf::Vector2f((float)x, (float)drawStart);
+        lines[x * 2].color = wallColor;
+        lines[x * 2].texCoords = sf::Vector2f((float)texture_coords.x, (float)texture_coords.y + 1);
+        // x * 2 + 1 are all the seconds points of the lines (bottom ones)
+        lines[x * 2 + 1].position = sf::Vector2f((float)x, (float)drawEnd);
+        lines[x * 2 + 1].color = wallColor;
+        lines[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
     }
+    // Draw walls with textures
+    gameManager->getRenderWindow()->draw(lines, &textures);
+
+    // Draw sprites
+    gameManager->getRenderWindow()->draw(sprites, &spriteTextures);
 }
 
 void StatePlayGame::parseMap2D()

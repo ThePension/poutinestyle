@@ -11,8 +11,8 @@ class GameManager
 private:
 	
 	std::stack<GameState*> states;
-	int windowWidth = 1032;
-	int windowHeight = 1032;
+	int windowWidth = 1030;
+	int windowHeight = 1030;
 	sf::RenderWindow* window;
 public:
 	int getWindowWidth() { return this->windowWidth; }

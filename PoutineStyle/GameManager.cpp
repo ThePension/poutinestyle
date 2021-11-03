@@ -5,33 +5,48 @@
 #include "StatePlayGame.h"
 #include "StateMainMenu.h"
 #include "StatePauseMenu.h"
+#include "StateGameOverMenu.h"
 
 GameManager::GameManager()
 {
     window = new sf::RenderWindow(sf::VideoMode(windowWidth, windowHeight), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
-
-    StatePlayGame *statePlayGame = new StatePlayGame(this);
-    states.push(statePlayGame);
+    StateMainMenu* stateMainMenu = new StateMainMenu(this);
+    states.push(stateMainMenu);
 }
 
 void GameManager::gameLoop()
 {
     while (window->isOpen())
     {
-        states.top()->update();   
+        if (peekState() != nullptr) peekState()->update();
     }
 }
 
 void GameManager::pushState(GameState* state) {
-
+    if (peekState() == nullptr) {
+        this->states.push(state);
+    }
 }
+
 void GameManager::popState() {
-
+    if (!this->states.empty()) {
+        GameState * stateToDelete = this->states.top();
+        delete stateToDelete;
+        stateToDelete = nullptr;
+        this->states.pop();
+    }
 }
+
 void GameManager::changeState(GameState* state) {
-
+    if (!this->states.empty()) {
+        popState();
+    }
+    pushState(state);
 }
+
 GameState* GameManager::peekState()
 {
-    return nullptr;
+    if (this->states.empty()) return nullptr;
+    else return this->states.top();
 }
+
