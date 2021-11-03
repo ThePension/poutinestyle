@@ -6,6 +6,7 @@ StatePlayGame::StatePlayGame(GameManager* game)
     
     gameManager->getRenderWindow()->setMouseCursorVisible(false);
     gameManager->getRenderWindow()->setMouseCursorGrabbed(true); // The mouse can't leave the window
+
     oldMouseX = sf::Mouse::getPosition().x;
     sf::Mouse::setPosition(sf::Vector2i(gameManager->getWindowWidth() / 2, gameManager->getWindowHeight() / 2));
 
@@ -24,22 +25,22 @@ StatePlayGame::StatePlayGame(GameManager* game)
     
 	parseMap2D();
 
-    block.setSize(sf::Vector2f(blockWidth, blockHeight));
-    block.setOutlineThickness(1);
-    block.setOutlineColor(sf::Color::Black);
-
-    player_circle.setRadius(10.f);
-    player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
-    player_circle.setFillColor(sf::Color::Green);
-
     // Create vector containing one vertexArray per sprite to draw (to avoid overlapping sprites)
     spritesToDraw = std::vector<sf::VertexArray>();
 
-    textures = sf::Texture();
-    textures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\textures.png");
-    // https://www.tilingtextures.com/stone-wall-with-mortar/
-    spriteTextures = sf::Texture();
-    spriteTextures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\sprite.png");
+    wallTextures = sf::Texture();
+    weaponTexture = sf::Texture();
+    
+    wallTextures.loadFromFile("../PoutineStyle/pics/textures.png");
+    weaponTexture.loadFromFile("../PoutineStyle/pics/arme.png");
+    https://www.tilingtextures.com/stone-wall-with-mortar/
+    barrelTextures = sf::Texture();
+    barrelTextures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\sprite.png");
+
+    //Gun sprite (move with player)
+    weaponSprite.setTexture(weaponTexture);
+    weaponSprite.setScale(1.5, 1.5);
+    weaponSprite.setPosition(sf::Vector2f(450, 750));
 }
 sf::Vector2f StatePlayGame::matrixMult(sf::Vector2f v, double a) {
     // Rotation matrix (used to rotate vector by an angle)
@@ -61,6 +62,7 @@ StatePlayGame::~StatePlayGame() {
 void StatePlayGame::handleInput()
 {
     sf::Event event;
+
     while (gameManager->getRenderWindow()->pollEvent(event))
     {
         if (event.type == sf::Event::Closed)
@@ -70,15 +72,31 @@ void StatePlayGame::handleInput()
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
-            if (oldMouseX > event.mouseMove.x || event.mouseMove.x == 0) {
-                playerDir = matrixMult(playerDir, -0.03); // Rotate the player direction
-                planeVec = matrixMult(planeVec, -0.03); // Rotate plane direction
+            float speedFactor = 1.2;
+            int mouseX = event.mouseMove.x;
+
+            if (mouseX == 0)
+            {
+                mouseX = gameManager->getWindowWidth() - 1;
+                sf::Mouse::setPosition(sf::Vector2i(500 + mouseX, sf::Mouse::getPosition().y));
             }
-            else if (oldMouseX < event.mouseMove.x || event.mouseMove.x == gameManager->getWindowWidth() - 1) {
-                playerDir = matrixMult(playerDir, 0.03); // Rotate the player direction
-                planeVec = matrixMult(planeVec, 0.03); // Rotate plane direction
+            else if (mouseX == gameManager->getWindowWidth() - 1)
+            {
+                mouseX = 0;
+                sf::Mouse::setPosition(sf::Vector2i(500, sf::Mouse::getPosition().y));
             }
-            oldMouseX = event.mouseMove.x;
+            else if (oldMouseX > mouseX) // go to left | 0 --- mouseX -- < -- oldMouseX --- maxWidth
+            {
+                playerDir = matrixMult(playerDir, -0.03 * speedFactor); // Rotate the player direction
+                planeVec = matrixMult(planeVec, -0.03 * speedFactor); // Rotate plane direction
+            }
+            else if (oldMouseX < mouseX)  // go to right | 0 --- oldMouseX -- < -- mouseX --- maxWidth
+            {
+                playerDir = matrixMult(playerDir, 0.03 * speedFactor); // Rotate the player direction
+                planeVec = matrixMult(planeVec, 0.03 * speedFactor); // Rotate plane direction
+            }
+            
+            oldMouseX = mouseX;
         }
 
         if (event.type == sf::Event::KeyPressed)
@@ -86,77 +104,79 @@ void StatePlayGame::handleInput()
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             {
-                isPlayerMoving = true;
-                keyPressed = sf::Keyboard::W;
+                wPressed = true;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
-                isPlayerMoving = true;
-                keyPressed = sf::Keyboard::A;
+                aPressed = true;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
-                isPlayerMoving = true;
-                keyPressed = sf::Keyboard::S;
+                sPressed = true;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
-                isPlayerMoving = true;
-                keyPressed = sf::Keyboard::D;
+                dPressed = true;
             }
         }
-        if (event.type == sf::Event::KeyReleased) {
-            if (event.key.code == sf::Keyboard::A) isPlayerMoving = false;
-            if (event.key.code == sf::Keyboard::D) isPlayerMoving = false;
-            if (event.key.code == sf::Keyboard::W) isPlayerMoving = false;
-            if (event.key.code == sf::Keyboard::S) isPlayerMoving = false;
+
+        if (event.type == sf::Event::KeyReleased)
+        {
+            if (event.key.code == sf::Keyboard::A) aPressed = false;
+            if (event.key.code == sf::Keyboard::D) dPressed = false;
+            if (event.key.code == sf::Keyboard::W) wPressed = false;
+            if (event.key.code == sf::Keyboard::S) sPressed = false;
         }
     }
-
-    player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
 }
-void StatePlayGame::update()
+void StatePlayGame::update(float deltaTime)
 {
     handleInput();
 
     // Player controls
     sf::Vector2f newPlayerPos;
-    int newPlayerPosOnMapY, newPlayerPosOnMapX;
-    if (isPlayerMoving) {
-        switch (keyPressed)
-        {
-        case sf::Keyboard::A:
-            playerDir = matrixMult(playerDir, -0.1); // Rotate the player direction
-            planeVec = matrixMult(planeVec, -0.1); // Rotate plane direction
-            break;
-        case sf::Keyboard::D:
-            playerDir = matrixMult(playerDir, 0.1); // Rotate the player direction
-            planeVec = matrixMult(planeVec, 0.1); // Rotate plane direction
-            break;
-        case sf::Keyboard::W:
-            // Check wall collision
-            newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * movingSpeed, playerPosition.y + playerDir.y * movingSpeed);
-            newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
-            newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-            if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
-                // Move the player position (forward) depending on player direction
-                playerPosition = newPlayerPos;
-            }
-            break;
-        case sf::Keyboard::S:
-            newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * movingSpeed, playerPosition.y - playerDir.y * movingSpeed);
-            newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
-            newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
-            if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
-                // Move the player position (backward) depending on player direction
-                playerPosition = newPlayerPos;
-            }
-            break;
-        }
+
+    if (aPressed)
+    {
+        newPlayerPos = sf::Vector2f(playerPosition.x - planeVec.x * movingSpeed * deltaTime, playerPosition.y - planeVec.y * movingSpeed * deltaTime);
+        updatePlayerPosition(newPlayerPos);
+    }
+
+    if (dPressed)
+    {
+        newPlayerPos = sf::Vector2f(playerPosition.x + planeVec.x * movingSpeed * deltaTime, playerPosition.y + planeVec.y * movingSpeed * deltaTime);
+        updatePlayerPosition(newPlayerPos);
+    }
+
+    if (wPressed)
+    {
+        newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * movingSpeed * deltaTime, playerPosition.y + playerDir.y * movingSpeed * deltaTime);
+        updatePlayerPosition(newPlayerPos);
+    }
+
+    if (sPressed)
+    {
+        newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * movingSpeed * deltaTime, playerPosition.y - playerDir.y * movingSpeed * deltaTime);
+        updatePlayerPosition(newPlayerPos);
     }
 
     draw();
 }
+
+void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
+{
+    int newPosMapY, newPosMapX;
+
+    newPosMapY = newPos.x / blockWidth;
+    newPosMapX = newPos.y / blockHeight;
+
+    if (map[newPosMapX][newPosMapY] != '1')
+    {
+        // Move the player position (backward) depending on player direction
+        playerPosition = newPos;
+    }
+}
+
 void StatePlayGame::draw()
 {
     gameManager->getRenderWindow()->clear();
@@ -165,7 +185,18 @@ void StatePlayGame::draw()
     gameManager->getRenderWindow()->display();
 }
 
-void StatePlayGame::drawMap2D() {
+void StatePlayGame::drawMap2D()
+{
+    sf::RectangleShape block;
+    block.setSize(sf::Vector2f(blockWidth, blockHeight));
+    block.setOutlineThickness(1);
+    block.setOutlineColor(sf::Color::Black);
+
+    sf::CircleShape player_circle;
+    player_circle.setRadius(10.f);
+    player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
+    player_circle.setFillColor(sf::Color::Green);
+
     for (int i = 0; i < mapSize; i++)
     {
         for (int j = 0; j < mapSize; j++)
@@ -176,7 +207,7 @@ void StatePlayGame::drawMap2D() {
             {
                 block.setFillColor(sf::Color::Red);
             }
-            else if(map[i][j] == '0')
+            else if (map[i][j] == '0')
             {
                 block.setFillColor(sf::Color::Black);
             }
@@ -195,9 +226,11 @@ void StatePlayGame::drawMap2D() {
         sf::Vertex(playerPosition),
         sf::Vertex(sf::Vector2f(playerPosition.x + 32 * playerDir.x, playerPosition.y + 32 * playerDir.y))
     };
+
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
-void StatePlayGame::drawMap3D() {
+void StatePlayGame::drawMap3D()
+{
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
     sf::VertexArray lines(sf::Lines, 2*gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
@@ -253,10 +286,11 @@ void StatePlayGame::drawMap3D() {
                 playerMapPos.y += stepY;
                 isWallHitHorizontal = false;
             }
+
             if (map[playerMapPos.y][playerMapPos.x] == '1') wallHit = true; // Inversion des composantes car sinon rotation de 90° ! Pas compris pourquoi ?
             else if (map[playerMapPos.y][playerMapPos.x] == 'E') {
                 bool isContained = false;
-                for(Sprite const& s : spritesArray) {
+                for (Sprite const& s : spritesArray) {
                     if (s.mapX == playerMapPos.x && s.mapY == playerMapPos.y) isContained = true;
                 }
                 if (!isContained) {
@@ -275,6 +309,7 @@ void StatePlayGame::drawMap3D() {
         else perpWallDist = sideDistY - deltaDistY;
 
         sf::Color wallColor;
+
         if (isWallHitHorizontal) wallColor = sf::Color::White;
         else wallColor = sf::Color(126, 126, 126);
 
@@ -379,13 +414,16 @@ void StatePlayGame::drawMap3D() {
     spritesArray.clear();
 
     // Draw walls with textures
-    gameManager->getRenderWindow()->draw(lines, &textures);
+    gameManager->getRenderWindow()->draw(lines, &wallTextures);
 
     // Draw all sprites
-    for (sf::VertexArray oneSprite : spritesToDraw) gameManager->getRenderWindow()->draw(oneSprite, &spriteTextures);
+    for (sf::VertexArray oneSprite : spritesToDraw) gameManager->getRenderWindow()->draw(oneSprite, &barrelTextures);
 
     // Clear sprites vector
     spritesToDraw.clear();
+
+    // Draw gun sprite
+    gameManager->getRenderWindow()->draw(weaponSprite);
 }
 
 void StatePlayGame::parseMap2D()

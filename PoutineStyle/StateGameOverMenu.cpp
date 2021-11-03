@@ -25,7 +25,7 @@ void StateGameOverMenu::handleInput() {
 		}
 	}
 }
-void StateGameOverMenu::update() {
+void StateGameOverMenu::update(float deltaTime) {
 	handleInput();
 	if(!isReplayClicked) draw();
 }

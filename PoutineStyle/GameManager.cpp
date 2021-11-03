@@ -10,15 +10,19 @@
 GameManager::GameManager()
 {
     window = new sf::RenderWindow(sf::VideoMode(windowWidth, windowHeight), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
+
     StateMainMenu* stateMainMenu = new StateMainMenu(this);
     states.push(stateMainMenu);
+
+    window->setPosition(sf::Vector2i(500, 0));
 }
 
 void GameManager::gameLoop()
 {
     while (window->isOpen())
     {
-        if (peekState() != nullptr) peekState()->update();
+        deltaTime = clock.restart().asSeconds();
+        if (peekState() != nullptr) peekState()->update(deltaTime);
     }
 }
 

@@ -16,6 +16,6 @@ protected:
 public:
 	StateGameOverMenu(GameManager* game);
 	~StateGameOverMenu();
-	void update() override;
+	void update(float deltaTime) override;
 };
 
