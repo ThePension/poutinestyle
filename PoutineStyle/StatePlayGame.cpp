@@ -31,11 +31,15 @@ StatePlayGame::StatePlayGame(GameManager* game)
     player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
     player_circle.setFillColor(sf::Color::Green);
 
-    textures = sf::Texture();
-    textures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\textures.png");
+    wallTextures = sf::Texture();
+    weaponTexture = sf::Texture();
+    
+    
+    wallTextures.loadFromFile("../PoutineStyle/pics/textures.png");
+    weaponTexture.loadFromFile("../PoutineStyle/pics/arme.png");
     // https://www.tilingtextures.com/stone-wall-with-mortar/
-    spriteTextures = sf::Texture();
-    spriteTextures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\sprite.png");
+    //spriteTextures = sf::Texture();
+    //spriteTextures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\sprite.png");
 }
 sf::Vector2f StatePlayGame::matrixMult(sf::Vector2f v, double a) {
     // Rotation matrix (used to rotate vector by an angle)
@@ -111,7 +115,7 @@ void StatePlayGame::handleInput()
 
     player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
 }
-void StatePlayGame::update()
+void StatePlayGame::update(float deltaTime)
 {
     handleInput();
 
@@ -122,16 +126,16 @@ void StatePlayGame::update()
         switch (keyPressed)
         {
         case sf::Keyboard::A:
-            playerDir = matrixMult(playerDir, -0.1); // Rotate the player direction
-            planeVec = matrixMult(planeVec, -0.1); // Rotate plane direction
+            playerDir = matrixMult(playerDir, -0.1 * deltaTime); // Rotate the player direction
+            planeVec = matrixMult(planeVec, -0.1 * deltaTime); // Rotate plane direction
             break;
         case sf::Keyboard::D:
-            playerDir = matrixMult(playerDir, 0.1); // Rotate the player direction
-            planeVec = matrixMult(planeVec, 0.1); // Rotate plane direction
+            playerDir = matrixMult(playerDir, 0.1 * deltaTime); // Rotate the player direction
+            planeVec = matrixMult(planeVec, 0.1 * deltaTime); // Rotate plane direction
             break;
         case sf::Keyboard::W:
             // Check wall collision
-            newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * movingSpeed, playerPosition.y + playerDir.y * movingSpeed);
+            newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * movingSpeed * deltaTime, playerPosition.y + playerDir.y * movingSpeed * deltaTime);
             newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
             newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
             if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
@@ -140,7 +144,7 @@ void StatePlayGame::update()
             }
             break;
         case sf::Keyboard::S:
-            newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * movingSpeed, playerPosition.y - playerDir.y * movingSpeed);
+            newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * movingSpeed * deltaTime, playerPosition.y - playerDir.y * movingSpeed * deltaTime);
             newPlayerPosOnMapY = newPlayerPos.x / blockWidth;
             newPlayerPosOnMapX = newPlayerPos.y / blockHeight;
             if (map[newPlayerPosOnMapX][newPlayerPosOnMapY] != '1') {
@@ -295,9 +299,14 @@ void StatePlayGame::drawMap3D() {
         lines[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
     }
     // Draw walls with textures
-    gameManager->getRenderWindow()->draw(lines, &textures);
+    gameManager->getRenderWindow()->draw(lines, &wallTextures);
 
+    //Gun sprite (move with player)
+    weaponSprite.setTexture(weaponTexture);
+    weaponSprite.setScale(1.5, 1.5);
+    weaponSprite.setPosition(sf::Vector2f(450, 750));
     // Draw sprites
+    gameManager->getRenderWindow()->draw(weaponSprite);
     gameManager->getRenderWindow()->draw(sprites, &spriteTextures);
 }
 

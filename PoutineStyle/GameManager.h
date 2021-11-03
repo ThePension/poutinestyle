@@ -14,6 +14,8 @@ private:
 	int windowWidth = 1030;
 	int windowHeight = 1030;
 	sf::RenderWindow* window;
+	sf::Clock clock;
+	float deltaTime;
 public:
 	int getWindowWidth() { return this->windowWidth; }
 	int getWindowHeight() { return this->windowHeight; }

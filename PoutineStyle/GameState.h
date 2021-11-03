@@ -19,6 +19,6 @@ protected:
 public:
 	GameState();
 	~GameState();
-	virtual void update() = 0;
+	virtual void update(float deltatime) = 0;
 };
 

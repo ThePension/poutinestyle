@@ -18,7 +18,8 @@ void GameManager::gameLoop()
 {
     while (window->isOpen())
     {
-        if (peekState() != nullptr) peekState()->update();
+        deltaTime = clock.restart().asSeconds();
+        if (peekState() != nullptr) peekState()->update(deltaTime);
     }
 }
 

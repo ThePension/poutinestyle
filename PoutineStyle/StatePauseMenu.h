@@ -11,6 +11,6 @@ protected:
 public:
 	StatePauseMenu();
 	~StatePauseMenu();
-	void update() override;
+	void update(float deltaTime) override;
 };
 

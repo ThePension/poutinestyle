@@ -28,7 +28,7 @@ void StateMainMenu::handleInput() {
 		}
 	}
 }
-void StateMainMenu::update() {
+void StateMainMenu::update(float deltaTime) {
 	draw();
 	handleInput();
 }
