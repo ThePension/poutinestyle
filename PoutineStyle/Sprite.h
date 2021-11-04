@@ -7,5 +7,5 @@ struct Sprite {
 // Used for sorting vector of sprites
 bool compareSpriteDistance(Sprite s1, Sprite s2)
 {
-	return (s1.distance > s2.distance);
+	return (abs(s1.distance) > abs(s2.distance));
 }

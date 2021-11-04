@@ -179,10 +179,10 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
 
 void StatePlayGame::draw()
 {
-    gameManager->getRenderWindow()->clear();
+    //gameManager->getRenderWindow()->clear();
     if(isMapDisplayed) drawMap2D();
     else drawMap3D();
-    gameManager->getRenderWindow()->display();
+    //gameManager->getRenderWindow()->display();
 }
 
 void StatePlayGame::drawMap2D()
@@ -231,6 +231,7 @@ void StatePlayGame::drawMap2D()
 }
 void StatePlayGame::drawMap3D()
 {
+    int yOffset = 100; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
     sf::VertexArray lines(sf::Lines, 2*gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
@@ -340,11 +341,11 @@ void StatePlayGame::drawMap3D()
 
         // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
         // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
-        lines[x * 2].position = sf::Vector2f((float)x, (float)drawStart);
+        lines[x * 2].position = sf::Vector2f((float)x, (float)drawStart + yOffset);
         lines[x * 2].color = wallColor;
         lines[x * 2].texCoords = sf::Vector2f((float)texture_coords.x, (float)texture_coords.y + 1);
         // x * 2 + 1 are all the seconds points of the lines (bottom ones)
-        lines[x * 2 + 1].position = sf::Vector2f((float)x, (float)drawEnd);
+        lines[x * 2 + 1].position = sf::Vector2f((float)x, (float)drawEnd + yOffset);
         lines[x * 2 + 1].color = wallColor;
         lines[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
 
@@ -354,9 +355,6 @@ void StatePlayGame::drawMap3D()
     // Rendering sprites stuff
     // Sort sprites in spritesArray by distance
     if (spritesArray.size() > 1) std::sort(spritesArray.begin(), spritesArray.end(), compareSpriteDistance);
-
-    
-    // for(sf::VertexArray oneSprite : spritesToDraw) oneSprite = sf::VertexArray(sf::Lines, 2 * gameManager->getWindowWidth());
 
     // Sprites Projection
     for (int i = 0; i < spritesArray.size(); i++) {
@@ -398,11 +396,11 @@ void StatePlayGame::drawMap3D()
             if (transformY < ZBuffer[j]) { // Draw it only there isn't a wall in front of it
                 // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
                 // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
-                oneVertexArray[j * 2].position = sf::Vector2f((float)j, (float)drawStartY);
+                oneVertexArray[j * 2].position = sf::Vector2f((float)j, (float)drawStartY + yOffset);
                 oneVertexArray[j * 2].color = sf::Color::White;
                 oneVertexArray[j * 2].texCoords = sf::Vector2f((float)texX + 0 * textureSize, (float)(1));
                 // x * 2 + 1 are all the seconds points of the lines (bottom ones)
-                oneVertexArray[j * 2 + 1].position = sf::Vector2f((float)j, (float)drawEndY);
+                oneVertexArray[j * 2 + 1].position = sf::Vector2f((float)j, (float)drawEndY + yOffset);
                 oneVertexArray[j * 2 + 1].color = sf::Color::White;
                 oneVertexArray[j * 2 + 1].texCoords = sf::Vector2f((float)texX + 0 * textureSize, (float)(0 + textureSize - 1));
             }
@@ -417,7 +415,9 @@ void StatePlayGame::drawMap3D()
     gameManager->getRenderWindow()->draw(lines, &wallTextures);
 
     // Draw all sprites
-    for (sf::VertexArray oneSprite : spritesToDraw) gameManager->getRenderWindow()->draw(oneSprite, &barrelTextures);
+    for (int i = 0; i < spritesToDraw.size(); i++) {
+        gameManager->getRenderWindow()->draw(spritesToDraw.at(i), &barrelTextures);
+    }    
 
     // Clear sprites vector
     spritesToDraw.clear();

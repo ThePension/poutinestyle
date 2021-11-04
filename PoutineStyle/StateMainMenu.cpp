@@ -33,9 +33,7 @@ void StateMainMenu::update(float deltaTime) {
 	handleInput();
 }
 void StateMainMenu::draw() {
-	this->gameManager->getRenderWindow()->clear();
 	playButton.draw();
 	settingsButton.draw();
 	quitButton.draw();
-	this->gameManager->getRenderWindow()->display();
 }
