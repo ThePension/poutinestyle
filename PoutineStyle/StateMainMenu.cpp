@@ -29,10 +29,10 @@ void StateMainMenu::handleInput() {
 	}
 }
 void StateMainMenu::update(float deltaTime) {
-	draw();
+	draw(deltaTime);
 	handleInput();
 }
-void StateMainMenu::draw() {
+void StateMainMenu::draw(double deltatime) {
 	playButton.draw();
 	settingsButton.draw();
 	quitButton.draw();

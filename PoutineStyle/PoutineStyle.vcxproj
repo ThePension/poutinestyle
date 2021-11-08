@@ -151,8 +151,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Chest.cpp" />
     <ClCompile Include="Ennemy.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="main.cpp" />
@@ -161,11 +164,15 @@
     <ClCompile Include="StateMainMenu.cpp" />
     <ClCompile Include="StatePauseMenu.cpp" />
     <ClCompile Include="StatePlayGame.cpp" />
+    <ClCompile Include="AnimatedVertexArray.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Chest.h" />
     <ClInclude Include="Ennemy.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Player.h" />
@@ -174,6 +181,7 @@
     <ClInclude Include="StateMainMenu.h" />
     <ClInclude Include="StatePauseMenu.h" />
     <ClInclude Include="StatePlayGame.h" />
+    <ClInclude Include="AnimatedVertexArray.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

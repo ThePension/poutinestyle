@@ -14,7 +14,7 @@ class GameState
 {
 protected:
 	GameManager* gameManager;
-	virtual void draw() = 0;
+	virtual void draw(double deltatime) = 0;
 	virtual void handleInput() = 0;
 public:
 	GameState();

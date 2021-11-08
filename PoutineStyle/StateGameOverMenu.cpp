@@ -27,9 +27,9 @@ void StateGameOverMenu::handleInput() {
 }
 void StateGameOverMenu::update(float deltaTime) {
 	handleInput();
-	if(!isReplayClicked) draw();
+	if(!isReplayClicked) draw(deltaTime);
 }
-void StateGameOverMenu::draw() {
+void StateGameOverMenu::draw(double deltatime) {
 	this->gameManager->getRenderWindow()->clear();
 	replayButton.draw();
 	quitButton.draw();

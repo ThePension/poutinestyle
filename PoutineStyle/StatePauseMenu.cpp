@@ -11,6 +11,6 @@ void StatePauseMenu::handleInput() {
 void StatePauseMenu::update(float deltaTime) {
 
 }
-void StatePauseMenu::draw() {
+void StatePauseMenu::draw(double deltaTime) {
 
 }

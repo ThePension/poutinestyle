@@ -11,7 +11,7 @@ private:
 
 protected:
 	void handleInput() override;
-	void draw() override;
+	void draw(double deltatime) override;
 
 public:
 	StateMainMenu(GameManager * game);

@@ -25,8 +25,8 @@ StatePlayGame::StatePlayGame(GameManager* game)
     
 	parseMap2D();
 
-    // Create vector containing one vertexArray per sprite to draw (to avoid overlapping sprites)
-    spritesToDraw = std::vector<sf::VertexArray>();
+    // Player creation
+    player = Player();
 
     wallTextures = sf::Texture();
     weaponTexture = sf::Texture();
@@ -42,7 +42,7 @@ StatePlayGame::StatePlayGame(GameManager* game)
     weaponSprite.setScale(1.5, 1.5);
     weaponSprite.setPosition(sf::Vector2f(450, 750));
 }
-sf::Vector2f StatePlayGame::matrixMult(sf::Vector2f v, double a) {
+sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     // Rotation matrix (used to rotate vector by an angle)
     // [cosa  -sina]
     // [sina   cosa]
@@ -87,13 +87,13 @@ void StatePlayGame::handleInput()
             }
             else if (oldMouseX > mouseX) // go to left | 0 --- mouseX -- < -- oldMouseX --- maxWidth
             {
-                playerDir = matrixMult(playerDir, -0.03 * speedFactor); // Rotate the player direction
-                planeVec = matrixMult(planeVec, -0.03 * speedFactor); // Rotate plane direction
+                player.direction = rotateVectorMatrix(player.direction, -0.03 * speedFactor); // Rotate the player direction
+                player.planeVec = rotateVectorMatrix(player.planeVec, -0.03 * speedFactor); // Rotate plane direction
             }
             else if (oldMouseX < mouseX)  // go to right | 0 --- oldMouseX -- < -- mouseX --- maxWidth
             {
-                playerDir = matrixMult(playerDir, 0.03 * speedFactor); // Rotate the player direction
-                planeVec = matrixMult(planeVec, 0.03 * speedFactor); // Rotate plane direction
+                player.direction = rotateVectorMatrix(player.direction, 0.03 * speedFactor); // Rotate the player direction
+                player.planeVec = rotateVectorMatrix(player.planeVec, 0.03 * speedFactor); // Rotate plane direction
             }
             
             oldMouseX = mouseX;
@@ -138,29 +138,29 @@ void StatePlayGame::update(float deltaTime)
 
     if (aPressed)
     {
-        newPlayerPos = sf::Vector2f(playerPosition.x - planeVec.x * movingSpeed * deltaTime, playerPosition.y - planeVec.y * movingSpeed * deltaTime);
+        newPlayerPos = sf::Vector2f(player.position.x - player.planeVec.x * movingSpeed * deltaTime, player.position.y - player.planeVec.y * movingSpeed * deltaTime);
         updatePlayerPosition(newPlayerPos);
     }
 
     if (dPressed)
     {
-        newPlayerPos = sf::Vector2f(playerPosition.x + planeVec.x * movingSpeed * deltaTime, playerPosition.y + planeVec.y * movingSpeed * deltaTime);
+        newPlayerPos = sf::Vector2f(player.position.x + player.planeVec.x * movingSpeed * deltaTime, player.position.y + player.planeVec.y * movingSpeed * deltaTime);
         updatePlayerPosition(newPlayerPos);
     }
 
     if (wPressed)
     {
-        newPlayerPos = sf::Vector2f(playerPosition.x + playerDir.x * movingSpeed * deltaTime, playerPosition.y + playerDir.y * movingSpeed * deltaTime);
+        newPlayerPos = sf::Vector2f(player.position.x + player.direction.x * movingSpeed * deltaTime, player.position.y + player.direction.y * movingSpeed * deltaTime);
         updatePlayerPosition(newPlayerPos);
     }
 
     if (sPressed)
     {
-        newPlayerPos = sf::Vector2f(playerPosition.x - playerDir.x * movingSpeed * deltaTime, playerPosition.y - playerDir.y * movingSpeed * deltaTime);
+        newPlayerPos = sf::Vector2f(player.position.x - player.direction.x * movingSpeed * deltaTime, player.position.y - player.direction.y * movingSpeed * deltaTime);
         updatePlayerPosition(newPlayerPos);
     }
 
-    draw();
+    draw(deltaTime);
 }
 
 void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
@@ -173,16 +173,14 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
     if (map[newPosMapX][newPosMapY] != '1')
     {
         // Move the player position (backward) depending on player direction
-        playerPosition = newPos;
+        player.position = newPos;
     }
 }
 
-void StatePlayGame::draw()
+void StatePlayGame::draw(double dt)
 {
-    //gameManager->getRenderWindow()->clear();
     if(isMapDisplayed) drawMap2D();
-    else drawMap3D();
-    //gameManager->getRenderWindow()->display();
+    else drawMap3D(dt);
 }
 
 void StatePlayGame::drawMap2D()
@@ -194,7 +192,7 @@ void StatePlayGame::drawMap2D()
 
     sf::CircleShape player_circle;
     player_circle.setRadius(10.f);
-    player_circle.setPosition(playerPosition - sf::Vector2f(10, 10));
+    player_circle.setPosition(player.position - sf::Vector2f(10, 10));
     player_circle.setFillColor(sf::Color::Green);
 
     for (int i = 0; i < mapSize; i++)
@@ -223,27 +221,28 @@ void StatePlayGame::drawMap2D()
     // Draw player direction vector
     sf::Vertex playerDirLine[] =
     {
-        sf::Vertex(playerPosition),
-        sf::Vertex(sf::Vector2f(playerPosition.x + 32 * playerDir.x, playerPosition.y + 32 * playerDir.y))
+        sf::Vertex(player.position),
+        sf::Vertex(sf::Vector2f(player.position.x + 32 * player.direction.x, player.position.y + 32 * player.direction.y))
     };
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
-void StatePlayGame::drawMap3D()
+void StatePlayGame::drawMap3D(double dt)
 {
+#pragma region Rendering Walls
     int yOffset = 100; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
-    sf::VertexArray lines(sf::Lines, 2*gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
+    sf::VertexArray lines(sf::Lines, 2 * gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
     std::vector<Sprite> spritesArray = std::vector<Sprite>();
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
-        sf::Vector2i playerMapPos = sf::Vector2i(int(playerPosition.x / blockWidth), int(playerPosition.y / blockHeight));
+        sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x / blockWidth), int(player.position.y / blockHeight));
 
         // Vector representing the direction of the actual ray
         double cameraX = double(2.f * x) / double(w) - 1;
 
-        sf::Vector2f rayDir = playerDir + sf::Vector2f(planeVec.x * cameraX, planeVec.y * cameraX);
+        sf::Vector2f rayDir = player.direction + sf::Vector2f(player.planeVec.x * cameraX, player.planeVec.y * cameraX);
         double rayDirLen = std::sqrt(pow(rayDir.x, 2) + pow(rayDir.y, 2));
 
         // Fisheye effect
@@ -260,19 +259,19 @@ void StatePlayGame::drawMap3D()
 
         if (rayDir.x < 0) {
             stepX = -1;
-            sideDistX = ((playerPosition.x / blockHeight) - double(playerMapPos.x)) * deltaDistX;
+            sideDistX = ((player.position.x / blockHeight) - double(playerMapPos.x)) * deltaDistX;
         }
         else {
             stepX = 1;
-            sideDistX = (double(playerMapPos.x) + 1.f - (playerPosition.x / blockHeight)) * deltaDistX;
+            sideDistX = (double(playerMapPos.x) + 1.f - (player.position.x / blockHeight)) * deltaDistX;
         }
         if (rayDir.y < 0) {
             stepY = -1;
-            sideDistY = ((playerPosition.y / blockHeight) - double(playerMapPos.y)) * deltaDistY;
+            sideDistY = ((player.position.y / blockHeight) - double(playerMapPos.y)) * deltaDistY;
         }
         else {
             stepY = 1;
-            sideDistY = (double(playerMapPos.y) + 1.f - (playerPosition.y / blockHeight)) * deltaDistY;
+            sideDistY = (double(playerMapPos.y) + 1.f - (player.position.y / blockHeight)) * deltaDistY;
         }
 
         // DDA algorithm
@@ -289,21 +288,16 @@ void StatePlayGame::drawMap3D()
             }
 
             if (map[playerMapPos.y][playerMapPos.x] == '1') wallHit = true; // Inversion des composantes car sinon rotation de 90° ! Pas compris pourquoi ?
-            else if (map[playerMapPos.y][playerMapPos.x] == 'E') {
-                bool isContained = false;
-                for (Sprite const& s : spritesArray) {
-                    if (s.mapX == playerMapPos.x && s.mapY == playerMapPos.y) isContained = true;
+            // Not optimized version
+            /*else if (map[playerMapPos.y][playerMapPos.x] == 'Y') {
+                // Check which ennemy must be drawn
+                for (Ennemy* ennemy : ennemies) {
+                    if (round(playerMapPos.y) == round(ennemy->mapPos.y) && round(playerMapPos.x) == round(ennemy->mapPos.x)) {
+                        ennemy->setIsVisible(true);
+                        ennemy->setDistanceFromPlayer(sideDistX - deltaDistX);
+                    }
                 }
-                if (!isContained) {
-                    // std::cout << "True" << std::endl;
-                    Sprite sprite = Sprite();
-                    sprite.distance = sideDistX - deltaDistX;
-                    sprite.type = 'E';
-                    sprite.mapX = playerMapPos.x;
-                    sprite.mapY = playerMapPos.y;
-                    spritesArray.push_back(sprite);
-                }
-            }
+            }*/
         }
         double perpWallDist;
         if (isWallHitHorizontal) perpWallDist = sideDistX - deltaDistX;
@@ -328,8 +322,8 @@ void StatePlayGame::drawMap3D()
 
         // Calculate where the wall was hit
         float wallX;
-        if (isWallHitHorizontal) wallX = (playerPosition.y / blockHeight) + perpWallDist * rayDir.y;
-        else wallX = (playerPosition.x / blockWidth) + perpWallDist * rayDir.x;
+        if (isWallHitHorizontal) wallX = (player.position.y / blockHeight) + perpWallDist * rayDir.y;
+        else wallX = (player.position.x / blockWidth) + perpWallDist * rayDir.x;
         wallX -= floor(wallX);
 
         // Get x coordinate on the wall texture
@@ -349,81 +343,39 @@ void StatePlayGame::drawMap3D()
         lines[x * 2 + 1].color = wallColor;
         lines[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
 
-        ZBuffer[x] = perpWallDist; // Needed for sprite rendering
+        ZBuffer[x] = perpWallDist; // Needed for entities rendering
     }
-
-    // Rendering sprites stuff
-    // Sort sprites in spritesArray by distance
-    if (spritesArray.size() > 1) std::sort(spritesArray.begin(), spritesArray.end(), compareSpriteDistance);
-
-    // Sprites Projection
-    for (int i = 0; i < spritesArray.size(); i++) {
-        Sprite sprite = spritesArray.at(i);
-
-        // Translate sprite pos relative to the camera
-        double spriteX = (double)sprite.mapX - playerPosition.x / (double)blockWidth;
-        spriteX += 0.5; // Center the sprite in the cell
-        double spriteY = (double)sprite.mapY - playerPosition.y / (double)blockHeight;
-        spriteY += 0.5; // Center the sprite in the cell
-
-        // Projection values
-        double invDet = 1.0 / ((double)planeVec.x * (double)playerDir.y - (double)playerDir.x * (double)planeVec.y);
-
-        double transformX = invDet * (playerDir.y * spriteX - playerDir.x * spriteY);
-        double transformY = invDet * (-planeVec.y * spriteX + planeVec.x * spriteY);
-
-        int spriteScreenX = int((w / 2) * (1 + transformX / transformY));
-        int h = gameManager->getWindowHeight();
-        int spriteHeight = abs(int(h / transformY)) - 32;
-
-        // Where the sprite should be displayed (on screen y coordinates)
-        int drawStartY = -spriteHeight / 2 + h / 2;
-        int drawEndY = spriteHeight / 2 + h / 2;
-
-        //calculate width of the sprite
-        int spriteWidth = abs(int(h / (transformY))) - 32;
-
-        // Where the sprite should be displayed (on screen x coordinates)
-        int drawStartX = -spriteWidth / 2 + spriteScreenX;
-        if (drawStartX < 0) drawStartX = 0;
-        int drawEndX = spriteWidth / 2 + spriteScreenX;
-        if (drawEndX >= w) drawEndX = w - 1;
-        sf::VertexArray oneVertexArray = sf::VertexArray(sf::Lines, 2 * gameManager->getWindowWidth());
-        for (int j = drawStartX; j < drawEndX; j++) {
-            // X coordinates of the sprite on the texture (y is useless, because it's always 0)
-            int texX = int(256 * (j - (-spriteWidth / 2 + spriteScreenX)) * textureSize / spriteWidth) / 256;
-
-            if (transformY < ZBuffer[j]) { // Draw it only there isn't a wall in front of it
-                // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
-                // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
-                oneVertexArray[j * 2].position = sf::Vector2f((float)j, (float)drawStartY + yOffset);
-                oneVertexArray[j * 2].color = sf::Color::White;
-                oneVertexArray[j * 2].texCoords = sf::Vector2f((float)texX + 0 * textureSize, (float)(1));
-                // x * 2 + 1 are all the seconds points of the lines (bottom ones)
-                oneVertexArray[j * 2 + 1].position = sf::Vector2f((float)j, (float)drawEndY + yOffset);
-                oneVertexArray[j * 2 + 1].color = sf::Color::White;
-                oneVertexArray[j * 2 + 1].texCoords = sf::Vector2f((float)texX + 0 * textureSize, (float)(0 + textureSize - 1));
-            }
-        }
-        spritesToDraw.push_back(oneVertexArray);
-        oneVertexArray.clear();
-    }
-    // Clean the spritesArray
-    spritesArray.clear();
 
     // Draw walls with textures
     gameManager->getRenderWindow()->draw(lines, &wallTextures);
 
-    // Draw all sprites
-    for (int i = 0; i < spritesToDraw.size(); i++) {
-        gameManager->getRenderWindow()->draw(spritesToDraw.at(i), &barrelTextures);
-    }    
+#pragma endregion
 
-    // Clear sprites vector
-    spritesToDraw.clear();
+#pragma region Rendering Textured Entities (Sprites)
+    // Calculate distance between every entities and the player
+    for (Entity* entity : entities) {
+        entity->calculateDistanceUntilPlayer(this->player);
+    }
+    // Sort entites by distance using lambda expression
+    entities.sort([](Entity* e1, Entity* e2) { return (abs(e1->getDistance()) > abs(e2->getDistance())); });
 
-    // Draw gun sprite
-    gameManager->getRenderWindow()->draw(weaponSprite);
+    // Draw all entities
+    for (Entity* entity : entities) {
+        /*if (ennemy->getIsVisible()) {
+            ennemy->shootAnimVA.draw(*gameManager->getRenderWindow(), ennemy->mapPos, player, ZBuffer);
+            ennemy->shootAnimVA.update(dt);
+            ennemy->setIsVisible(false);
+        }*/
+        entity->draw(*gameManager->getRenderWindow(), player, ZBuffer); // Draw entity
+        entity->update(dt); // Update entity (animation)
+    }   
+#pragma endregion
+
+#pragma region Rendering player sprites
+    player.draw(*gameManager->getRenderWindow());
+    player.update(dt);
+#pragma endregion
+
 }
 
 void StatePlayGame::parseMap2D()
@@ -441,7 +393,17 @@ void StatePlayGame::parseMap2D()
             map[indexX][indexY] = *it;
             if (map[indexX][indexY] == 'T') // Player spawn position
             {
-                playerPosition = sf::Vector2f(indexY * blockWidth + blockWidth / 2, indexX * blockHeight + blockHeight / 2);
+                player.position = sf::Vector2f(indexY * blockWidth + blockWidth / 2, indexX * blockHeight + blockHeight / 2);
+            }
+            else if(map[indexX][indexY] == 'E'){ //Ennemy
+                Ennemy *ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX));
+                ennemies.push_back(ennemy);
+                entities.push_back(ennemy);
+            }
+            else if (map[indexX][indexY] == 'C') { // Chest
+                Chest* chest = new Chest(1, sf::Vector2f((float)indexY, (float)indexX));
+                chests.push_back(chest);
+                entities.push_back(chest);
             }
             indexY++;
         }

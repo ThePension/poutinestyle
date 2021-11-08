@@ -11,6 +11,8 @@ GameManager::GameManager()
 {
     window = new sf::RenderWindow(sf::VideoMode(windowWidth, windowHeight), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
 
+    // window->setFramerateLimit(144);
+
     StateMainMenu* stateMainMenu = new StateMainMenu(this);
     states.push(stateMainMenu);
 
