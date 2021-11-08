@@ -10,7 +10,7 @@ private:
 	Button settingsButton;
 
 protected:
-	void handleInput() override;
+	void handleInput(double deltatime) override;
 	void draw(double deltatime) override;
 
 public:

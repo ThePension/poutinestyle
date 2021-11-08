@@ -5,7 +5,7 @@ StatePauseMenu::StatePauseMenu() {
 StatePauseMenu::~StatePauseMenu() {
 
 }
-void StatePauseMenu::handleInput() {
+void StatePauseMenu::handleInput(double deltatime) {
 
 }
 void StatePauseMenu::update(float deltaTime) {

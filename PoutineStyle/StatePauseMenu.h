@@ -7,7 +7,7 @@ private:
 	// Add buttons and more
 protected:
 	void draw(double deltatime) override;
-	void handleInput() override;
+	void handleInput(double deltatime) override;
 public:
 	StatePauseMenu();
 	~StatePauseMenu();

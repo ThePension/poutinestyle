@@ -10,7 +10,7 @@ StateMainMenu::StateMainMenu(GameManager * game) {
 StateMainMenu::~StateMainMenu() {
 
 }
-void StateMainMenu::handleInput() {
+void StateMainMenu::handleInput(double deltatime) {
 	sf::Event event;
 	while (gameManager->getRenderWindow()->pollEvent(event))
 	{
@@ -30,7 +30,7 @@ void StateMainMenu::handleInput() {
 }
 void StateMainMenu::update(float deltaTime) {
 	draw(deltaTime);
-	handleInput();
+	handleInput(deltaTime);
 }
 void StateMainMenu::draw(double deltatime) {
 	playButton.draw();

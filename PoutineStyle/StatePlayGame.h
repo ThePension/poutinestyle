@@ -50,7 +50,7 @@ private:
 
 protected:
 	void draw(double dt) override;
-	void handleInput() override;
+	void handleInput(double deltatime) override;
 	void parseMap2D();
 	void drawMap2D();
 	void drawMap3D(double dt);

@@ -55,9 +55,23 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     return resVec;
 }
 StatePlayGame::~StatePlayGame() {
-
+    for (int x = 0; x < gameManager->getWindowWidth(); x++) {
+        for (int y = 0; y < gameManager->getWindowHeight(); y++) {
+            // delete map[x][y];
+            delete entityMap[x][y]; entityMap[x][y] = nullptr;
+        }
+    }
+    for(Entity * entity : entitiesToDraw) {
+        delete entity; entity = nullptr;
+    }
+    for (Ennemy* ennemy : ennemies) {
+        delete ennemy; ennemy = nullptr;
+    }
+    for (Chest* chest : chests) {
+        delete chest; chest = nullptr;
+    }
 }
-void StatePlayGame::handleInput()
+void StatePlayGame::handleInput(double deltatime)
 {
     sf::Event event;
 
@@ -70,7 +84,7 @@ void StatePlayGame::handleInput()
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
-            float speedFactor = 1.2;
+            float speedFactor = 15;
             int mouseX = event.mouseMove.x;
 
             if (mouseX == 0)
@@ -85,13 +99,13 @@ void StatePlayGame::handleInput()
             }
             else if (oldMouseX > mouseX) // go to left | 0 --- mouseX -- < -- oldMouseX --- maxWidth
             {
-                player.direction = rotateVectorMatrix(player.direction, -0.03 * speedFactor); // Rotate the player direction
-                player.planeVec = rotateVectorMatrix(player.planeVec, -0.03 * speedFactor); // Rotate plane direction
+                player.direction = rotateVectorMatrix(player.direction, -speedFactor * deltatime); // Rotate the player direction
+                player.planeVec = rotateVectorMatrix(player.planeVec, -speedFactor * deltatime); // Rotate plane direction
             }
             else if (oldMouseX < mouseX)  // go to right | 0 --- oldMouseX -- < -- mouseX --- maxWidth
             {
-                player.direction = rotateVectorMatrix(player.direction, 0.03 * speedFactor); // Rotate the player direction
-                player.planeVec = rotateVectorMatrix(player.planeVec, 0.03 * speedFactor); // Rotate plane direction
+                player.direction = rotateVectorMatrix(player.direction, speedFactor * deltatime); // Rotate the player direction
+                player.planeVec = rotateVectorMatrix(player.planeVec, speedFactor * deltatime); // Rotate plane direction
             }
             
             oldMouseX = mouseX;
@@ -129,7 +143,7 @@ void StatePlayGame::handleInput()
 }
 void StatePlayGame::update(float deltaTime)
 {
-    handleInput();
+    handleInput(deltaTime);
 
     // Player controls
     sf::Vector2f newPlayerPos;
