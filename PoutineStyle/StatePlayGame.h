@@ -35,6 +35,8 @@ private:
 	int oldMouseX = 0, oldMouseY = 0;
 
 	char** map;
+	Entity* entityMap[32][32];
+	std::list<Entity*> entitiesToDraw;
 
 	std::list<Ennemy*> ennemies; // Contains Ennemy Object
 	std::list<Chest*> chests; // Contains Chest Object

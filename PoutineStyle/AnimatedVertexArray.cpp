@@ -25,7 +25,6 @@ void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapP
     double transformY = invDet * (-player.planeVec.y * spriteX + player.planeVec.x * spriteY);
 
     if (transformY > 0) {
-
         int spriteScreenX = floor((w / 2.0) * (1.0 + transformX / transformY));
         int h = target.getSize().y;
         int spriteHeightOnScreen = abs(floor(h / transformY));

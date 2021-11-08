@@ -34,8 +34,6 @@ StatePlayGame::StatePlayGame(GameManager* game)
     wallTextures.loadFromFile("../PoutineStyle/pics/textures.png");
     weaponTexture.loadFromFile("../PoutineStyle/pics/arme.png");
     https://www.tilingtextures.com/stone-wall-with-mortar/
-    barrelTextures = sf::Texture();
-    barrelTextures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\sprite.png");
 
     //Gun sprite (move with player)
     weaponSprite.setTexture(weaponTexture);
@@ -288,16 +286,16 @@ void StatePlayGame::drawMap3D(double dt)
             }
 
             if (map[playerMapPos.y][playerMapPos.x] == '1') wallHit = true; // Inversion des composantes car sinon rotation de 90° ! Pas compris pourquoi ?
-            // Not optimized version
-            /*else if (map[playerMapPos.y][playerMapPos.x] == 'Y') {
-                // Check which ennemy must be drawn
-                for (Ennemy* ennemy : ennemies) {
-                    if (round(playerMapPos.y) == round(ennemy->mapPos.y) && round(playerMapPos.x) == round(ennemy->mapPos.x)) {
-                        ennemy->setIsVisible(true);
-                        ennemy->setDistanceFromPlayer(sideDistX - deltaDistX);
+            else if (map[playerMapPos.y][playerMapPos.x] == 'E' || map[playerMapPos.y][playerMapPos.x] == 'C') {
+                // Add the entity in entitiesToDraw list if it's not already in
+                if (entityMap[playerMapPos.x][playerMapPos.y] != nullptr) {
+                    bool isContained = false;
+                    for (Entity* entity : entitiesToDraw) {
+                        if (entityMap[playerMapPos.x][playerMapPos.y]->mapPos == entity->mapPos) isContained = true;
                     }
+                    if(!isContained) entitiesToDraw.push_back(entityMap[playerMapPos.x][playerMapPos.y]);
                 }
-            }*/
+            }
         }
         double perpWallDist;
         if (isWallHitHorizontal) perpWallDist = sideDistX - deltaDistX;
@@ -353,22 +351,19 @@ void StatePlayGame::drawMap3D(double dt)
 
 #pragma region Rendering Textured Entities (Sprites)
     // Calculate distance between every entities and the player
-    for (Entity* entity : entities) {
+    for (Entity* entity : entitiesToDraw) {
         entity->calculateDistanceUntilPlayer(this->player);
     }
+
     // Sort entites by distance using lambda expression
-    entities.sort([](Entity* e1, Entity* e2) { return (abs(e1->getDistance()) > abs(e2->getDistance())); });
+    entitiesToDraw.sort([](Entity* e1, Entity* e2) { return (abs(e1->getDistance()) > abs(e2->getDistance())); });
 
     // Draw all entities
-    for (Entity* entity : entities) {
-        /*if (ennemy->getIsVisible()) {
-            ennemy->shootAnimVA.draw(*gameManager->getRenderWindow(), ennemy->mapPos, player, ZBuffer);
-            ennemy->shootAnimVA.update(dt);
-            ennemy->setIsVisible(false);
-        }*/
+    for (Entity* entity : entitiesToDraw) {
         entity->draw(*gameManager->getRenderWindow(), player, ZBuffer); // Draw entity
         entity->update(dt); // Update entity (animation)
-    }   
+    }
+    entitiesToDraw.clear();
 #pragma endregion
 
 #pragma region Rendering player sprites
@@ -397,13 +392,18 @@ void StatePlayGame::parseMap2D()
             }
             else if(map[indexX][indexY] == 'E'){ //Ennemy
                 Ennemy *ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX));
-                ennemies.push_back(ennemy);
-                entities.push_back(ennemy);
+                /*ennemies.push_back(ennemy);
+                entities.push_back(ennemy);*/
+                entityMap[indexY][indexX] = ennemy;
             }
             else if (map[indexX][indexY] == 'C') { // Chest
                 Chest* chest = new Chest(1, sf::Vector2f((float)indexY, (float)indexX));
-                chests.push_back(chest);
-                entities.push_back(chest);
+                /*chests.push_back(chest);
+                entities.push_back(chest);*/
+                entityMap[indexY][indexX] = chest;
+            }
+            else if (map[indexX][indexY] == '1' || map[indexX][indexY] == '0') {
+                entityMap[indexY][indexX] = nullptr;
             }
             indexY++;
         }
