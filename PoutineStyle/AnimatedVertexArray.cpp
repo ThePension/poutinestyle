@@ -1,5 +1,5 @@
 #include "AnimatedVertexArray.h"
-sf::VertexArray AnimatedVertexArray::vertStripesArray = sf::VertexArray(sf::Lines, 2 * 1000);
+sf::VertexArray AnimatedVertexArray::vertStripesArray = sf::VertexArray(sf::Lines, 0);
 AnimatedVertexArray::AnimatedVertexArray(std::string texturesPath, int spriteHeight, int spriteWidth, int y, int totalFrame) {
     this->textures = sf::Texture();
     this->textures.loadFromFile(texturesPath);
@@ -47,21 +47,27 @@ void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapP
             int texX = int(256 * (j - (-spriteWidthOnScreen / 2 + spriteScreenX)) * spriteWidth / spriteWidthOnScreen) / 256;
 
             if (transformY > 0 && transformY < ZBuffer[j] && j > 0 && j < w) { // Draw it only there isn't a wall in front of it, if it's on screen and not behind the player
-                vertStripesArray[j * 2].position = sf::Vector2f((float)j, (float)drawStartY + yOffset);
-                vertStripesArray[j * 2].color = sf::Color::White;
-                vertStripesArray[j * 2].texCoords = sf::Vector2f((float)texX + currentRenderedFrameNum * spriteWidth, (float)(spriteHeight * this->y));
+                sf::Vertex topVertex = sf::Vertex();
+                topVertex.position = sf::Vector2f((float)j, (float)drawStartY + yOffset);
+                topVertex.color = sf::Color::White;
+                topVertex.texCoords = sf::Vector2f((float)texX + currentRenderedFrameNum * spriteWidth, (float)(spriteHeight * this->y));
 
-                vertStripesArray[j * 2 + 1].position = sf::Vector2f((float)j, (float)drawEndY + yOffset);
-                vertStripesArray[j * 2 + 1].color = sf::Color::White;
-                vertStripesArray[j * 2 + 1].texCoords = sf::Vector2f((float)texX + currentRenderedFrameNum * spriteWidth, (float)(spriteHeight * this->y + spriteHeight - 1));
+                vertStripesArray.append(topVertex);
+
+                sf::Vertex bottomVertex = sf::Vertex();
+                bottomVertex.position = sf::Vector2f((float)j, (float)drawEndY + yOffset);
+                bottomVertex.color = sf::Color::White;
+                bottomVertex.texCoords = sf::Vector2f((float)texX + currentRenderedFrameNum * spriteWidth, (float)(spriteHeight * this->y + spriteHeight - 1));
+                
+                vertStripesArray.append(bottomVertex);
+
                 isDrawn = true;
             }
         }
 
         if (isDrawn) {
-            target.draw(vertStripesArray, &this->textures);
-            this->vertStripesArray.clear(); // Clear the VertexArray only if something was drawn on screen to prevent performance issue
-            this->vertStripesArray.resize(2 * w); // Resize 
+            std::cout << vertStripesArray.getVertexCount() << std::endl;
+            this->vertStripesArray.clear(); // Clear the VertexArray only if something was drawn on screen to prevent performance issue            
         }
         isDrawn = false;
     }

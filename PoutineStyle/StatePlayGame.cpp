@@ -364,19 +364,21 @@ void StatePlayGame::drawMap3D(double dt)
 #pragma endregion
 
 #pragma region Rendering Textured Entities (Sprites)
-    // Calculate distance between every entities and the player
+    // Calculate distance between every entities and the player (needed for sorting entities)
     for (Entity* entity : entitiesToDraw) {
         entity->calculateDistanceUntilPlayer(this->player);
     }
 
-    // Sort entites by distance using lambda expression
+    // Sort entities by distanceFromPlayer using lambda expression (needed to avoid overlapping sprites)
     entitiesToDraw.sort([](Entity* e1, Entity* e2) { return (abs(e1->getDistance()) > abs(e2->getDistance())); });
 
-    // Draw all entities
+    // Draw all visible entities
     for (Entity* entity : entitiesToDraw) {
         entity->draw(*gameManager->getRenderWindow(), player, ZBuffer); // Draw entity
         entity->update(dt); // Update entity (animation)
     }
+
+    // Clear entitiesToDraw list
     entitiesToDraw.clear();
 #pragma endregion
 
