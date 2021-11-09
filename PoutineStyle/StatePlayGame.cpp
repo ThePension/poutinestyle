@@ -346,6 +346,9 @@ void StatePlayGame::drawMap3D()
     gameManager->getRenderWindow()->draw(weaponSprite);
     gameManager->getRenderWindow()->draw(sprites, &spriteTextures);
 
+    // Draw the cursor
+    showCursor();
+
     // Draw the shoot
     if (shoot)
     {
@@ -377,4 +380,21 @@ void StatePlayGame::parseMap2D()
     }
 
     mapFile.close();
+}
+
+void StatePlayGame::showCursor()
+{
+    sf::Texture imgAimCursor;
+    imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
+    sf::Sprite aimCursor;
+    aimCursor.setTexture(imgAimCursor);
+
+    sf::Vector2u cursorSize = imgAimCursor.getSize();
+    int cursorWidth = cursorSize.x, cursorHeigth = cursorSize.y;
+
+    sf::Vector2f centerWindowPos = sf::Vector2f(this->gameManager->getWindowWidth() / 2, this->gameManager->getWindowHeight() / 2);
+
+    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 2), centerWindowPos.y - (cursorHeigth / 2));
+
+    this->gameManager->getRenderWindow()->draw(aimCursor);
 }
