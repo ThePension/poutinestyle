@@ -238,6 +238,17 @@ void StatePlayGame::drawMap2D()
 }
 void StatePlayGame::drawMap3D(double dt)
 {
+    //ceiling and floor
+    sf::RectangleShape rfloor(sf::Vector2f(1024, 800));
+    sf::RectangleShape ceiling(sf::Vector2f(1024, 600));
+    rfloor.setPosition(0, 500);
+    rfloor.setFillColor(sf::Color(96, 96, 96));
+    ceiling.setPosition(0, 0);
+    ceiling.setFillColor(sf::Color(50, 50, 50));
+
+    gameManager->getRenderWindow()->draw(rfloor);
+    gameManager->getRenderWindow()->draw(ceiling);
+
 #pragma region Rendering Walls
     int yOffset = 100; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
