@@ -2,7 +2,7 @@
 0 Sol
 T Entrer du niveau
 P Sortie du niveau
-E Ennemie
+E Ennemi
 P PNJ
 L Objet
 C Coffre legendaire

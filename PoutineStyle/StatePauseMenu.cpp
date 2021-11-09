@@ -5,12 +5,12 @@ StatePauseMenu::StatePauseMenu() {
 StatePauseMenu::~StatePauseMenu() {
 
 }
-void StatePauseMenu::handleInput() {
+void StatePauseMenu::handleInput(double deltatime) {
 
 }
 void StatePauseMenu::update(float deltaTime) {
 
 }
-void StatePauseMenu::draw() {
+void StatePauseMenu::draw(double deltaTime) {
 
 }

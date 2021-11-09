@@ -10,8 +10,8 @@ private:
 	Button settingsButton;
 
 protected:
-	void handleInput() override;
-	void draw() override;
+	void handleInput(double deltatime) override;
+	void draw(double deltatime) override;
 
 public:
 	StateMainMenu(GameManager * game);

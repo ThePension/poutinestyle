@@ -9,7 +9,7 @@ StateGameOverMenu::StateGameOverMenu(GameManager* game) {
 StateGameOverMenu::~StateGameOverMenu() {
 
 }
-void StateGameOverMenu::handleInput() {
+void StateGameOverMenu::handleInput(double deltatime) {
 	sf::Event event;
 	while (gameManager->getRenderWindow()->pollEvent(event))
 	{
@@ -26,10 +26,10 @@ void StateGameOverMenu::handleInput() {
 	}
 }
 void StateGameOverMenu::update(float deltaTime) {
-	handleInput();
-	if(!isReplayClicked) draw();
+	handleInput(deltaTime);
+	if(!isReplayClicked) draw(deltaTime);
 }
-void StateGameOverMenu::draw() {
+void StateGameOverMenu::draw(double deltatime) {
 	this->gameManager->getRenderWindow()->clear();
 	replayButton.draw();
 	quitButton.draw();

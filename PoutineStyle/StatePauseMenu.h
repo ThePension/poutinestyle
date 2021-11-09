@@ -6,8 +6,8 @@ private:
 	sf::View view;
 	// Add buttons and more
 protected:
-	void draw() override;
-	void handleInput() override;
+	void draw(double deltatime) override;
+	void handleInput(double deltatime) override;
 public:
 	StatePauseMenu();
 	~StatePauseMenu();
