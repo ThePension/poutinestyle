@@ -25,9 +25,6 @@ StatePlayGame::StatePlayGame(GameManager* game)
     
 	parseMap2D();
 
-    // Player creation
-    player = Player();
-
     wallTextures = sf::Texture();
     weaponTexture = sf::Texture();
     
