@@ -24,6 +24,7 @@ private:
 	bool sPressed = false;
 
 	bool isMapDisplayed = false;
+	bool isGamePaused = false;
 
 	int mapSize = 32;
 	int movingSpeed = 100;
@@ -54,6 +55,8 @@ protected:
 	void parseMap2D();
 	void drawMap2D();
 	void drawMap3D(double dt);
+	void displayPauseMenu();
+	void RenderingFloor(double dt);
 	void updatePlayerPosition(sf::Vector2f newPos);
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
 

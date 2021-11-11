@@ -9,10 +9,10 @@
 
 GameManager::GameManager()
 {
-    window = new sf::RenderWindow(sf::VideoMode(windowWidth, windowHeight), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
-
+    window = new sf::RenderWindow(sf::VideoMode(1000, 1000), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
     // window->setFramerateLimit(144);
-
+    sf::View view(sf::FloatRect(0, 0, this->windowWidth, this->windowWidth));
+    window->setView(view);
     StateMainMenu* stateMainMenu = new StateMainMenu(this);
     states.push(stateMainMenu);
 

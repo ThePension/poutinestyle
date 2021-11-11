@@ -12,7 +12,7 @@ private:
 	bool isDying = false;
 public:
 	Ennemy(int hp, sf::Vector2f pos);
-	void draw(sf::RenderTarget& target, Player player, double* ZBuffer) override;
+	void draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) override;
 	void update(float dt) override;
 
 	AnimatedVertexArray walkAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 55, 6, 8);

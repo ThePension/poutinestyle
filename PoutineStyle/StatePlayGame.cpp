@@ -127,6 +127,9 @@ void StatePlayGame::handleInput(double deltatime)
             {
                 dPressed = true;
             }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                isGamePaused = !isGamePaused;
+            }
         }
 
         if (event.type == sf::Event::KeyReleased)
@@ -188,10 +191,13 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
 
 void StatePlayGame::draw(double dt)
 {
-    if(isMapDisplayed) drawMap2D();
+    if (isGamePaused) displayPauseMenu();
+    else if(isMapDisplayed) drawMap2D();
     else drawMap3D(dt);
 }
+void StatePlayGame::displayPauseMenu() {
 
+}
 void StatePlayGame::drawMap2D()
 {
     sf::RectangleShape block;
@@ -236,14 +242,22 @@ void StatePlayGame::drawMap2D()
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
+void StatePlayGame::RenderingFloor(double dt) {
+    
+}
 void StatePlayGame::drawMap3D(double dt)
 {
+#pragma region Rendering Floor
+    //std::thread t1(&StatePlayGame::RenderingFloor, this, dt);
+#pragma endregion
+
 #pragma region Rendering Walls
-    int yOffset = 100; // Used to create the illusion of a taller player
+    int yOffset = 50; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
-    sf::VertexArray lines(sf::Lines, 2 * gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
-    std::vector<Sprite> spritesArray = std::vector<Sprite>();
+    sf::VertexArray lines(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
+
+    // #pragma omp parallel for
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
         sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x / blockWidth), int(player.position.y / blockHeight));
@@ -282,7 +296,11 @@ void StatePlayGame::drawMap3D(double dt)
             stepY = 1;
             sideDistY = (double(playerMapPos.y) + 1.f - (player.position.y / blockHeight)) * deltaDistY;
         }
-
+        int ceilingPixel = 0; // position of ceiling pixel on the screen
+        int groundPixel = gameManager->getWindowHeight(); // position of ground pixel on the screen
+        sf::Color color1 = sf::Color(100, 100, 100), color2 = sf::Color(150, 150, 150);
+        sf::Color floorColor = ((playerMapPos.x % 2 == 0 && playerMapPos.y % 2 == 0) || (playerMapPos.x % 2 == 1 && playerMapPos.y % 2 == 1)) ? color1 : color2;
+        double perpWallDist;
         // DDA algorithm
         while (wallHit == false) {
             if (sideDistX < sideDistY) {
@@ -307,10 +325,18 @@ void StatePlayGame::drawMap3D(double dt)
                     if(!isContained) entitiesToDraw.push_back(entityMap[playerMapPos.x][playerMapPos.y]);
                 }
             }
+            if (isWallHitHorizontal) perpWallDist = sideDistX - deltaDistX;
+            else perpWallDist = sideDistY - deltaDistY;
+            // Floor
+            double wallHeight = int(gameManager->getWindowHeight() / perpWallDist);
+            // add floor
+            lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
+            groundPixel = int(wallHeight * 0.495 + double(gameManager->getWindowHeight()) * 0.5f);
+            lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
+
+            if (floorColor == color1) floorColor = color2;
+            else floorColor = color1;
         }
-        double perpWallDist;
-        if (isWallHitHorizontal) perpWallDist = sideDistX - deltaDistX;
-        else perpWallDist = sideDistY - deltaDistY;
 
         sf::Color wallColor;
 
@@ -357,6 +383,8 @@ void StatePlayGame::drawMap3D(double dt)
 
     // Draw walls with textures
     gameManager->getRenderWindow()->draw(lines, &wallTextures);
+    lines.clear();
+    lines.resize(2 * w);
 
 #pragma endregion
 
@@ -368,10 +396,10 @@ void StatePlayGame::drawMap3D(double dt)
 
     // Sort entities by distanceFromPlayer using lambda expression (needed to avoid overlapping sprites)
     entitiesToDraw.sort([](Entity* e1, Entity* e2) { return (abs(e1->getDistance()) > abs(e2->getDistance())); });
-
+    
     // Draw all visible entities
     for (Entity* entity : entitiesToDraw) {
-        entity->draw(*gameManager->getRenderWindow(), player, ZBuffer); // Draw entity
+        entity->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight()); // Draw entity
         entity->update(dt); // Update entity (animation)
     }
 
@@ -383,9 +411,7 @@ void StatePlayGame::drawMap3D(double dt)
     player.draw(*gameManager->getRenderWindow());
     player.update(dt);
 #pragma endregion
-
 }
-
 void StatePlayGame::parseMap2D()
 {
     std::string tempText;
