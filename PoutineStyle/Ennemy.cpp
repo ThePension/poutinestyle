@@ -1,5 +1,4 @@
 #include "Ennemy.h"
-#include <thread>
 
 Ennemy::Ennemy(int hp, sf::Vector2f pos) {
 	this->HP = hp;

@@ -23,7 +23,7 @@ void GameManager::gameLoop()
 {
     sf::Font font = sf::Font();
     font.loadFromFile("CollegiateBlackFLF.ttf");
-    sf::Text fpsText("", font, 50);
+    sf::Text fpsText("", font, 15);
     fpsText.setFillColor(sf::Color::White);
     float dt_counter = 0.0f; // delta time for multiple frames, for calculating FPS smoothly
     int frame_counter = 0; // counts frames for FPS calculation

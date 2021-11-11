@@ -247,10 +247,6 @@ void StatePlayGame::RenderingFloor(double dt) {
 }
 void StatePlayGame::drawMap3D(double dt)
 {
-#pragma region Rendering Floor
-    //std::thread t1(&StatePlayGame::RenderingFloor, this, dt);
-#pragma endregion
-
 #pragma region Rendering Walls
     int yOffset = 50; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
