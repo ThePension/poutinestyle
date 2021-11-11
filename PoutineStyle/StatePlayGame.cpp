@@ -140,7 +140,7 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::MouseButtonPressed)
         {
-            shoot = true;
+            isShooting = true;
         }
     }
 }
@@ -243,11 +243,11 @@ void StatePlayGame::drawMap2D()
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
+
 void StatePlayGame::drawMap3D(double dt)
 {
 #pragma region Rendering Walls
 
-    int yOffset = 100; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
     sf::VertexArray lines(sf::Lines, 2 * gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
@@ -392,19 +392,12 @@ void StatePlayGame::drawMap3D(double dt)
 #pragma region Rendering player sprites
 
     player.draw(*gameManager->getRenderWindow());
-    player.update(dt);
+    isShooting = player.update(dt, isShooting);
 
 #pragma endregion
 
     // Draw the cursor
     showCursor();
-
-    // Draw the shoot
-    if (shoot)
-    {
-        player.useWeapon(sf::Vector2f(200, 600), sf::Vector2f(200, 600), this->gameManager);
-    }
-
 }
 
 void StatePlayGame::parseMap2D()
@@ -460,7 +453,7 @@ void StatePlayGame::showCursor()
 
     sf::Vector2f centerWindowPos = sf::Vector2f(this->gameManager->getWindowWidth() / 2, this->gameManager->getWindowHeight() / 2);
 
-    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 2), centerWindowPos.y - (cursorHeigth / 2) + 100);
+    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 2), centerWindowPos.y - (cursorHeigth / 2) + yOffset);
 
     this->gameManager->getRenderWindow()->draw(aimCursor);
 }

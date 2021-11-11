@@ -15,10 +15,9 @@ public:
 	Player(double posX, double posY, double cameraAngle);
 
 	void draw(sf::RenderTarget& target) const;
-	void update(float dt);
-	void shoot();
+	bool update(float dt, bool shoot);
+	bool shoot();
 	void takeWeapon(Weapon* weapon);
-	void useWeapon(sf::Vector2f start, sf::Vector2f direction, GameManager* game);
 
 	sf::Vector2f position = sf::Vector2f(50.f, 50.f); // Default player position
 	sf::Vector2f direction = sf::Vector2f(0.f, 0.75f);

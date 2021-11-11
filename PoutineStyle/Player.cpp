@@ -18,24 +18,26 @@ void Player::takeWeapon(Weapon* weapon)
 	this->weapon = weapon;
 }
 
-void Player::useWeapon(sf::Vector2f start, sf::Vector2f direction, GameManager* game)
-{
-	this->weapon->shoot(start, direction, game);
-}
-
 void Player::draw(sf::RenderTarget& target) const
 {
 	target.draw(weaponSprite);
 }
 
-void Player::update(float dt)
+bool Player::update(float dt, bool shoot)
 {
-	shootAnim.update(dt);
-	shootAnim.ApplyToSprite(weaponSprite);
-	
+	shootAnim.update(dt, shoot);
+
+	if (shootAnim.ApplyToSprite(weaponSprite) < 3 && shoot)
+	{
+		return true;
+	}
+
+	return false;
 }
 
-void Player::shoot()
+bool Player::shoot()
 {
-
+	this->weapon->shoot();
+	
+	return true;
 }

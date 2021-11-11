@@ -14,6 +14,6 @@ class Weapon
 		Weapon();
 		Weapon(double shootCadency, int damage);
 
-		void shoot(sf::Vector2f start, sf::Vector2f direction, GameManager* game);
+		void shoot();
 };
 

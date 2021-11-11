@@ -22,7 +22,7 @@ private:
 	bool dPressed = false;
 	bool wPressed = false;
 	bool sPressed = false;
-	bool shoot = false;
+	bool isShooting = false;
 
 	bool isMapDisplayed = false;
 
@@ -32,6 +32,7 @@ private:
 	int blockWidth;
 	int blockHeight;
 	int textureSize = 64;
+	int yOffset = 100; // Used to create the illusion of a taller player
 
 	int oldMouseX = 0, oldMouseY = 0;
 
@@ -41,6 +42,9 @@ private:
 
 	std::list<Ennemy*> ennemies; // Contains Ennemy Objects
 	std::list<Chest*> chests; // Contains Chest Objects
+	std::list<sf::RectangleShape*> bullets;
+	std::list<sf::RectangleShape*> bulletsToRemove;
+
 
 	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
 	std::string mapFileName = "Map_Example.txt";
