@@ -427,12 +427,12 @@ void StatePlayGame::drawMap3D(double dt)
             x = floor(bullet->mapPos.x); // Pas de décalage avec les ennemis
             y = floor(bullet->mapPos.y);
         }
-        if (x < 0 || x > mapSize - 1 || y < 0 || y > mapSize - 1) {
+        if (x < 1 || x > mapSize - 2 || y < 1 || y > mapSize - 2) {
             bullet->isTravelling = false;
             bullet->isExplosing = true;
             // bullet->setToRemove(true);
         }
-        else if (map[y][x] == '1' || (map[y][x] == 'T' && !bullet->getIsPlayerBullet()) || (map[y][x] == 'E' && bullet->getIsPlayerBullet())) {
+        else if (map[y][x] == '1' || (x == floor(player.position.x - 0.5) && y == floor(player.position.y - 0.5) && !bullet->getIsPlayerBullet()) || (map[y][x] == 'E' && bullet->getIsPlayerBullet())) {
             bullet->isTravelling = false;
             bullet->isExplosing = true;
         }
