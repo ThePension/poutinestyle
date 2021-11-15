@@ -17,9 +17,15 @@ void Player::update(float dt) {
 void Player::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction) {
 	if (shootAnim.isAnimationOver) {
 		isShooting = true;
+
+		// Add noise to the bullet direction
+		double xNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
+		double yNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
+		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise, direction.y + yNoise);
+
 		// Create a bullet
-		sf::Vector2f bulletPos = sf::Vector2f(this->position.x - 0.5 + 2*this->direction.x, this->position.y - 0.5 + 2*this->direction.y);
-		Bullet* bullet = new Bullet(1, bulletPos, direction, true);
+		sf::Vector2f bulletPos = sf::Vector2f(this->position.x - 0.5 + 2.0*this->direction.x, this->position.y - 0.5 + 2.0*this->direction.y);
+		Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, true);
 		bullets.push_back(bullet);
 	}
 }

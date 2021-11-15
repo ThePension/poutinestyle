@@ -80,6 +80,12 @@ void StatePlayGame::handleInput(double deltatime)
             gameManager->getRenderWindow()->close();
         }
 
+        if (event.type == sf::Event::MouseButtonPressed) {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                player.shoot(bullets, player.direction);
+            }
+        }
+
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
             float speedFactor = 15;
@@ -130,9 +136,6 @@ void StatePlayGame::handleInput(double deltatime)
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
                 isGamePaused = !isGamePaused;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
-                player.shoot(bullets, player.direction);
             }
         }
 
@@ -210,8 +213,8 @@ void StatePlayGame::drawMap2D()
     block.setOutlineColor(sf::Color::Black);
 
     sf::CircleShape player_circle;
-    player_circle.setRadius(10.f);
-    player_circle.setPosition(player.position - sf::Vector2f(10, 10));
+    player_circle.setRadius(5);
+    player_circle.setPosition(sf::Vector2f(player.position.x * (blockWidth) - player_circle.getRadius(), player.position.y * (blockHeight - 1) - player_circle.getRadius() / 2.0));
     player_circle.setFillColor(sf::Color::Green);
 
     for (int i = 0; i < mapSize; i++)
@@ -240,8 +243,8 @@ void StatePlayGame::drawMap2D()
     // Draw player direction vector
     sf::Vertex playerDirLine[] =
     {
-        sf::Vertex(player.position),
-        sf::Vertex(sf::Vector2f(player.position.x + 32 * player.direction.x, player.position.y + 32 * player.direction.y))
+        sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius(), player_circle.getPosition().y + player_circle.getRadius())),
+        sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius() + 16 * player.direction.x, player_circle.getPosition().y + player_circle.getRadius() + 16 * player.direction.y))
     };
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
@@ -330,10 +333,10 @@ void StatePlayGame::drawMap3D(double dt)
             // Floor
             double wallHeight = int(gameManager->getWindowHeight() / perpWallDist);
             // add floor
-            /*lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
+            lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
             groundPixel = int(wallHeight * 0.495 + double(gameManager->getWindowHeight()) * 0.5f);
             lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
-            */
+            
             if (floorColor == color1) floorColor = color2;
             else floorColor = color1;
         }
@@ -399,11 +402,12 @@ void StatePlayGame::drawMap3D(double dt)
         // Check if the bullet hit something
         int nextX = floor((float)bullet->mapPos.x + 0.5 + bullet->getVelocity().x * dt * 10.f);
         int nextY = floor((float)bullet->mapPos.y + 0.5 + bullet->getVelocity().y * dt * 10.f);
+
         if (nextX < 0 || nextY < 0 || nextX > mapSize - 1 || nextY > mapSize - 1){
             bullet->isTravelling = false;
             bullet->isExplosing = true;
         }
-        else if (map[nextX][nextY] == '1' || (nextX == floor(player.position.x) && nextY == floor(player.position.y) && !bullet->getIsPlayerBullet()) || (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet())) {
+        else if (map[nextY][nextX] == '1' || (nextX == floor(player.position.x) && nextY == floor(player.position.y) && !bullet->getIsPlayerBullet()) || (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet())) {
             bullet->isTravelling = false;
             bullet->isExplosing = true;
         }
@@ -433,13 +437,12 @@ void StatePlayGame::drawMap3D(double dt)
         {
             Ennemy* ennemy = dynamic_cast<Ennemy*>(entity);
             // Calculate the direction of the bullet (aiming the player)
-            sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
+            sf::Vector2f bulletDir = sf::Vector2f(player.position.x, player.position.y) - ennemy->mapPos;
             // Get the norm of the direction vector
             double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
             // Get the unit vector
             sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
             ennemy->shoot(bullets, bulletDirUnit);
-
         }
     }
     
