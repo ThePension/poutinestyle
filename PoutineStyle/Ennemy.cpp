@@ -11,6 +11,22 @@ void Ennemy::draw(sf::RenderTarget& target, Player player, double* ZBuffer, int 
 	}
 	else if(isWalking) { /* Do stuff */ }
 }
+
 void Ennemy::update(float dt) {
-	if (isShooting) this->shootAnimVA.update(dt);
+	if (isShooting) {
+		this->shootAnimVA.update(dt);
+		if (shootAnimVA.getIsAnimationOver()) {
+			isShooting = false;
+		}
+	}
+}
+
+void Ennemy::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction) {
+	if (shootAnimVA.getIsAnimationOver()) {
+		isShooting = true;
+		// Create a bullet
+		sf::Vector2f bulletPos = sf::Vector2f((this->mapPos.x), (this->mapPos.y));
+		Bullet* bullet = new Bullet(1, bulletPos, direction, false);
+		bullets.push_back(bullet);
+	}
 }

@@ -11,6 +11,7 @@ private:
 	int nbFrames = 4;
 	int currentRenderedFrameNum = 0;
 	bool isDrawn = false;
+	bool isAnimationOver = false;
 
 	float frameDuration = 0.1f;
 	float time = 0;
@@ -23,4 +24,5 @@ public:
 	static double map(double value, double start1, double stop1, double start2, double stop2) {
 		return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
 	}
+	bool getIsAnimationOver() { return this->isAnimationOver; }
 };

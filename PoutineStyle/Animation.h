@@ -9,15 +9,20 @@ public:
 		sprite.setTextureRect(frames[currentRenderedFrameNum]);
 	}
 	void update(float dt) {
+		isAnimationOver = false;
 		time += dt;
 		while (time >= frameDuration) {
 			time -= frameDuration;
 			advance();
 		}
 	}
+	bool isAnimationOver = true;
 private:
 	void advance() {
-		if (++currentRenderedFrameNum >= nbFrames) currentRenderedFrameNum = 0; 
+		if (++currentRenderedFrameNum >= nbFrames) {
+			currentRenderedFrameNum = 0;
+			isAnimationOver = true;
+		}
 	}
 	static const int nbFrames = 4;
 	int currentRenderedFrameNum = 0;

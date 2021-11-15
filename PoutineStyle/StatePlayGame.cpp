@@ -1,5 +1,6 @@
 #include "StatePlayGame.h"
 #include "Sprite.h"
+#include "Bullet.h"
 StatePlayGame::StatePlayGame(GameManager* game)
 {
     this->gameManager = game;
@@ -130,6 +131,9 @@ void StatePlayGame::handleInput(double deltatime)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
                 isGamePaused = !isGamePaused;
             }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
+                player.shoot(bullets, player.direction);
+            }
         }
 
         if (event.type == sf::Event::KeyReleased)
@@ -179,8 +183,8 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
 {
     int newPosMapY, newPosMapX;
 
-    newPosMapY = newPos.x / blockWidth;
-    newPosMapX = newPos.y / blockHeight;
+    newPosMapY = newPos.x;
+    newPosMapX = newPos.y;
 
     if (map[newPosMapX][newPosMapY] != '1')
     {
@@ -256,7 +260,7 @@ void StatePlayGame::drawMap3D(double dt)
     // #pragma omp parallel for
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
-        sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x / blockWidth), int(player.position.y / blockHeight));
+        sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x), int(player.position.y));
 
         // Vector representing the direction of the actual ray
         double cameraX = double(2.f * x) / double(w) - 1;
@@ -278,19 +282,19 @@ void StatePlayGame::drawMap3D(double dt)
 
         if (rayDir.x < 0) {
             stepX = -1;
-            sideDistX = ((player.position.x / blockHeight) - double(playerMapPos.x)) * deltaDistX;
+            sideDistX = ((player.position.x) - double(playerMapPos.x)) * deltaDistX;
         }
         else {
             stepX = 1;
-            sideDistX = (double(playerMapPos.x) + 1.f - (player.position.x / blockHeight)) * deltaDistX;
+            sideDistX = (double(playerMapPos.x) + 1.f - (player.position.x)) * deltaDistX;
         }
         if (rayDir.y < 0) {
             stepY = -1;
-            sideDistY = ((player.position.y / blockHeight) - double(playerMapPos.y)) * deltaDistY;
+            sideDistY = ((player.position.y) - double(playerMapPos.y)) * deltaDistY;
         }
         else {
             stepY = 1;
-            sideDistY = (double(playerMapPos.y) + 1.f - (player.position.y / blockHeight)) * deltaDistY;
+            sideDistY = (double(playerMapPos.y) + 1.f - (player.position.y)) * deltaDistY;
         }
         int ceilingPixel = 0; // position of ceiling pixel on the screen
         int groundPixel = gameManager->getWindowHeight(); // position of ground pixel on the screen
@@ -326,10 +330,10 @@ void StatePlayGame::drawMap3D(double dt)
             // Floor
             double wallHeight = int(gameManager->getWindowHeight() / perpWallDist);
             // add floor
-            lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
+            /*lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
             groundPixel = int(wallHeight * 0.495 + double(gameManager->getWindowHeight()) * 0.5f);
             lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
-
+            */
             if (floorColor == color1) floorColor = color2;
             else floorColor = color1;
         }
@@ -353,8 +357,8 @@ void StatePlayGame::drawMap3D(double dt)
 
         // Calculate where the wall was hit
         float wallX;
-        if (isWallHitHorizontal) wallX = (player.position.y / blockHeight) + perpWallDist * rayDir.y;
-        else wallX = (player.position.x / blockWidth) + perpWallDist * rayDir.x;
+        if (isWallHitHorizontal) wallX = (player.position.y) + perpWallDist * rayDir.y;
+        else wallX = (player.position.x) + perpWallDist * rayDir.x;
         wallX -= floor(wallX);
 
         // Get x coordinate on the wall texture
@@ -397,6 +401,59 @@ void StatePlayGame::drawMap3D(double dt)
     for (Entity* entity : entitiesToDraw) {
         entity->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight()); // Draw entity
         entity->update(dt); // Update entity (animation)
+        if (typeid(*entity).name() == typeid(Ennemy).name())
+        {
+            Ennemy* ennemy = dynamic_cast<Ennemy*>(entity);
+            // Calculate the direction of the bullet (aiming the player)
+            sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
+            // Get the norm of the direction vector
+            double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
+            // Get the unit vector
+            sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
+            ennemy->shoot(bullets, bulletDirUnit);
+
+        }
+    }
+
+    // Calculate distance for bullets
+    for (Bullet* bullet : bullets) {
+        // Check if the bullet hit something
+        int x, y;
+        if (bullet->getIsPlayerBullet()) {
+            x = floor(bullet->mapPos.x + 0.5 - 2.0 * bullet->getVelocity().x); // Décalage avec le joueur
+            y = floor(bullet->mapPos.y + 0.5 - 2.0 * bullet->getVelocity().y);
+        }
+        else {
+            x = floor(bullet->mapPos.x); // Pas de décalage avec les ennemis
+            y = floor(bullet->mapPos.y);
+        }
+        if (x < 0 || x > mapSize - 1 || y < 0 || y > mapSize - 1) {
+            bullet->isTravelling = false;
+            bullet->isExplosing = true;
+            // bullet->setToRemove(true);
+        }
+        else if (map[y][x] == '1' || (map[y][x] == 'T' && !bullet->getIsPlayerBullet()) || (map[y][x] == 'E' && bullet->getIsPlayerBullet())) {
+            bullet->isTravelling = false;
+            bullet->isExplosing = true;
+        }
+        bullet->calculateDistanceUntilPlayer(this->player);
+    }
+
+    bullets.remove_if([](Bullet* b) {
+        if (b->getToRemove()) {
+            delete b;
+            return true;
+        }
+        return false;
+    });
+    
+    // Sort bullets by distanceFromPlayer using lambda expression (needed to avoid overlapping sprites)
+    bullets.sort([](Bullet* b1, Bullet* b2) { return (abs(b1->getDistance()) > abs(b2->getDistance())); });
+
+    // Draw all bullets
+    for (Bullet* bullet : bullets) {
+        bullet->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight());
+        bullet->update(dt);
     }
 
     // Clear entitiesToDraw list
@@ -423,7 +480,7 @@ void StatePlayGame::parseMap2D()
             map[indexX][indexY] = *it;
             if (map[indexX][indexY] == 'T') // Player spawn position
             {
-                player.position = sf::Vector2f(indexY * blockWidth + blockWidth / 2, indexX * blockHeight + blockHeight / 2);
+                player.position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
             else if(map[indexX][indexY] == 'E'){ //Ennemy
                 Ennemy *ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX));
