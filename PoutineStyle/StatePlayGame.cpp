@@ -394,6 +394,31 @@ void StatePlayGame::drawMap3D(double dt)
         entity->calculateDistanceUntilPlayer(this->player);
     }
 
+    // Calculate distance for bullets
+    for (Bullet* bullet : bullets) {
+        // Check if the bullet hit something
+        int nextX = floor((float)bullet->mapPos.x + 0.5 + bullet->getVelocity().x * dt * 10.f);
+        int nextY = floor((float)bullet->mapPos.y + 0.5 + bullet->getVelocity().y * dt * 10.f);
+
+        if (map[nextX][nextY] == '1' || (nextX == floor(player.position.x) && nextY == floor(player.position.y) && !bullet->getIsPlayerBullet()) || (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet())) {
+            bullet->isTravelling = false;
+            bullet->isExplosing = true;
+        }
+        bullet->calculateDistanceUntilPlayer(this->player);
+    }
+    // Delete bullets the must be deleted
+    bullets.remove_if([](Bullet* b) {
+        if (b->getToRemove()) {
+            delete b;
+            return true;
+        }
+        return false;
+    });
+
+    // Add remaining bullets in entitiesToDraw list
+    for (Bullet* bullet : bullets) {
+        entitiesToDraw.push_back(bullet);
+    }
     // Sort entities by distanceFromPlayer using lambda expression (needed to avoid overlapping sprites)
     entitiesToDraw.sort([](Entity* e1, Entity* e2) { return (abs(e1->getDistance()) > abs(e2->getDistance())); });
     
@@ -414,37 +439,7 @@ void StatePlayGame::drawMap3D(double dt)
 
         }
     }
-
-    // Calculate distance for bullets
-    for (Bullet* bullet : bullets) {
-        // Check if the bullet hit something
-        int nextX = floor((float)bullet->mapPos.x + 0.5 + bullet->getVelocity().x * dt * 10.f); // Pas de décalage avec les ennemis
-        int nextY = floor((float)bullet->mapPos.y + 0.5 + bullet->getVelocity().y * dt * 10.f);
-
-        if (map[nextX][nextY] == '1' || (nextX == floor(player.position.x - 0.5) && nextY == floor(player.position.y - 0.5) && !bullet->getIsPlayerBullet()) || (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet())) {
-            bullet->isTravelling = false;
-            bullet->isExplosing = true;
-        }
-        bullet->calculateDistanceUntilPlayer(this->player);
-    }
-
-    bullets.remove_if([](Bullet* b) {
-        if (b->getToRemove()) {
-            delete b;
-            return true;
-        }
-        return false;
-    });
     
-    // Sort bullets by distanceFromPlayer using lambda expression (needed to avoid overlapping sprites)
-    bullets.sort([](Bullet* b1, Bullet* b2) { return (abs(b1->getDistance()) > abs(b2->getDistance())); });
-
-    // Draw all bullets
-    for (Bullet* bullet : bullets) {
-        bullet->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight());
-        bullet->update(dt);
-    }
-
     // Clear entitiesToDraw list
     entitiesToDraw.clear();
 #pragma endregion
