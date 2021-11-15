@@ -428,9 +428,11 @@ void StatePlayGame::drawMap3D(double dt)
             y = floor(bullet->mapPos.y);
         }
         if (x < 1 || x > mapSize - 2 || y < 1 || y > mapSize - 2) {
+            // Change the bullet position, otherwise the animation is displayed behind the walls
+            if (x > mapSize - 2) bullet->mapPos = sf::Vector2f(bullet->mapPos.x - 1, bullet->mapPos.y);
+            if (y > mapSize - 2) bullet->mapPos = sf::Vector2f(bullet->mapPos.x, bullet->mapPos.y - 1);
             bullet->isTravelling = false;
             bullet->isExplosing = true;
-            // bullet->setToRemove(true);
         }
         else if (map[y][x] == '1' || (x == floor(player.position.x - 0.5) && y == floor(player.position.y - 0.5) && !bullet->getIsPlayerBullet()) || (map[y][x] == 'E' && bullet->getIsPlayerBullet())) {
             bullet->isTravelling = false;
