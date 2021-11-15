@@ -399,8 +399,11 @@ void StatePlayGame::drawMap3D(double dt)
         // Check if the bullet hit something
         int nextX = floor((float)bullet->mapPos.x + 0.5 + bullet->getVelocity().x * dt * 10.f);
         int nextY = floor((float)bullet->mapPos.y + 0.5 + bullet->getVelocity().y * dt * 10.f);
-
-        if (map[nextX][nextY] == '1' || (nextX == floor(player.position.x) && nextY == floor(player.position.y) && !bullet->getIsPlayerBullet()) || (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet())) {
+        if (nextX < 0 || nextY < 0 || nextX > mapSize - 1 || nextY > mapSize - 1){
+            bullet->isTravelling = false;
+            bullet->isExplosing = true;
+        }
+        else if (map[nextX][nextY] == '1' || (nextX == floor(player.position.x) && nextY == floor(player.position.y) && !bullet->getIsPlayerBullet()) || (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet())) {
             bullet->isTravelling = false;
             bullet->isExplosing = true;
         }
