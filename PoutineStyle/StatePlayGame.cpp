@@ -418,23 +418,10 @@ void StatePlayGame::drawMap3D(double dt)
     // Calculate distance for bullets
     for (Bullet* bullet : bullets) {
         // Check if the bullet hit something
-        int x, y;
-        if (bullet->getIsPlayerBullet()) {
-            x = floor(bullet->mapPos.x + 0.5 - 2.0 * bullet->getVelocity().x); // Décalage avec le joueur
-            y = floor(bullet->mapPos.y + 0.5 - 2.0 * bullet->getVelocity().y);
-        }
-        else {
-            x = floor(bullet->mapPos.x); // Pas de décalage avec les ennemis
-            y = floor(bullet->mapPos.y);
-        }
-        if (x < 1 || x > mapSize - 2 || y < 1 || y > mapSize - 2) {
-            // Change the bullet position, otherwise the animation is displayed behind the walls
-            if (x > mapSize - 2) bullet->mapPos = sf::Vector2f(bullet->mapPos.x - 1, bullet->mapPos.y);
-            if (y > mapSize - 2) bullet->mapPos = sf::Vector2f(bullet->mapPos.x, bullet->mapPos.y - 1);
-            bullet->isTravelling = false;
-            bullet->isExplosing = true;
-        }
-        else if (map[y][x] == '1' || (x == floor(player.position.x - 0.5) && y == floor(player.position.y - 0.5) && !bullet->getIsPlayerBullet()) || (map[y][x] == 'E' && bullet->getIsPlayerBullet())) {
+        int nextX = floor((float)bullet->mapPos.x + 0.5 + bullet->getVelocity().x * dt * 10.f); // Pas de décalage avec les ennemis
+        int nextY = floor((float)bullet->mapPos.y + 0.5 + bullet->getVelocity().y * dt * 10.f);
+
+        if (map[nextX][nextY] == '1' || (nextX == floor(player.position.x - 0.5) && nextY == floor(player.position.y - 0.5) && !bullet->getIsPlayerBullet()) || (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet())) {
             bullet->isTravelling = false;
             bullet->isExplosing = true;
         }
