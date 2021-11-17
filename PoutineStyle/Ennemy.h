@@ -4,10 +4,10 @@
 #include "Entity.h"
 #include "AnimatedVertexArray.h"
 #include "Bullet.h"
+#include "Weapon.h"
 class Ennemy : public Entity
 {
 private:
-	int weaponDamage = 1;
 	bool isShooting = true;
 	bool isWalking = false;
 	bool isDying = false;

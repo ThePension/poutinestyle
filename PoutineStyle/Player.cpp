@@ -1,21 +1,20 @@
 #include "Player.h"
 #include "Bullet.h"
 Player::Player() {
-	weaponSprite.scale(1, 1);
-	weaponSprite.setPosition(300, 500 - 105);
+	
+	this->weapon = new Weapon();
 }
 void Player::draw(sf::RenderTarget& target) const {
-	target.draw(weaponSprite);
+	weapon->draw(target);
 }
 void Player::update(float dt) {
 	if (isShooting) {
-		shootAnim.update(dt);
-		shootAnim.ApplyToSprite(weaponSprite);
-		if (shootAnim.isAnimationOver) isShooting = false;
+		weapon->update(dt);
+		if (weapon->getShootAnimation().isAnimationOver) isShooting = false;
 	}	
 }
 void Player::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction) {
-	if (shootAnim.isAnimationOver) {
+	if (weapon->getShootAnimation().isAnimationOver) {
 		isShooting = true;
 
 		// Add noise to the bullet direction

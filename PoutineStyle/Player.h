@@ -6,9 +6,7 @@ class Bullet;
 class Player
 {
 private:
-	Weapon* weapon;
-	Animation shootAnim = Animation(0, 0, 105, 105, "../PoutineStyle/pics/gunTexture.png");
-	sf::Sprite weaponSprite = sf::Sprite();
+	Weapon * weapon;
 	bool isShooting = false;
 
 public:
