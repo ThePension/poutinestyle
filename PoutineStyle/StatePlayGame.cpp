@@ -409,7 +409,17 @@ void StatePlayGame::drawMap3D(double dt)
             bullet->isTravelling = false;
             bullet->isExplosing = true;
         }
-        else if (map[nextY][nextX] == '1' || (nextX == floor(player.position.x) && nextY == floor(player.position.y) && !bullet->getIsPlayerBullet()) || (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet())) {
+        else if (map[nextY][nextX] == '1') { // Bullet and Wall collision
+            bullet->isTravelling = false;
+            bullet->isExplosing = true;
+        }
+        else if (nextX == floor(player.position.x) && nextY == floor(player.position.y) // Ennemies bullets and Player collision
+                 && !bullet->getIsPlayerBullet()) 
+        { 
+            bullet->isTravelling = false;
+            bullet->isExplosing = true;
+        }
+        else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
             bullet->isTravelling = false;
             bullet->isExplosing = true;
         }
