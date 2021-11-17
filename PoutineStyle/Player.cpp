@@ -1,16 +1,28 @@
 #include "Player.h"
-Player::Player() {
-	weaponSprite.scale(2, 2);
-	weaponSprite.setPosition(700, 1000 - 210);
+Player::Player()
+{
+	weaponSprite.scale(1, 1);
+	weaponSprite.setPosition(300, 600 - 210);
 }
-void Player::draw(sf::RenderTarget& target) const {
+
+void Player::draw(sf::RenderTarget& target) const
+{
 	target.draw(weaponSprite);
 }
-void Player::update(float dt) {
-	shootAnim.update(dt);
-	shootAnim.ApplyToSprite(weaponSprite);
-	
+
+bool Player::update(float dt, bool shoot)
+{
+	shootAnim.update(dt, shoot);
+
+	if (shootAnim.ApplyToSprite(weaponSprite) < 3 && shoot)
+	{
+		return true;
+	}
+
+	return false;
 }
-void Player::shoot() {
+
+void Player::shoot()
+{
 
 }
