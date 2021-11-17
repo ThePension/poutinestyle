@@ -34,7 +34,7 @@ StatePlayGame::StatePlayGame(GameManager* game)
 
     //Gun sprite (move with player)
     weaponSprite.setTexture(weaponTexture);
-    weaponSprite.setScale(1.5, 1.5);
+    weaponSprite.setScale(0.5, 0.5);
     weaponSprite.setPosition(sf::Vector2f(450, 750));
 }
 sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
@@ -138,6 +138,11 @@ void StatePlayGame::handleInput(double deltatime)
             if (event.key.code == sf::Keyboard::D) dPressed = false;
             if (event.key.code == sf::Keyboard::W) wPressed = false;
             if (event.key.code == sf::Keyboard::S) sPressed = false;
+        }
+
+        if (event.type == sf::Event::MouseButtonPressed)
+        {
+            isShooting = true;
         }
     }
 }
@@ -248,7 +253,7 @@ void StatePlayGame::RenderingFloor(double dt) {
 void StatePlayGame::drawMap3D(double dt)
 {
 #pragma region Rendering Walls
-    int yOffset = 50; // Used to create the illusion of a taller player
+    yOffset = 50; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
     sf::VertexArray lines(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
@@ -405,8 +410,10 @@ void StatePlayGame::drawMap3D(double dt)
 
 #pragma region Rendering player sprites
     player.draw(*gameManager->getRenderWindow());
-    player.update(dt);
+    isShooting = player.update(dt, isShooting);
 #pragma endregion
+
+    showCursor();
 }
 void StatePlayGame::parseMap2D()
 {
@@ -447,4 +454,24 @@ void StatePlayGame::parseMap2D()
     }
 
     mapFile.close();
+}
+
+void StatePlayGame::showCursor()
+{
+    yOffset = 60;
+
+    sf::Texture imgAimCursor;
+    imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
+    sf::Sprite aimCursor;
+    aimCursor.setTexture(imgAimCursor);
+    aimCursor.setScale(0.5, 0.5);
+
+    sf::Vector2u cursorSize = imgAimCursor.getSize();
+    int cursorWidth = cursorSize.x, cursorHeigth = cursorSize.y;
+
+    sf::Vector2f centerWindowPos = sf::Vector2f(this->gameManager->getWindowWidth() / 2, this->gameManager->getWindowHeight() / 2);
+
+    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 2), centerWindowPos.y - (cursorHeigth / 2) + yOffset);
+
+    this->gameManager->getRenderWindow()->draw(aimCursor);
 }

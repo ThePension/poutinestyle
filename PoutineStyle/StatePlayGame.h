@@ -22,6 +22,7 @@ private:
 	bool dPressed = false;
 	bool wPressed = false;
 	bool sPressed = false;
+	bool isShooting = false;
 
 	bool isMapDisplayed = false;
 	bool isGamePaused = false;
@@ -32,6 +33,7 @@ private:
 	int blockWidth;
 	int blockHeight;
 	int textureSize = 64;
+	int yOffset = 50;
 
 	int oldMouseX = 0, oldMouseY = 0;
 
@@ -56,6 +58,7 @@ protected:
 	void drawMap2D();
 	void drawMap3D(double dt);
 	void displayPauseMenu();
+	void showCursor();
 	void RenderingFloor(double dt);
 	void updatePlayerPosition(sf::Vector2f newPos);
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);

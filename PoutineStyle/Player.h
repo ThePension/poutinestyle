@@ -11,7 +11,7 @@ private:
 public:
 	Player();
 	void draw(sf::RenderTarget& target) const;
-	void update(float dt);
+	bool update(float dt, bool shoot);
 	void shoot();
 
 	sf::Vector2f position = sf::Vector2f(50.f, 50.f); // Default player position
