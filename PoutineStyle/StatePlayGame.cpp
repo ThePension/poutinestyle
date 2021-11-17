@@ -88,15 +88,17 @@ void StatePlayGame::handleInput(double deltatime)
             float speedFactor = 5;
             int mouseX = event.mouseMove.x;
 
+            std::cout << "oldX : " << oldMouseX << " | X : " << mouseX << std::endl;
+
             if (mouseX == 0)
             {
                 mouseX = gameManager->getWindowWidth() - 1;
-                sf::Mouse::setPosition(sf::Vector2i(500 + mouseX, sf::Mouse::getPosition().y));
+                sf::Mouse::setPosition(sf::Vector2i(gameManager->getWindowWidth() / 2 + mouseX, sf::Mouse::getPosition().y));
             }
-            else if (mouseX == gameManager->getWindowWidth() - 1)
+            else if (mouseX >= gameManager->getWindowWidth() - 1)
             {
                 mouseX = 0;
-                sf::Mouse::setPosition(sf::Vector2i(500, sf::Mouse::getPosition().y));
+                sf::Mouse::setPosition(sf::Vector2i(gameManager->getWindowWidth()/2, sf::Mouse::getPosition().y));
             }
             else if (oldMouseX > mouseX) // go to left | 0 --- mouseX -- < -- oldMouseX --- maxWidth
             {
