@@ -58,6 +58,7 @@ protected:
 	void displayPauseMenu();
 	void RenderingFloor(double dt);
 	void updatePlayerPosition(sf::Vector2f newPos);
+	void hud();
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
 
 public:

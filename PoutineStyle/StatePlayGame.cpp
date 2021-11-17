@@ -193,7 +193,11 @@ void StatePlayGame::draw(double dt)
 {
     if (isGamePaused) displayPauseMenu();
     else if(isMapDisplayed) drawMap2D();
-    else drawMap3D(dt);
+    else
+    {
+        drawMap3D(dt);
+        hud();
+    }
 }
 void StatePlayGame::displayPauseMenu() {
 
@@ -447,4 +451,91 @@ void StatePlayGame::parseMap2D()
     }
 
     mapFile.close();
+}
+
+void StatePlayGame::hud()
+{
+    sf::RectangleShape hudUp, hudDownL, hudDownML, hudDownM, hudDownMR, hudDownR;
+    //sf::RectangleShape line(sf::Vector2f(150, 10));
+    float widthPos = gameManager->getWindowWidth() / gameManager->getWindowWidth();
+    float hudDownWidth = widthPos* (gameManager->getWindowWidth() / 5);
+    float heightPos = gameManager->getWindowHeight() / gameManager->getWindowHeight();
+    sf::Color lineCol = sf::Color::Red;
+    sf::Color hudBack = sf::Color::White;
+
+    hudUp.setSize(sf::Vector2f(gameManager->getWindowWidth(), gameManager->getWindowHeight() / 25));
+    hudDownL.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 8));
+    hudDownML.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 8));
+    hudDownM.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 8));
+    hudDownMR.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 8));
+    hudDownR.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 8));
+    
+    hudUp.setFillColor(hudBack);
+    hudUp.setOutlineColor(lineCol);
+    hudUp.setOutlineThickness(3);
+    hudUp.setPosition(0, 0);
+
+    hudDownL.setFillColor(hudBack);
+    hudDownL.setOutlineColor(lineCol);
+    hudDownL.setOutlineThickness(3);
+    hudDownL.setPosition(0, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10);
+
+    hudDownML.setFillColor(hudBack);
+    hudDownML.setOutlineColor(lineCol);
+    hudDownML.setOutlineThickness(3);
+    hudDownML.setPosition(hudDownWidth, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10);
+
+    hudDownM.setFillColor(hudBack);
+    hudDownM.setOutlineColor(lineCol);
+    hudDownM.setOutlineThickness(3);
+    hudDownM.setPosition(hudDownWidth*2, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10);
+
+    hudDownMR.setFillColor(hudBack);
+    hudDownMR.setOutlineColor(lineCol);
+    hudDownMR.setOutlineThickness(3);
+    hudDownMR.setPosition(hudDownWidth * 3, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10);
+
+    hudDownR.setFillColor(hudBack);
+    hudDownR.setOutlineColor(lineCol);
+    hudDownR.setOutlineThickness(3);
+    hudDownR.setPosition(hudDownWidth * 4, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10);
+
+    gameManager->getRenderWindow()->draw(hudUp);
+    gameManager->getRenderWindow()->draw(hudDownL);
+    gameManager->getRenderWindow()->draw(hudDownML);
+    gameManager->getRenderWindow()->draw(hudDownM);
+    gameManager->getRenderWindow()->draw(hudDownMR);
+    gameManager->getRenderWindow()->draw(hudDownR);
+
+
+    sf::Font font = sf::Font();
+    sf::Color fontCol = sf::Color::Red;
+    font.loadFromFile("CollegiateBlackFLF.ttf");
+    //text purement indicatif a ce stade
+    sf::Text barreDeVie("Barre de vie", font, 15);
+    sf::Text liveText("Live", font, 15);
+    sf::Text arme("weapon", font, 15);
+    sf::Text munition("munition", font, 15);
+    sf::Text score("score", font, 15);
+    
+    barreDeVie.setFillColor(fontCol);
+    barreDeVie.setPosition(sf::Vector2f(0, gameManager->getWindowHeight()-heightPos*50));
+
+    liveText.setFillColor(fontCol);
+    liveText.setPosition(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() - heightPos * 50));
+
+    arme.setFillColor(fontCol);
+    arme.setPosition(sf::Vector2f(hudDownWidth*2, gameManager->getWindowHeight() - heightPos * 50));
+
+    munition.setFillColor(fontCol);
+    munition.setPosition(sf::Vector2f(hudDownWidth*3, gameManager->getWindowHeight() - heightPos * 50));
+
+    score.setFillColor(fontCol);
+    score.setPosition(sf::Vector2f(hudDownWidth*4, gameManager->getWindowHeight() - heightPos * 50));
+    
+    gameManager->getRenderWindow()->draw(barreDeVie);
+    gameManager->getRenderWindow()->draw(liveText);
+    gameManager->getRenderWindow()->draw(arme);
+    gameManager->getRenderWindow()->draw(munition);
+    gameManager->getRenderWindow()->draw(score);
 }
