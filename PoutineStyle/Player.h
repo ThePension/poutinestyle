@@ -8,12 +8,37 @@ class Player
 private:
 	Weapon * weapon;
 	bool isShooting = false;
+	int live = 3;
+	int health = 100;
+	int ammunition = 50;
+	int currentAmmunition=7;
+	int score = 0;
 
 public:
 	Player();
 	void draw(sf::RenderTarget& target) const;
 	void update(float dt);
 	void shoot(std::list<Bullet*>& bullets, sf::Vector2f direction);
+
+	int getLive() {
+		return live;
+	}
+
+	int getHealth() {
+		return health;
+	}
+
+	int getAmmunition() {
+		return ammunition;
+	}
+
+	int getCurrentAmmunition() {
+		return currentAmmunition;
+	}
+
+	int getScore() {
+		return score;
+	}
 
 	sf::Vector2f position = sf::Vector2f(50.f, 50.f); // Default player position
 	sf::Vector2f direction = sf::Vector2f(0.f, 0.75f);
