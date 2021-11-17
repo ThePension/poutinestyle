@@ -4,26 +4,34 @@ class Animation
 {
 public:
 	Animation(int x, int y, int width, int height, std::string texturePath);
-	void ApplyToSprite(sf::Sprite & sprite) {
+
+	int ApplyToSprite(sf::Sprite& sprite)
+	{
 		sprite.setTexture(texture);
 		sprite.setTextureRect(frames[currentRenderedFrameNum]);
+		return currentRenderedFrameNum;
 	}
-	void update(float dt) {
+
+	void update(float dt)
+	{
 		isAnimationOver = false;
 		time += dt;
-		while (time >= frameDuration) {
+		while (time >= frameDuration)
+		{
 			time -= frameDuration;
 			advance();
 		}
 	}
 	bool isAnimationOver = true;
 private:
-	void advance() {
+	void advance()
+	{
 		if (++currentRenderedFrameNum >= nbFrames) {
 			currentRenderedFrameNum = 0;
 			isAnimationOver = true;
 		}
 	}
+
 	static const int nbFrames = 4;
 	int currentRenderedFrameNum = 0;
 	sf::Texture texture;

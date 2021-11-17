@@ -1,7 +1,6 @@
 #include "Player.h"
 #include "Bullet.h"
 Player::Player() {
-	
 	this->weapon = new Weapon();
 }
 void Player::draw(sf::RenderTarget& target) const {

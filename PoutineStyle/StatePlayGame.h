@@ -23,6 +23,7 @@ private:
 	bool dPressed = false;
 	bool wPressed = false;
 	bool sPressed = false;
+	bool isShooting = false;
 
 	bool isMapDisplayed = false;
 	bool isGamePaused = false;
@@ -33,6 +34,7 @@ private:
 	int blockWidth;
 	int blockHeight;
 	int textureSize = 64;
+	int yOffset = 50;
 
 	int oldMouseX = 0, oldMouseY = 0;
 
@@ -47,7 +49,7 @@ private:
 	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
 	std::string mapFileName = "Map_Example.txt";
 
-	sf::Texture wallTextures, weaponTexture;
+	sf::Texture wallTextures, weaponTexture, imgAimCursor;
 	sf::Sprite weaponSprite;
 	double ZBuffer[1032]; // Contains perpendicular distance from player to closest wall (usefull for rendering Entity object)
 
@@ -58,6 +60,7 @@ protected:
 	void drawMap2D();
 	void drawMap3D(double dt);
 	void displayPauseMenu();
+	void showCursor();
 	void RenderingFloor(double dt);
 	void updatePlayerPosition(sf::Vector2f newPos);
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
