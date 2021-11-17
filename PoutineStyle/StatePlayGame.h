@@ -35,6 +35,7 @@ private:
 	int blockHeight;
 	int textureSize = 64;
 	int yOffset = 50;
+	float speedFactor = 5;
 
 	int oldMouseX = 0, oldMouseY = 0;
 

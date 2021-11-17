@@ -85,10 +85,7 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
-            float speedFactor = 5;
             int mouseX = event.mouseMove.x;
-
-            std::cout << "oldX : " << oldMouseX << " | X : " << mouseX << std::endl;
 
             if (mouseX == 0)
             {
@@ -124,6 +121,8 @@ void StatePlayGame::handleInput(double deltatime)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dPressed = true;
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) isGamePaused = !isGamePaused;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) movingSpeed = 5;
         }
 
         if (event.type == sf::Event::KeyReleased)
@@ -132,6 +131,8 @@ void StatePlayGame::handleInput(double deltatime)
             if (event.key.code == sf::Keyboard::D) dPressed = false;
             if (event.key.code == sf::Keyboard::W) wPressed = false;
             if (event.key.code == sf::Keyboard::S) sPressed = false;
+
+            if (event.key.code == sf::Keyboard::LShift) movingSpeed = 3;
         }
 
         if (event.type == sf::Event::MouseButtonPressed)
