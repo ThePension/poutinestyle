@@ -3,9 +3,9 @@ Chest::Chest(int hp, sf::Vector2f pos) {
 	this->HP = hp;
 	this->mapPos = pos;
 }
-void Chest::draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) {
+void Chest::draw(sf::RenderTarget& target, Player player, double* ZBuffer) {
 	if (isOpening) { // Opening chest
-		this->OpeningAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+		this->OpeningAnimVA.draw(target, this->mapPos, player, ZBuffer);
 	}
 	else if (!isOpen) { // Closed chest
 		// TO DO

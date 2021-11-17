@@ -49,7 +49,7 @@ void Button::draw() {
 	sfText.setFont(font);
 	sfText.setString(this->text);
 	sfText.setFillColor(sf::Color::White);
-	sfText.setCharacterSize(15);
+	sfText.setCharacterSize(30);
 	sfText.setPosition(this->position.x + width / 2 - (sfText.getCharacterSize() / 2) * (text.length() / 2) - 10, this->position.y + height / 2 - sfText.getCharacterSize() / 2);
 
 	// Background hovering

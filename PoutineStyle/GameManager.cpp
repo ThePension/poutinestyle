@@ -9,10 +9,10 @@
 
 GameManager::GameManager()
 {
-    window = new sf::RenderWindow(sf::VideoMode(1000, 1000), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
+    window = new sf::RenderWindow(sf::VideoMode(windowWidth, windowHeight), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
+
     // window->setFramerateLimit(144);
-    sf::View view(sf::FloatRect(0, 0, this->windowWidth, this->windowWidth));
-    window->setView(view);
+
     StateMainMenu* stateMainMenu = new StateMainMenu(this);
     states.push(stateMainMenu);
 
@@ -23,7 +23,7 @@ void GameManager::gameLoop()
 {
     sf::Font font = sf::Font();
     font.loadFromFile("CollegiateBlackFLF.ttf");
-    sf::Text fpsText("", font, 15);
+    sf::Text fpsText("", font, 50);
     fpsText.setFillColor(sf::Color::White);
     float dt_counter = 0.0f; // delta time for multiple frames, for calculating FPS smoothly
     int frame_counter = 0; // counts frames for FPS calculation

@@ -1,5 +1,6 @@
 #include "StatePlayGame.h"
 #include "Sprite.h"
+
 StatePlayGame::StatePlayGame(GameManager* game)
 {
     this->gameManager = game;
@@ -30,12 +31,12 @@ StatePlayGame::StatePlayGame(GameManager* game)
     
     wallTextures.loadFromFile("../PoutineStyle/pics/textures.png");
     weaponTexture.loadFromFile("../PoutineStyle/pics/arme.png");
-    https://www.tilingtextures.com/stone-wall-with-mortar/
+    // https://www.tilingtextures.com/stone-wall-with-mortar/
+    //spriteTextures = sf::Texture();
+    //spriteTextures.loadFromFile("C:\\users\\nicolas.aubert1\\desktop\\sprite.png");
 
-    //Gun sprite (move with player)
-    weaponSprite.setTexture(weaponTexture);
-    weaponSprite.setScale(1.5, 1.5);
-    weaponSprite.setPosition(sf::Vector2f(450, 750));
+    Weapon* w1 = new Weapon();
+    player.takeWeapon(w1);
 }
 sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     // Rotation matrix (used to rotate vector by an angle)
@@ -51,7 +52,8 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     resVec.y /= vecLen;*/
     return resVec;
 }
-StatePlayGame::~StatePlayGame() {
+StatePlayGame::~StatePlayGame()
+{
     for (int x = 0; x < gameManager->getWindowWidth(); x++) {
         for (int y = 0; y < gameManager->getWindowHeight(); y++) {
             // delete map[x][y];
@@ -111,25 +113,10 @@ void StatePlayGame::handleInput(double deltatime)
         if (event.type == sf::Event::KeyPressed)
         {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            {
-                wPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            {
-                aPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            {
-                sPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            {
-                dPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                isGamePaused = !isGamePaused;
-            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) wPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) aPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) sPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dPressed = true;
         }
 
         if (event.type == sf::Event::KeyReleased)
@@ -138,6 +125,11 @@ void StatePlayGame::handleInput(double deltatime)
             if (event.key.code == sf::Keyboard::D) dPressed = false;
             if (event.key.code == sf::Keyboard::W) wPressed = false;
             if (event.key.code == sf::Keyboard::S) sPressed = false;
+        }
+
+        if (event.type == sf::Event::MouseButtonPressed)
+        {
+            isShooting = true;
         }
     }
 }
@@ -191,13 +183,10 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
 
 void StatePlayGame::draw(double dt)
 {
-    if (isGamePaused) displayPauseMenu();
-    else if(isMapDisplayed) drawMap2D();
+    if(isMapDisplayed) drawMap2D();
     else drawMap3D(dt);
 }
-void StatePlayGame::displayPauseMenu() {
 
-}
 void StatePlayGame::drawMap2D()
 {
     sf::RectangleShape block;
@@ -224,7 +213,8 @@ void StatePlayGame::drawMap2D()
             {
                 block.setFillColor(sf::Color::Black);
             }
-            else {
+            else
+            {
                 block.setFillColor(sf::Color::Blue);
             }
 
@@ -242,18 +232,15 @@ void StatePlayGame::drawMap2D()
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
-void StatePlayGame::RenderingFloor(double dt) {
-    
-}
+
 void StatePlayGame::drawMap3D(double dt)
 {
 #pragma region Rendering Walls
-    int yOffset = 50; // Used to create the illusion of a taller player
+
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
-    sf::VertexArray lines(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
-
-    // #pragma omp parallel for
+    sf::VertexArray lines(sf::Lines, 2 * gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
+    std::vector<Sprite> spritesArray = std::vector<Sprite>();
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
         sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x / blockWidth), int(player.position.y / blockHeight));
@@ -292,11 +279,7 @@ void StatePlayGame::drawMap3D(double dt)
             stepY = 1;
             sideDistY = (double(playerMapPos.y) + 1.f - (player.position.y / blockHeight)) * deltaDistY;
         }
-        int ceilingPixel = 0; // position of ceiling pixel on the screen
-        int groundPixel = gameManager->getWindowHeight(); // position of ground pixel on the screen
-        sf::Color color1 = sf::Color(100, 100, 100), color2 = sf::Color(150, 150, 150);
-        sf::Color floorColor = ((playerMapPos.x % 2 == 0 && playerMapPos.y % 2 == 0) || (playerMapPos.x % 2 == 1 && playerMapPos.y % 2 == 1)) ? color1 : color2;
-        double perpWallDist;
+
         // DDA algorithm
         while (wallHit == false) {
             if (sideDistX < sideDistY) {
@@ -321,18 +304,10 @@ void StatePlayGame::drawMap3D(double dt)
                     if(!isContained) entitiesToDraw.push_back(entityMap[playerMapPos.x][playerMapPos.y]);
                 }
             }
-            if (isWallHitHorizontal) perpWallDist = sideDistX - deltaDistX;
-            else perpWallDist = sideDistY - deltaDistY;
-            // Floor
-            double wallHeight = int(gameManager->getWindowHeight() / perpWallDist);
-            // add floor
-            lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
-            groundPixel = int(wallHeight * 0.495 + double(gameManager->getWindowHeight()) * 0.5f);
-            lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
-
-            if (floorColor == color1) floorColor = color2;
-            else floorColor = color1;
         }
+        double perpWallDist;
+        if (isWallHitHorizontal) perpWallDist = sideDistX - deltaDistX;
+        else perpWallDist = sideDistY - deltaDistY;
 
         sf::Color wallColor;
 
@@ -379,12 +354,11 @@ void StatePlayGame::drawMap3D(double dt)
 
     // Draw walls with textures
     gameManager->getRenderWindow()->draw(lines, &wallTextures);
-    lines.clear();
-    lines.resize(2 * w);
-
+    
 #pragma endregion
 
 #pragma region Rendering Textured Entities (Sprites)
+
     // Calculate distance between every entities and the player (needed for sorting entities)
     for (Entity* entity : entitiesToDraw) {
         entity->calculateDistanceUntilPlayer(this->player);
@@ -392,22 +366,29 @@ void StatePlayGame::drawMap3D(double dt)
 
     // Sort entities by distanceFromPlayer using lambda expression (needed to avoid overlapping sprites)
     entitiesToDraw.sort([](Entity* e1, Entity* e2) { return (abs(e1->getDistance()) > abs(e2->getDistance())); });
-    
+
     // Draw all visible entities
     for (Entity* entity : entitiesToDraw) {
-        entity->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight()); // Draw entity
+        entity->draw(*gameManager->getRenderWindow(), player, ZBuffer); // Draw entity
         entity->update(dt); // Update entity (animation)
     }
 
     // Clear entitiesToDraw list
     entitiesToDraw.clear();
+
 #pragma endregion
 
 #pragma region Rendering player sprites
+
     player.draw(*gameManager->getRenderWindow());
-    player.update(dt);
+    isShooting = player.update(dt, isShooting);
+
 #pragma endregion
+
+    // Draw the cursor
+    showCursor();
 }
+
 void StatePlayGame::parseMap2D()
 {
     std::string tempText;
@@ -447,4 +428,21 @@ void StatePlayGame::parseMap2D()
     }
 
     mapFile.close();
+}
+
+void StatePlayGame::showCursor()
+{
+    sf::Texture imgAimCursor;
+    imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
+    sf::Sprite aimCursor;
+    aimCursor.setTexture(imgAimCursor);
+
+    sf::Vector2u cursorSize = imgAimCursor.getSize();
+    int cursorWidth = cursorSize.x, cursorHeigth = cursorSize.y;
+
+    sf::Vector2f centerWindowPos = sf::Vector2f(this->gameManager->getWindowWidth() / 2, this->gameManager->getWindowHeight() / 2);
+
+    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 2), centerWindowPos.y - (cursorHeigth / 2) + yOffset);
+
+    this->gameManager->getRenderWindow()->draw(aimCursor);
 }
