@@ -424,11 +424,11 @@ void StatePlayGame::drawMap3D(double dt)
                 Entity* entity = entityMap[nextX][nextY];
                 if (entity != nullptr) {
                     entity->decreaseHP(bullet->getDamage());
-
                     // Remove the ennemy if his HP are under 1
                     if (entity->getHP() <= 0) {
                         entitiesToDraw.remove(entity);
                         delete entity;
+                        entity = nullptr;
                         entityMap[nextX][nextY] = nullptr;
                         map[nextY][nextX] == '0';
                     }
@@ -465,7 +465,7 @@ void StatePlayGame::drawMap3D(double dt)
         double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
         // Get the unit vector
         sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
-        // entity->shoot(bullets, bulletDirUnit);
+        entity->shoot(bullets, bulletDirUnit);
     }
     
     // Clear entitiesToDraw list
