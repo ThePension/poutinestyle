@@ -420,6 +420,20 @@ void StatePlayGame::drawMap3D(double dt)
             bullet->isExplosing = true;
         }
         else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
+            if (bullet->isExplosing == false) {
+                Entity* entity = entityMap[nextX][nextY];
+                if (entity != nullptr) {
+                    entity->decreaseHP(bullet->getDamage());
+
+                    // Remove the ennemy if his HP are under 1
+                    if (entity->getHP() <= 0) {
+                        entitiesToDraw.remove(entity);
+                        delete entity;
+                        entityMap[nextX][nextY] = nullptr;
+                        map[nextY][nextX] == '0';
+                    }
+                }
+            }
             bullet->isTravelling = false;
             bullet->isExplosing = true;
         }
@@ -445,17 +459,13 @@ void StatePlayGame::drawMap3D(double dt)
     for (Entity* entity : entitiesToDraw) {
         entity->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight()); // Draw entity
         entity->update(dt); // Update entity (animation)
-        if (typeid(*entity).name() == typeid(Ennemy).name())
-        {
-            Ennemy* ennemy = dynamic_cast<Ennemy*>(entity);
-            // Calculate the direction of the bullet (aiming the player)
-            sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
-            // Get the norm of the direction vector
-            double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
-            // Get the unit vector
-            sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
-            ennemy->shoot(bullets, bulletDirUnit);
-        }
+        // Calculate the direction of the bullet (aiming the player)
+        sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - entity->mapPos;
+        // Get the norm of the direction vector
+        double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
+        // Get the unit vector
+        sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
+        // entity->shoot(bullets, bulletDirUnit);
     }
     
     // Clear entitiesToDraw list

@@ -4,7 +4,7 @@
 class Bullet : public Entity
 {
 private:
-	
+	int damage = 1;
 	bool toRemove = false;
 	sf::Vector2f vel;
 	bool isPlayerBullet = false;
@@ -16,6 +16,8 @@ public:
 	bool getToRemove() { return this->toRemove; }
 	sf::Vector2f getVelocity() { return this->vel; }
 	bool getIsPlayerBullet() { return this->isPlayerBullet; }
+	int getDamage() { return this->damage; }
+	void shoot(std::list<Bullet*>& bullets, sf::Vector2f direction) override {}
 	bool isTravelling = true;
 	bool isExplosing = false;
 	AnimatedVertexArray travellingAnimVA = AnimatedVertexArray("../PoutineStyle/pics/bullet.png", 64, 64, 0, 1);

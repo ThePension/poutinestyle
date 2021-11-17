@@ -25,3 +25,6 @@ void Chest::update(float dt) {
 		// TO DO
 	}
 }
+void Chest::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction) {
+
+}

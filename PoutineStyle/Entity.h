@@ -9,10 +9,13 @@ protected:
 public:
 	virtual void draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) = 0;
 	virtual void update(float dt) = 0;
+	virtual void shoot(std::list<Bullet*>& bullets, sf::Vector2f direction) = 0;
 	sf::Vector2f mapPos;
 	void setDistanceFromPlayer(float dist) { distUntilPlay = dist; }
 	void calculateDistanceUntilPlayer(Player player) {
 		distUntilPlay = ((player.position.x - this->mapPos.x) * (player.position.x - this->mapPos.x) + (player.position.y - this->mapPos.y) * (player.position.y - this->mapPos.y));
 	}
 	float getDistance() { return this->distUntilPlay; }
+	int getHP() { return this->HP; }
+	void decreaseHP(int damage) { this->HP -= damage; }
 };

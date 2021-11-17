@@ -12,6 +12,9 @@ void Ennemy::draw(sf::RenderTarget& target, Player player, double* ZBuffer, int 
 		this->shootAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
 	}
 	else if(isWalking) { /* Do stuff */ }
+	else {
+		this->shootAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+	}
 }
 
 void Ennemy::update(float dt) {
