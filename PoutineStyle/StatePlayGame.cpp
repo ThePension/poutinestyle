@@ -332,7 +332,7 @@ void StatePlayGame::drawMap3D(double dt)
             else perpWallDist = sideDistY - deltaDistY;
             // Floor
             double wallHeight = int(gameManager->getWindowHeight() / perpWallDist);
-            // add floor
+            // Add floor
             lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
             groundPixel = int(wallHeight * 0.495 + double(gameManager->getWindowHeight()) * 0.5f);
             lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
@@ -437,7 +437,7 @@ void StatePlayGame::drawMap3D(double dt)
         {
             Ennemy* ennemy = dynamic_cast<Ennemy*>(entity);
             // Calculate the direction of the bullet (aiming the player)
-            sf::Vector2f bulletDir = sf::Vector2f(player.position.x, player.position.y) - ennemy->mapPos;
+            sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
             // Get the norm of the direction vector
             double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
             // Get the unit vector
@@ -472,7 +472,7 @@ void StatePlayGame::parseMap2D()
             {
                 player.position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
-            else if(map[indexX][indexY] == 'E'){ //Ennemy
+            else if(map[indexX][indexY] == 'E'){ // Ennemy
                 Ennemy *ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX));
                 /*ennemies.push_back(ennemy);
                 entities.push_back(ennemy);*/
