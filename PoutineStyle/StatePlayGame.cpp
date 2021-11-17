@@ -52,7 +52,8 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     resVec.y /= vecLen;*/
     return resVec;
 }
-StatePlayGame::~StatePlayGame() {
+StatePlayGame::~StatePlayGame()
+{
     for (int x = 0; x < gameManager->getWindowWidth(); x++) {
         for (int y = 0; y < gameManager->getWindowHeight(); y++) {
             // delete map[x][y];
@@ -112,22 +113,10 @@ void StatePlayGame::handleInput(double deltatime)
         if (event.type == sf::Event::KeyPressed)
         {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            {
-                wPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            {
-                aPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            {
-                sPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            {
-                dPressed = true;
-            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) wPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) aPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) sPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dPressed = true;
         }
 
         if (event.type == sf::Event::KeyReleased)
