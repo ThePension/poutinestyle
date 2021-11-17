@@ -29,7 +29,7 @@ private:
 	bool isGamePaused = false;
 
 	int mapSize = 32;
-	int movingSpeed = 5;
+	int movingSpeed = 3;
 	int movingSpeedSPrint = 150;
 	int blockWidth;
 	int blockHeight;

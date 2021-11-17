@@ -85,7 +85,7 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
-            float speedFactor = 15;
+            float speedFactor = 5;
             int mouseX = event.mouseMove.x;
 
             if (mouseX == 0)
@@ -115,25 +115,13 @@ void StatePlayGame::handleInput(double deltatime)
         if (event.type == sf::Event::KeyPressed)
         {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            {
-                wPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            {
-                aPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            {
-                sPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            {
-                dPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                isGamePaused = !isGamePaused;
-            }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) wPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) aPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) sPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dPressed = true;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) isGamePaused = !isGamePaused;
         }
 
         if (event.type == sf::Event::KeyReleased)
@@ -150,6 +138,7 @@ void StatePlayGame::handleInput(double deltatime)
         }
     }
 }
+
 void StatePlayGame::update(float deltaTime)
 {
     handleInput(deltaTime);
@@ -208,9 +197,12 @@ void StatePlayGame::draw(double dt)
         hud();
     }
 }
-void StatePlayGame::displayPauseMenu() {
+
+void StatePlayGame::displayPauseMenu()
+{
 
 }
+
 void StatePlayGame::drawMap2D()
 {
     sf::RectangleShape block;
@@ -255,11 +247,14 @@ void StatePlayGame::drawMap2D()
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
+
 void StatePlayGame::RenderingFloor(double dt) {
     
 }
+
 void StatePlayGame::drawMap3D(double dt)
 {
+
 #pragma region Rendering Walls
     yOffset = 50; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
@@ -471,6 +466,7 @@ void StatePlayGame::drawMap3D(double dt)
     player.update(dt);
     showCursor();
 #pragma endregion
+
 }
 void StatePlayGame::parseMap2D()
 {
@@ -512,7 +508,6 @@ void StatePlayGame::parseMap2D()
 
     mapFile.close();
 }
-
 
 void StatePlayGame::hud()
     {
@@ -600,9 +595,10 @@ void StatePlayGame::hud()
         gameManager->getRenderWindow()->draw(munition);
         gameManager->getRenderWindow()->draw(score);
     }
+
 void StatePlayGame::showCursor()
 {
-    yOffset = 80;
+    yOffset = 60;
     sf::Sprite aimCursor;
     aimCursor.setTexture(imgAimCursor);
     aimCursor.setScale(0.5, 0.5);
@@ -612,8 +608,7 @@ void StatePlayGame::showCursor()
 
     sf::Vector2f centerWindowPos = sf::Vector2f(this->gameManager->getWindowWidth() / 2, this->gameManager->getWindowHeight() / 2);
 
-    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 2), centerWindowPos.y - (cursorHeigth / 2) + yOffset);
+    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 4.5), centerWindowPos.y - (cursorHeigth / 4) + yOffset);
 
     this->gameManager->getRenderWindow()->draw(aimCursor);
-
 }

@@ -19,6 +19,10 @@ void Player::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction) {
 		// Add noise to the bullet direction
 		double xNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
 		double yNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
+
+		xNoise = 0;
+		yNoise = 0;
+
 		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise, direction.y + yNoise);
 
 		// Create a bullet
