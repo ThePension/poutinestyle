@@ -12,7 +12,7 @@ public:
 	sf::Vector2f mapPos;
 	void setDistanceFromPlayer(float dist) { distUntilPlay = dist; }
 	void calculateDistanceUntilPlayer(Player player) {
-		distUntilPlay = ((player.position.x/32 - this->mapPos.x) * (player.position.x / 32 - this->mapPos.x) + (player.position.y / 32 - this->mapPos.y) * (player.position.y / 32 - this->mapPos.y));
+		distUntilPlay = ((player.position.x - this->mapPos.x) * (player.position.x - this->mapPos.x) + (player.position.y - this->mapPos.y) * (player.position.y - this->mapPos.y));
 	}
 	float getDistance() { return this->distUntilPlay; }
 };

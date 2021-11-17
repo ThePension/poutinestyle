@@ -2,44 +2,41 @@
 #include "SFML/Graphics.hpp"
 class Animation
 {
-	public:
-		Animation(int x, int y, int width, int height, std::string texturePath);
+public:
+	Animation(int x, int y, int width, int height, std::string texturePath);
 
-		int ApplyToSprite(sf::Sprite& sprite)
+	int ApplyToSprite(sf::Sprite& sprite)
+	{
+		sprite.setTexture(texture);
+		sprite.setTextureRect(frames[currentRenderedFrameNum]);
+		return currentRenderedFrameNum;
+	}
+
+	void update(float dt)
+	{
+		isAnimationOver = false;
+		time += dt;
+		while (time >= frameDuration)
 		{
-			sprite.setTexture(texture);
-			sprite.setTextureRect(frames[currentRenderedFrameNum]);
-			return currentRenderedFrameNum;
+			time -= frameDuration;
+			advance();
 		}
-
-		void update(float dt, bool shoot = true)
-		{
-			time += dt;
-			while (time >= frameDuration)
-			{
-				time -= frameDuration;
-				if (shoot)
-				{
-					advance();
-				}
-				else
-				{
-					currentRenderedFrameNum = 0;
-				}
-			}
+	}
+	bool isAnimationOver = true;
+private:
+	void advance()
+	{
+		if (++currentRenderedFrameNum >= nbFrames) {
+			currentRenderedFrameNum = 0;
+			isAnimationOver = true;
 		}
+	}
 
-	private:
-		void advance()
-		{
-			if (++currentRenderedFrameNum >= nbFrames) currentRenderedFrameNum = 0;
-		}
-
-		static const int nbFrames = 4;
-		int currentRenderedFrameNum = 0;
-		sf::Texture texture;
-		sf::IntRect frames[nbFrames];
-		float frameDuration = 0.1f;
-		float time = 0;
+	static const int nbFrames = 4;
+	int currentRenderedFrameNum = 0;
+	sf::Texture texture;
+	sf::IntRect frames[nbFrames];
+	float frameDuration = 0.1f;
+	float time = 0;
 };
 

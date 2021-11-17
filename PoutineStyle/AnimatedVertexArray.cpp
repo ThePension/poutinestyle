@@ -13,10 +13,10 @@ void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapP
     // Raycast the entity
     double w = viewWidth;
     // Translate sprite pos relative to the camera
-    double spriteX = (double)entityMapPos.x - (double)player.position.x / 16.0;
-    spriteX += map(entityMapPos.x, 0, 16, 0.5, -0.5); // Center the sprite in the cell
-    double spriteY = (double)entityMapPos.y - (double)player.position.y / 16.0;
-    spriteY += map(entityMapPos.y, 0, 16, 0.5, -0.5); // Center the sprite in the cell
+    double spriteX = (double)entityMapPos.x - (double)player.position.x + 0.5;
+    //spriteX += map(entityMapPos.x, 0, 16, 0.5, -0.5); // Center the sprite in the cell
+    double spriteY = (double)entityMapPos.y - (double)player.position.y + 0.5;
+    //spriteY += map(entityMapPos.y, 0, 16, 0.5, -0.5); // Center the sprite in the cell
 
     // Projection values
     double invDet = 1.0 / ((double)player.planeVec.x * (double)player.direction.y - (double)player.direction.x * (double)player.planeVec.y);
@@ -74,9 +74,13 @@ void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapP
 }
 void AnimatedVertexArray::update(float dt) {
 	// Update the currentRenderedFrameNum depending on the deltaTime
+    isAnimationOver = false;
 	time += dt;
 	while (time >= frameDuration) {
 		time -= frameDuration;
-		if (++currentRenderedFrameNum >= nbFrames) currentRenderedFrameNum = 0;
+        if (++currentRenderedFrameNum >= nbFrames) {
+            currentRenderedFrameNum = 0;
+            isAnimationOver = true;
+        }
 	}
 }

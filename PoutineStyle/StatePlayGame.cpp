@@ -1,5 +1,6 @@
 #include "StatePlayGame.h"
 #include "Sprite.h"
+#include "Bullet.h"
 StatePlayGame::StatePlayGame(GameManager* game)
 {
     this->gameManager = game;
@@ -32,10 +33,13 @@ StatePlayGame::StatePlayGame(GameManager* game)
     weaponTexture.loadFromFile("../PoutineStyle/pics/arme.png");
     https://www.tilingtextures.com/stone-wall-with-mortar/
 
-    //Gun sprite (move with player)
+    //Gun texture (move with player)
     weaponSprite.setTexture(weaponTexture);
     weaponSprite.setScale(0.5, 0.5);
     weaponSprite.setPosition(sf::Vector2f(450, 750));
+
+    // Load cursor texture
+    imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
 }
 sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     // Rotation matrix (used to rotate vector by an angle)
@@ -142,7 +146,7 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::MouseButtonPressed)
         {
-            isShooting = true;
+            player.shoot(bullets, player.direction);
         }
     }
 }
@@ -184,8 +188,8 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
 {
     int newPosMapY, newPosMapX;
 
-    newPosMapY = newPos.x / blockWidth;
-    newPosMapX = newPos.y / blockHeight;
+    newPosMapY = newPos.x;
+    newPosMapX = newPos.y;
 
     if (map[newPosMapX][newPosMapY] != '1')
     {
@@ -215,8 +219,8 @@ void StatePlayGame::drawMap2D()
     block.setOutlineColor(sf::Color::Black);
 
     sf::CircleShape player_circle;
-    player_circle.setRadius(10.f);
-    player_circle.setPosition(player.position - sf::Vector2f(10, 10));
+    player_circle.setRadius(5);
+    player_circle.setPosition(sf::Vector2f(player.position.x * (blockWidth) - player_circle.getRadius(), player.position.y * (blockHeight - 1) - player_circle.getRadius() / 2.0));
     player_circle.setFillColor(sf::Color::Green);
 
     for (int i = 0; i < mapSize; i++)
@@ -245,8 +249,8 @@ void StatePlayGame::drawMap2D()
     // Draw player direction vector
     sf::Vertex playerDirLine[] =
     {
-        sf::Vertex(player.position),
-        sf::Vertex(sf::Vector2f(player.position.x + 32 * player.direction.x, player.position.y + 32 * player.direction.y))
+        sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius(), player_circle.getPosition().y + player_circle.getRadius())),
+        sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius() + 16 * player.direction.x, player_circle.getPosition().y + player_circle.getRadius() + 16 * player.direction.y))
     };
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
@@ -265,7 +269,7 @@ void StatePlayGame::drawMap3D(double dt)
     // #pragma omp parallel for
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
-        sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x / blockWidth), int(player.position.y / blockHeight));
+        sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x), int(player.position.y));
 
         // Vector representing the direction of the actual ray
         double cameraX = double(2.f * x) / double(w) - 1;
@@ -287,19 +291,19 @@ void StatePlayGame::drawMap3D(double dt)
 
         if (rayDir.x < 0) {
             stepX = -1;
-            sideDistX = ((player.position.x / blockHeight) - double(playerMapPos.x)) * deltaDistX;
+            sideDistX = ((player.position.x) - double(playerMapPos.x)) * deltaDistX;
         }
         else {
             stepX = 1;
-            sideDistX = (double(playerMapPos.x) + 1.f - (player.position.x / blockHeight)) * deltaDistX;
+            sideDistX = (double(playerMapPos.x) + 1.f - (player.position.x)) * deltaDistX;
         }
         if (rayDir.y < 0) {
             stepY = -1;
-            sideDistY = ((player.position.y / blockHeight) - double(playerMapPos.y)) * deltaDistY;
+            sideDistY = ((player.position.y) - double(playerMapPos.y)) * deltaDistY;
         }
         else {
             stepY = 1;
-            sideDistY = (double(playerMapPos.y) + 1.f - (player.position.y / blockHeight)) * deltaDistY;
+            sideDistY = (double(playerMapPos.y) + 1.f - (player.position.y)) * deltaDistY;
         }
         int ceilingPixel = 0; // position of ceiling pixel on the screen
         int groundPixel = gameManager->getWindowHeight(); // position of ground pixel on the screen
@@ -334,11 +338,11 @@ void StatePlayGame::drawMap3D(double dt)
             else perpWallDist = sideDistY - deltaDistY;
             // Floor
             double wallHeight = int(gameManager->getWindowHeight() / perpWallDist);
-            // add floor
+            // Add floor
             lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
             groundPixel = int(wallHeight * 0.495 + double(gameManager->getWindowHeight()) * 0.5f);
             lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
-
+            
             if (floorColor == color1) floorColor = color2;
             else floorColor = color1;
         }
@@ -362,8 +366,8 @@ void StatePlayGame::drawMap3D(double dt)
 
         // Calculate where the wall was hit
         float wallX;
-        if (isWallHitHorizontal) wallX = (player.position.y / blockHeight) + perpWallDist * rayDir.y;
-        else wallX = (player.position.x / blockWidth) + perpWallDist * rayDir.x;
+        if (isWallHitHorizontal) wallX = (player.position.y) + perpWallDist * rayDir.y;
+        else wallX = (player.position.x) + perpWallDist * rayDir.x;
         wallX -= floor(wallX);
 
         // Get x coordinate on the wall texture
@@ -399,6 +403,45 @@ void StatePlayGame::drawMap3D(double dt)
         entity->calculateDistanceUntilPlayer(this->player);
     }
 
+    // Calculate distance for bullets
+    for (Bullet* bullet : bullets) {
+        // Check if the bullet hit something
+        int nextX = floor((float)bullet->mapPos.x + 0.5 + bullet->getVelocity().x * dt * 10.f);
+        int nextY = floor((float)bullet->mapPos.y + 0.5 + bullet->getVelocity().y * dt * 10.f);
+
+        if (nextX < 0 || nextY < 0 || nextX > mapSize - 1 || nextY > mapSize - 1){
+            bullet->isTravelling = false;
+            bullet->isExplosing = true;
+        }
+        else if (map[nextY][nextX] == '1') { // Bullet and Wall collision
+            bullet->isTravelling = false;
+            bullet->isExplosing = true;
+        }
+        else if (nextX == floor(player.position.x) && nextY == floor(player.position.y) // Ennemies bullets and Player collision
+                 && !bullet->getIsPlayerBullet()) 
+        { 
+            bullet->isTravelling = false;
+            bullet->isExplosing = true;
+        }
+        else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
+            bullet->isTravelling = false;
+            bullet->isExplosing = true;
+        }
+        bullet->calculateDistanceUntilPlayer(this->player);
+    }
+    // Delete bullets the must be deleted
+    bullets.remove_if([](Bullet* b) {
+        if (b->getToRemove()) {
+            delete b;
+            return true;
+        }
+        return false;
+    });
+
+    // Add remaining bullets in entitiesToDraw list
+    for (Bullet* bullet : bullets) {
+        entitiesToDraw.push_back(bullet);
+    }
     // Sort entities by distanceFromPlayer using lambda expression (needed to avoid overlapping sprites)
     entitiesToDraw.sort([](Entity* e1, Entity* e2) { return (abs(e1->getDistance()) > abs(e2->getDistance())); });
     
@@ -406,18 +449,28 @@ void StatePlayGame::drawMap3D(double dt)
     for (Entity* entity : entitiesToDraw) {
         entity->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight()); // Draw entity
         entity->update(dt); // Update entity (animation)
+        if (typeid(*entity).name() == typeid(Ennemy).name())
+        {
+            Ennemy* ennemy = dynamic_cast<Ennemy*>(entity);
+            // Calculate the direction of the bullet (aiming the player)
+            sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
+            // Get the norm of the direction vector
+            double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
+            // Get the unit vector
+            sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
+            ennemy->shoot(bullets, bulletDirUnit);
+        }
     }
-
+    
     // Clear entitiesToDraw list
     entitiesToDraw.clear();
 #pragma endregion
 
 #pragma region Rendering player sprites
     player.draw(*gameManager->getRenderWindow());
-    isShooting = player.update(dt, isShooting);
-#pragma endregion
-
+    player.update(dt);
     showCursor();
+#pragma endregion
 }
 void StatePlayGame::parseMap2D()
 {
@@ -434,9 +487,9 @@ void StatePlayGame::parseMap2D()
             map[indexX][indexY] = *it;
             if (map[indexX][indexY] == 'T') // Player spawn position
             {
-                player.position = sf::Vector2f(indexY * blockWidth + blockWidth / 2, indexX * blockHeight + blockHeight / 2);
+                player.position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
-            else if(map[indexX][indexY] == 'E'){ //Ennemy
+            else if(map[indexX][indexY] == 'E'){ // Ennemy
                 Ennemy *ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX));
                 /*ennemies.push_back(ennemy);
                 entities.push_back(ennemy);*/
@@ -549,10 +602,7 @@ void StatePlayGame::hud()
     }
 void StatePlayGame::showCursor()
 {
-    yOffset = 60;
-
-    sf::Texture imgAimCursor;
-    imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
+    yOffset = 80;
     sf::Sprite aimCursor;
     aimCursor.setTexture(imgAimCursor);
     aimCursor.setScale(0.5, 0.5);

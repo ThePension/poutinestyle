@@ -5,6 +5,7 @@
 #include "Button.h"
 #include "Entity.h"
 #include "Chest.h"
+#include "Bullet.h"
 #include <list>
 #include <numbers>
 #include <vector>
@@ -28,7 +29,7 @@ private:
 	bool isGamePaused = false;
 
 	int mapSize = 32;
-	int movingSpeed = 100;
+	int movingSpeed = 5;
 	int movingSpeedSPrint = 150;
 	int blockWidth;
 	int blockHeight;
@@ -43,11 +44,12 @@ private:
 
 	std::list<Ennemy*> ennemies; // Contains Ennemy Objects
 	std::list<Chest*> chests; // Contains Chest Objects
+	std::list<Bullet*> bullets;
 
 	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
 	std::string mapFileName = "Map_Example.txt";
 
-	sf::Texture wallTextures, weaponTexture;
+	sf::Texture wallTextures, weaponTexture, imgAimCursor;
 	sf::Sprite weaponSprite;
 	double ZBuffer[1032]; // Contains perpendicular distance from player to closest wall (usefull for rendering Entity object)
 
