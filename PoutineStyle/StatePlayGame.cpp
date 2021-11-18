@@ -419,14 +419,15 @@ void StatePlayGame::drawMap3D(double dt)
         }
         else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
             if (bullet->isExplosing == false) {
-                Entity* entity = entityMap[nextX][nextY];
-                if (entity != nullptr) {
-                    entity->decreaseHP(bullet->getDamage());
+                Ennemy* ennemy = static_cast<Ennemy*>(entityMap[nextX][nextY]);
+                if (ennemy != nullptr) {
+                    ennemy->decreaseHP(bullet->getDamage());
                     // Remove the ennemy if his HP are under 1
-                    if (entity->getHP() <= 0) {
-                        entitiesToDraw.remove(entity);
-                        delete entity;
-                        entity = nullptr;
+                    if (ennemy->getHP() <= 0) {
+                        entitiesToDraw.remove(ennemy);
+                        ennemies.remove(ennemy);
+                        delete ennemy;
+                        ennemy = nullptr;
                         entityMap[nextX][nextY] = nullptr;
                         map[nextY][nextX] = '0';
                     }
