@@ -11,7 +11,7 @@ private:
 	int nbFrames = 4;
 	int currentRenderedFrameNum = 0;
 	bool isDrawn = false;
-	bool isAnimationOver = false;
+	bool isAnimationOver = true;
 
 	float frameDuration = 0.1f;
 	float time = 0;

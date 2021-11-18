@@ -1,5 +1,4 @@
 #include "StatePlayGame.h"
-#include "Sprite.h"
 #include "Bullet.h"
 StatePlayGame::StatePlayGame(GameManager* game)
 {
@@ -85,7 +84,7 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
-            float speedFactor = 15;
+            float speedFactor = 5;
             int mouseX = event.mouseMove.x;
 
             if (mouseX == 0)
@@ -262,7 +261,6 @@ void StatePlayGame::drawMap3D(double dt)
     int w = gameManager->getWindowWidth();
     sf::VertexArray lines(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
 
-    // #pragma omp parallel for
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
         sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x), int(player.position.y));
@@ -430,7 +428,7 @@ void StatePlayGame::drawMap3D(double dt)
                         delete entity;
                         entity = nullptr;
                         entityMap[nextX][nextY] = nullptr;
-                        map[nextY][nextX] == '0';
+                        map[nextY][nextX] = '0';
                     }
                 }
             }
@@ -458,14 +456,18 @@ void StatePlayGame::drawMap3D(double dt)
     // Draw all visible entities
     for (Entity* entity : entitiesToDraw) {
         entity->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight()); // Draw entity
-        entity->update(dt); // Update entity (animation)
+        if (typeid(*entity).name() != typeid(Ennemy).name()) entity->update(dt); // Ennemy update is already done behind
+    }
+
+    for (Ennemy* ennemy : ennemies) {
         // Calculate the direction of the bullet (aiming the player)
-        sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - entity->mapPos;
+        sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
         // Get the norm of the direction vector
         double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
         // Get the unit vector
         sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
-        entity->shoot(bullets, bulletDirUnit);
+        ennemy->shoot(bullets, bulletDirUnit, this->player.position, this->map);
+        ennemy->update(dt); // Update the animation
     }
     
     // Clear entitiesToDraw list
@@ -496,9 +498,8 @@ void StatePlayGame::parseMap2D()
                 player.position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
             else if(map[indexX][indexY] == 'E'){ // Ennemy
-                Ennemy *ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX));
-                /*ennemies.push_back(ennemy);
-                entities.push_back(ennemy);*/
+                Ennemy *ennemy = new Ennemy(2, sf::Vector2f((float)indexY, (float)indexX));
+                ennemies.push_back(ennemy);
                 entityMap[indexY][indexX] = ennemy;
             }
             else if (map[indexX][indexY] == 'C') { // Chest
