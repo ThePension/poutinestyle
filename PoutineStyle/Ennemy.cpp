@@ -12,6 +12,9 @@ void Ennemy::draw(sf::RenderTarget& target, Player player, double* ZBuffer, int 
 		this->shootAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
 	}
 	else if(isWalking) { /* Do stuff */ }
+    else if (isDying) {
+        this->dieAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+    }
 	else {
 		this->shootAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
 	}
@@ -23,7 +26,13 @@ void Ennemy::update(float dt) {
 		if (shootAnimVA.getIsAnimationOver()) {
 			isShooting = false;
 		}
-	}
+    }
+    else if (isDying) {
+        this->dieAnimVA.update(dt);
+        if (this->dieAnimVA.getIsAnimationOver()) {
+            this->toRemove = true;
+        }
+    }
 }
 
 void Ennemy::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction, sf::Vector2f playerPos, char** map) {

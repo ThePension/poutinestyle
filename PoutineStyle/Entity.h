@@ -6,6 +6,7 @@ class Entity
 protected:
 	int HP = 1;
 	float distUntilPlay = 0;
+	bool toRemove = false;
 public:
 	virtual void draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) = 0;
 	virtual void update(float dt) = 0;
@@ -17,4 +18,6 @@ public:
 	float getDistance() { return this->distUntilPlay; }
 	int getHP() { return this->HP; }
 	void decreaseHP(int damage) { this->HP -= damage; }
+	void setToRemove(bool b) { this->toRemove = b; }
+	bool getToRemove() { return this->toRemove; }
 };

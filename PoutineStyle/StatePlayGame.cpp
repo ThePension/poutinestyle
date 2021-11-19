@@ -424,12 +424,7 @@ void StatePlayGame::drawMap3D(double dt)
                     ennemy->decreaseHP(bullet->getDamage());
                     // Remove the ennemy if his HP are under 1
                     if (ennemy->getHP() <= 0) {
-                        entitiesToDraw.remove(ennemy);
-                        ennemies.remove(ennemy);
-                        delete ennemy;
-                        ennemy = nullptr;
-                        entityMap[nextX][nextY] = nullptr;
-                        map[nextY][nextX] = '0';
+                        ennemy->setIsDying();
                     }
                 }
             }
@@ -446,6 +441,25 @@ void StatePlayGame::drawMap3D(double dt)
         }
         return false;
     });
+
+    // ennemies.remove_if(&clearEnnemy); // Clear dead ennemies
+    for (int x = 0; x < 32; x++) {
+        for (int y = 0; y < 32; y++) {
+            Entity* entity = entityMap[x][y];
+            if (entity != nullptr) {
+                if(typeid(*entity).name() == typeid(Ennemy).name()){
+                    Ennemy* ennemy = static_cast<Ennemy*>(entity);
+                    if (ennemy->getToRemove()) {
+                        entitiesToDraw.remove(ennemy);
+                        ennemies.remove(ennemy);
+                        entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = nullptr;
+                        map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = '0';
+                        delete ennemy; ennemy = nullptr;
+                    }
+                }
+            }
+        }
+    }
 
     // Add remaining bullets in entitiesToDraw list
     for (Bullet* bullet : bullets) {
