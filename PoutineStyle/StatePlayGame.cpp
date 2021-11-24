@@ -414,8 +414,15 @@ void StatePlayGame::drawMap3D(double dt)
         else if (nextX == floor(player.position.x) && nextY == floor(player.position.y) // Ennemies bullets and Player collision
                  && !bullet->getIsPlayerBullet()) 
         { 
-            bullet->isTravelling = false;
-            bullet->isExplosing = true;
+             bullet->isTravelling = false;
+             bullet->isExplosing = true;
+
+             // Decrease player health
+
+             // Check if player is dead
+
+             // If player is dead, lauch gameOver menu
+
         }
         else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
             if (bullet->isExplosing == false) {
@@ -433,6 +440,7 @@ void StatePlayGame::drawMap3D(double dt)
         }
         bullet->calculateDistanceUntilPlayer(this->player);
     }
+
     // Delete bullets the must be deleted
     bullets.remove_if([](Bullet* b) {
         if (b->getToRemove()) {
@@ -442,7 +450,7 @@ void StatePlayGame::drawMap3D(double dt)
         return false;
     });
 
-    // ennemies.remove_if(&clearEnnemy); // Clear dead ennemies
+    // Clear dead ennemies
     for (int x = 0; x < 32; x++) {
         for (int y = 0; y < 32; y++) {
             Entity* entity = entityMap[x][y];

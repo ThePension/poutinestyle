@@ -69,4 +69,3 @@ public:
 	~StatePlayGame();
 	void update(float deltaTime) override;
 };
-
