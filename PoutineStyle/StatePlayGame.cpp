@@ -1,5 +1,4 @@
 #include "StatePlayGame.h"
-#include "Sprite.h"
 #include "Bullet.h"
 StatePlayGame::StatePlayGame(GameManager* game)
 {
@@ -34,9 +33,11 @@ StatePlayGame::StatePlayGame(GameManager* game)
     https://www.tilingtextures.com/stone-wall-with-mortar/
 
     //Gun texture (move with player)
+    /*
     weaponSprite.setTexture(weaponTexture);
     weaponSprite.setScale(0.5, 0.5);
     weaponSprite.setPosition(sf::Vector2f(450, 750));
+    */
 
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
@@ -55,7 +56,8 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     resVec.y /= vecLen;*/
     return resVec;
 }
-StatePlayGame::~StatePlayGame() {
+StatePlayGame::~StatePlayGame()
+{
     for (int x = 0; x < gameManager->getWindowWidth(); x++) {
         for (int y = 0; y < gameManager->getWindowHeight(); y++) {
             // delete map[x][y];
@@ -85,18 +87,18 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
-            float speedFactor = 15;
+            float speedFactor = 5;
             int mouseX = event.mouseMove.x;
 
             if (mouseX == 0)
             {
                 mouseX = gameManager->getWindowWidth() - 1;
-                sf::Mouse::setPosition(sf::Vector2i(500 + mouseX, sf::Mouse::getPosition().y));
+                sf::Mouse::setPosition(sf::Vector2i(gameManager->getWindowWidth() / 2 + mouseX, sf::Mouse::getPosition().y));
             }
-            else if (mouseX == gameManager->getWindowWidth() - 1)
+            else if (mouseX >= gameManager->getWindowWidth() - 1)
             {
                 mouseX = 0;
-                sf::Mouse::setPosition(sf::Vector2i(500, sf::Mouse::getPosition().y));
+                sf::Mouse::setPosition(sf::Vector2i(gameManager->getWindowWidth()/2, sf::Mouse::getPosition().y));
             }
             else if (oldMouseX > mouseX) // go to left | 0 --- mouseX -- < -- oldMouseX --- maxWidth
             {
@@ -115,27 +117,15 @@ void StatePlayGame::handleInput(double deltatime)
         if (event.type == sf::Event::KeyPressed)
         {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-                player.reload();
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            {
-                wPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            {
-                aPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            {
-                sPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            {
-                dPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                isGamePaused = !isGamePaused;
-            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) player.reload();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) wPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) aPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) sPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dPressed = true;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) isGamePaused = !isGamePaused;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) movingSpeed = 5;
         }
 
         if (event.type == sf::Event::KeyReleased)
@@ -144,6 +134,8 @@ void StatePlayGame::handleInput(double deltatime)
             if (event.key.code == sf::Keyboard::D) dPressed = false;
             if (event.key.code == sf::Keyboard::W) wPressed = false;
             if (event.key.code == sf::Keyboard::S) sPressed = false;
+
+            if (event.key.code == sf::Keyboard::LShift) movingSpeed = 3;
         }
 
         if (event.type == sf::Event::MouseButtonPressed)
@@ -152,6 +144,7 @@ void StatePlayGame::handleInput(double deltatime)
         }
     }
 }
+
 void StatePlayGame::update(float deltaTime)
 {
     handleInput(deltaTime);
@@ -210,9 +203,12 @@ void StatePlayGame::draw(double dt)
         hud();
     }
 }
-void StatePlayGame::displayPauseMenu() {
+
+void StatePlayGame::displayPauseMenu()
+{
 
 }
+
 void StatePlayGame::drawMap2D()
 {
     sf::RectangleShape block;
@@ -257,18 +253,20 @@ void StatePlayGame::drawMap2D()
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
+
 void StatePlayGame::RenderingFloor(double dt) {
     
 }
+
 void StatePlayGame::drawMap3D(double dt)
 {
+
 #pragma region Rendering Walls
     yOffset = 50; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
     sf::VertexArray lines(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
 
-    // #pragma omp parallel for
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         // Cell where the player is standing
         sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x), int(player.position.y));
@@ -422,15 +420,33 @@ void StatePlayGame::drawMap3D(double dt)
         else if (nextX == floor(player.position.x) && nextY == floor(player.position.y) // Ennemies bullets and Player collision
                  && !bullet->getIsPlayerBullet()) 
         { 
-            bullet->isTravelling = false;
-            bullet->isExplosing = true;
+             bullet->isTravelling = false;
+             bullet->isExplosing = true;
+
+             // Decrease player health
+
+             // Check if player is dead
+
+             // If player is dead, lauch gameOver menu
+
         }
         else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
+            if (bullet->isExplosing == false) {
+                Ennemy* ennemy = static_cast<Ennemy*>(entityMap[nextX][nextY]);
+                if (ennemy != nullptr) {
+                    ennemy->decreaseHP(bullet->getDamage());
+                    // Remove the ennemy if his HP are under 1
+                    if (ennemy->getHP() <= 0) {
+                        ennemy->setIsDying();
+                    }
+                }
+            }
             bullet->isTravelling = false;
             bullet->isExplosing = true;
         }
         bullet->calculateDistanceUntilPlayer(this->player);
     }
+
     // Delete bullets the must be deleted
     bullets.remove_if([](Bullet* b) {
         if (b->getToRemove()) {
@@ -439,6 +455,25 @@ void StatePlayGame::drawMap3D(double dt)
         }
         return false;
     });
+
+    // Clear dead ennemies
+    for (int x = 0; x < 32; x++) {
+        for (int y = 0; y < 32; y++) {
+            Entity* entity = entityMap[x][y];
+            if (entity != nullptr) {
+                if(typeid(*entity).name() == typeid(Ennemy).name()){
+                    Ennemy* ennemy = static_cast<Ennemy*>(entity);
+                    if (ennemy->getToRemove()) {
+                        entitiesToDraw.remove(ennemy);
+                        ennemies.remove(ennemy);
+                        entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = nullptr;
+                        map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = '0';
+                        delete ennemy; ennemy = nullptr;
+                    }
+                }
+            }
+        }
+    }
 
     // Add remaining bullets in entitiesToDraw list
     for (Bullet* bullet : bullets) {
@@ -450,18 +485,18 @@ void StatePlayGame::drawMap3D(double dt)
     // Draw all visible entities
     for (Entity* entity : entitiesToDraw) {
         entity->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight()); // Draw entity
-        entity->update(dt); // Update entity (animation)
-        if (typeid(*entity).name() == typeid(Ennemy).name())
-        {
-            Ennemy* ennemy = dynamic_cast<Ennemy*>(entity);
-            // Calculate the direction of the bullet (aiming the player)
-            sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
-            // Get the norm of the direction vector
-            double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
-            // Get the unit vector
-            sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
-            ennemy->shoot(bullets, bulletDirUnit);
-        }
+        if (typeid(*entity).name() != typeid(Ennemy).name()) entity->update(dt); // Ennemy update is already done behind
+    }
+
+    for (Ennemy* ennemy : ennemies) {
+        // Calculate the direction of the bullet (aiming the player)
+        sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
+        // Get the norm of the direction vector
+        double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
+        // Get the unit vector
+        sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
+        ennemy->shoot(bullets, bulletDirUnit, this->player.position, this->map);
+        ennemy->update(dt); // Update the animation
     }
     
     // Clear entitiesToDraw list
@@ -473,6 +508,7 @@ void StatePlayGame::drawMap3D(double dt)
     player.update(dt);
     showCursor();
 #pragma endregion
+
 }
 void StatePlayGame::parseMap2D()
 {
@@ -492,9 +528,8 @@ void StatePlayGame::parseMap2D()
                 player.position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
             else if(map[indexX][indexY] == 'E'){ // Ennemy
-                Ennemy *ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX));
-                /*ennemies.push_back(ennemy);
-                entities.push_back(ennemy);*/
+                Ennemy *ennemy = new Ennemy(2, sf::Vector2f((float)indexY, (float)indexX));
+                ennemies.push_back(ennemy);
                 entityMap[indexY][indexX] = ennemy;
             }
             else if (map[indexX][indexY] == 'C') { // Chest
@@ -514,7 +549,6 @@ void StatePlayGame::parseMap2D()
 
     mapFile.close();
 }
-
 
 void StatePlayGame::hud()
 {
@@ -633,9 +667,10 @@ void StatePlayGame::hud()
     gameManager->getRenderWindow()->draw(currentScore);
 
 }
+
 void StatePlayGame::showCursor()
 {
-    yOffset = 80;
+    yOffset = 60;
     sf::Sprite aimCursor;
     aimCursor.setTexture(imgAimCursor);
     aimCursor.setScale(0.5, 0.5);
@@ -645,8 +680,7 @@ void StatePlayGame::showCursor()
 
     sf::Vector2f centerWindowPos = sf::Vector2f(this->gameManager->getWindowWidth() / 2, this->gameManager->getWindowHeight() / 2);
 
-    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 2), centerWindowPos.y - (cursorHeigth / 2) + yOffset);
+    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 4.5), centerWindowPos.y - (cursorHeigth / 4) + yOffset);
 
     this->gameManager->getRenderWindow()->draw(aimCursor);
-
 }
