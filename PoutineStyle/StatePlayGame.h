@@ -29,12 +29,13 @@ private:
 	bool isGamePaused = false;
 
 	int mapSize = 32;
-	int movingSpeed = 5;
+	int movingSpeed = 3;
 	int movingSpeedSPrint = 150;
 	int blockWidth;
 	int blockHeight;
 	int textureSize = 64;
 	int yOffset = 50;
+	float speedFactor = 5;
 
 	int oldMouseX = 0, oldMouseY = 0;
 
@@ -63,6 +64,7 @@ protected:
 	void showCursor();
 	void RenderingFloor(double dt);
 	void updatePlayerPosition(sf::Vector2f newPos);
+	void hud();
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
 public:
 	StatePlayGame(GameManager * game);

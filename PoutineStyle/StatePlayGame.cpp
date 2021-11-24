@@ -33,9 +33,11 @@ StatePlayGame::StatePlayGame(GameManager* game)
     https://www.tilingtextures.com/stone-wall-with-mortar/
 
     //Gun texture (move with player)
+    /*
     weaponSprite.setTexture(weaponTexture);
     weaponSprite.setScale(0.5, 0.5);
     weaponSprite.setPosition(sf::Vector2f(450, 750));
+    */
 
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
@@ -54,7 +56,8 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     resVec.y /= vecLen;*/
     return resVec;
 }
-StatePlayGame::~StatePlayGame() {
+StatePlayGame::~StatePlayGame()
+{
     for (int x = 0; x < gameManager->getWindowWidth(); x++) {
         for (int y = 0; y < gameManager->getWindowHeight(); y++) {
             // delete map[x][y];
@@ -90,12 +93,12 @@ void StatePlayGame::handleInput(double deltatime)
             if (mouseX == 0)
             {
                 mouseX = gameManager->getWindowWidth() - 1;
-                sf::Mouse::setPosition(sf::Vector2i(500 + mouseX, sf::Mouse::getPosition().y));
+                sf::Mouse::setPosition(sf::Vector2i(gameManager->getWindowWidth() / 2 + mouseX, sf::Mouse::getPosition().y));
             }
-            else if (mouseX == gameManager->getWindowWidth() - 1)
+            else if (mouseX >= gameManager->getWindowWidth() - 1)
             {
                 mouseX = 0;
-                sf::Mouse::setPosition(sf::Vector2i(500, sf::Mouse::getPosition().y));
+                sf::Mouse::setPosition(sf::Vector2i(gameManager->getWindowWidth()/2, sf::Mouse::getPosition().y));
             }
             else if (oldMouseX > mouseX) // go to left | 0 --- mouseX -- < -- oldMouseX --- maxWidth
             {
@@ -114,25 +117,15 @@ void StatePlayGame::handleInput(double deltatime)
         if (event.type == sf::Event::KeyPressed)
         {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            {
-                wPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            {
-                aPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            {
-                sPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            {
-                dPressed = true;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                isGamePaused = !isGamePaused;
-            }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) wPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) aPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) sPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dPressed = true;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) isGamePaused = !isGamePaused;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) movingSpeed = 5;
         }
 
         if (event.type == sf::Event::KeyReleased)
@@ -141,6 +134,8 @@ void StatePlayGame::handleInput(double deltatime)
             if (event.key.code == sf::Keyboard::D) dPressed = false;
             if (event.key.code == sf::Keyboard::W) wPressed = false;
             if (event.key.code == sf::Keyboard::S) sPressed = false;
+
+            if (event.key.code == sf::Keyboard::LShift) movingSpeed = 3;
         }
 
         if (event.type == sf::Event::MouseButtonPressed)
@@ -149,6 +144,7 @@ void StatePlayGame::handleInput(double deltatime)
         }
     }
 }
+
 void StatePlayGame::update(float deltaTime)
 {
     handleInput(deltaTime);
@@ -201,11 +197,18 @@ void StatePlayGame::draw(double dt)
 {
     if (isGamePaused) displayPauseMenu();
     else if(isMapDisplayed) drawMap2D();
-    else drawMap3D(dt);
+    else
+    {
+        drawMap3D(dt);
+        hud();
+    }
 }
-void StatePlayGame::displayPauseMenu() {
+
+void StatePlayGame::displayPauseMenu()
+{
 
 }
+
 void StatePlayGame::drawMap2D()
 {
     sf::RectangleShape block;
@@ -250,11 +253,14 @@ void StatePlayGame::drawMap2D()
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
+
 void StatePlayGame::RenderingFloor(double dt) {
     
 }
+
 void StatePlayGame::drawMap3D(double dt)
 {
+
 #pragma region Rendering Walls
     yOffset = 50; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
@@ -502,6 +508,7 @@ void StatePlayGame::drawMap3D(double dt)
     player.update(dt);
     showCursor();
 #pragma endregion
+
 }
 void StatePlayGame::parseMap2D()
 {
@@ -543,9 +550,96 @@ void StatePlayGame::parseMap2D()
     mapFile.close();
 }
 
+void StatePlayGame::hud()
+    {
+        sf::RectangleShape hudUp, hudDownL, hudDownML, hudDownM, hudDownMR, hudDownR;
+        //sf::RectangleShape line(sf::Vector2f(150, 10));
+        float widthPos = gameManager->getWindowWidth() / gameManager->getWindowWidth();
+        float hudDownWidth = widthPos * (gameManager->getWindowWidth() / 5);
+        float heightPos = gameManager->getWindowHeight() / gameManager->getWindowHeight();
+        sf::Color lineCol = sf::Color::Red;
+        sf::Color hudBack = sf::Color::White;
+
+        hudUp.setSize(sf::Vector2f(gameManager->getWindowWidth(), gameManager->getWindowHeight() / 25));
+        hudDownL.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 8));
+        hudDownML.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 8));
+        hudDownM.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 8));
+        hudDownMR.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 8));
+        hudDownR.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 8));
+
+        hudUp.setFillColor(hudBack);
+        hudUp.setOutlineColor(lineCol);
+        hudUp.setOutlineThickness(3);
+        hudUp.setPosition(0, 0);
+
+        hudDownL.setFillColor(hudBack);
+        hudDownL.setOutlineColor(lineCol);
+        hudDownL.setOutlineThickness(3);
+        hudDownL.setPosition(0, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10);
+
+        hudDownML.setFillColor(hudBack);
+        hudDownML.setOutlineColor(lineCol);
+        hudDownML.setOutlineThickness(3);
+        hudDownML.setPosition(hudDownWidth, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10);
+
+        hudDownM.setFillColor(hudBack);
+        hudDownM.setOutlineColor(lineCol);
+        hudDownM.setOutlineThickness(3);
+        hudDownM.setPosition(hudDownWidth * 2, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10);
+
+        hudDownMR.setFillColor(hudBack);
+        hudDownMR.setOutlineColor(lineCol);
+        hudDownMR.setOutlineThickness(3);
+        hudDownMR.setPosition(hudDownWidth * 3, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10);
+
+        hudDownR.setFillColor(hudBack);
+        hudDownR.setOutlineColor(lineCol);
+        hudDownR.setOutlineThickness(3);
+        hudDownR.setPosition(hudDownWidth * 4, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10);
+
+        gameManager->getRenderWindow()->draw(hudUp);
+        gameManager->getRenderWindow()->draw(hudDownL);
+        gameManager->getRenderWindow()->draw(hudDownML);
+        gameManager->getRenderWindow()->draw(hudDownM);
+        gameManager->getRenderWindow()->draw(hudDownMR);
+        gameManager->getRenderWindow()->draw(hudDownR);
+
+
+        sf::Font font = sf::Font();
+        sf::Color fontCol = sf::Color::Red;
+        font.loadFromFile("CollegiateBlackFLF.ttf");
+        //text purement indicatif a ce stade
+        sf::Text barreDeVie("Barre de vie", font, 15);
+        sf::Text liveText("Live", font, 15);
+        sf::Text arme("weapon", font, 15);
+        sf::Text munition("munition", font, 15);
+        sf::Text score("score", font, 15);
+
+        barreDeVie.setFillColor(fontCol);
+        barreDeVie.setPosition(sf::Vector2f(0, gameManager->getWindowHeight() - heightPos * 50));
+
+        liveText.setFillColor(fontCol);
+        liveText.setPosition(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() - heightPos * 50));
+
+        arme.setFillColor(fontCol);
+        arme.setPosition(sf::Vector2f(hudDownWidth * 2, gameManager->getWindowHeight() - heightPos * 50));
+
+        munition.setFillColor(fontCol);
+        munition.setPosition(sf::Vector2f(hudDownWidth * 3, gameManager->getWindowHeight() - heightPos * 50));
+
+        score.setFillColor(fontCol);
+        score.setPosition(sf::Vector2f(hudDownWidth * 4, gameManager->getWindowHeight() - heightPos * 50));
+
+        gameManager->getRenderWindow()->draw(barreDeVie);
+        gameManager->getRenderWindow()->draw(liveText);
+        gameManager->getRenderWindow()->draw(arme);
+        gameManager->getRenderWindow()->draw(munition);
+        gameManager->getRenderWindow()->draw(score);
+    }
+
 void StatePlayGame::showCursor()
 {
-    yOffset = 80;
+    yOffset = 60;
     sf::Sprite aimCursor;
     aimCursor.setTexture(imgAimCursor);
     aimCursor.setScale(0.5, 0.5);
@@ -555,7 +649,7 @@ void StatePlayGame::showCursor()
 
     sf::Vector2f centerWindowPos = sf::Vector2f(this->gameManager->getWindowWidth() / 2, this->gameManager->getWindowHeight() / 2);
 
-    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 2), centerWindowPos.y - (cursorHeigth / 2) + yOffset);
+    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 4.5), centerWindowPos.y - (cursorHeigth / 4) + yOffset);
 
     this->gameManager->getRenderWindow()->draw(aimCursor);
 }
