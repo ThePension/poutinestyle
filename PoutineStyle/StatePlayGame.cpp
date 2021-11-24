@@ -34,9 +34,11 @@ StatePlayGame::StatePlayGame(GameManager* game)
     https://www.tilingtextures.com/stone-wall-with-mortar/
 
     //Gun texture (move with player)
+    /*
     weaponSprite.setTexture(weaponTexture);
     weaponSprite.setScale(0.5, 0.5);
     weaponSprite.setPosition(sf::Vector2f(450, 750));
+    */
 
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
@@ -55,7 +57,8 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     resVec.y /= vecLen;*/
     return resVec;
 }
-StatePlayGame::~StatePlayGame() {
+StatePlayGame::~StatePlayGame()
+{
     for (int x = 0; x < gameManager->getWindowWidth(); x++) {
         for (int y = 0; y < gameManager->getWindowHeight(); y++) {
             // delete map[x][y];
