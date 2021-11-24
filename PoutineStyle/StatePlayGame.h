@@ -11,6 +11,7 @@
 #include <vector>
 #include <math.h>
 #include "StatePauseMenu.h"
+#include "StateGameOverMenu.h"
 
 class StatePlayGame : public GameState
 {

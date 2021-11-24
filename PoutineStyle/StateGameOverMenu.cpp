@@ -1,10 +1,13 @@
 #include "StateGameOverMenu.h"
-StateGameOverMenu::StateGameOverMenu(GameManager* game) {
+StateGameOverMenu::StateGameOverMenu(GameManager* game, bool win) {
 	this->gameManager = game;
+	this->win = win;
 
-	// Create buttons
-	replayButton = Button(sf::Vector2i(150, 800), 300, 100, sf::Color::Cyan, L"Rejouer", gameManager->getRenderWindow());
-	quitButton = Button(sf::Vector2i(550, 800), 300, 100, sf::Color::Cyan, L"Quitter", gameManager->getRenderWindow());
+	w = gameManager->getWindowWidth();
+	h = gameManager->getWindowHeight();
+
+	replayButton = Button(sf::Vector2i(w / 2 - 75, 2 * (h / 4) - 25), 150, 50, sf::Color::Cyan, L"Rejouer", gameManager->getRenderWindow());
+	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) - 25), 150, 50, sf::Color::Cyan, L"Quitter", gameManager->getRenderWindow());
 }
 StateGameOverMenu::~StateGameOverMenu() {
 
@@ -13,25 +16,45 @@ void StateGameOverMenu::handleInput(double deltatime) {
 	sf::Event event;
 	while (gameManager->getRenderWindow()->pollEvent(event))
 	{
-		if (replayButton.isClicked() && !isReplayClicked) {
+		if (replayButton.isClicked())
+		{
 			StatePlayGame* statePlayGame = new StatePlayGame(this->gameManager); // Create new PlayGame state
 			gameManager->changeState(statePlayGame); // Change current state for new PlayGame state
-			isReplayClicked = true;
 			return;
 		}
-		else if (quitButton.isClicked()) {
+		else if (quitButton.isClicked())
+		{
 			// Quit application
 			exit(0);
 		}
 	}
 }
-void StateGameOverMenu::update(float deltaTime) {
+void StateGameOverMenu::update(float deltaTime)
+{
+	draw(deltaTime);
 	handleInput(deltaTime);
-	if(!isReplayClicked) draw(deltaTime);
 }
-void StateGameOverMenu::draw(double deltatime) {
-	this->gameManager->getRenderWindow()->clear();
+
+void StateGameOverMenu::draw(double deltatime)
+{
+	sf::Font font = sf::Font();
+	font.loadFromFile("CollegiateBlackFLF.ttf");
+
+	text.setFont(font);
+	text.setCharacterSize(34);
+	if (win)
+	{
+		text.setString("VICTOIRE !!!");
+	}
+	else
+	{
+		text.setString("DEFAITE ...");
+	}
+	
+	text.setFillColor(sf::Color::White);
+	text.setPosition(sf::Vector2f(w / 2 - 57, 1 * (h / 4) - 25));
+	gameManager->getRenderWindow()->draw(text);
+
 	replayButton.draw();
 	quitButton.draw();
-	this->gameManager->getRenderWindow()->display();
 }

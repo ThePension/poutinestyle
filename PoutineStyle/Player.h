@@ -8,6 +8,7 @@ class Player
 private:
 	Weapon * weapon;
 	bool isShooting = false;
+	bool isDead = false;
 	int live = 3;
 	int health = 100;
 	int ammunition = 50;
@@ -46,6 +47,8 @@ public:
 
 	void reload();
 	void loseLife();
+
+	bool dead();
 
 	sf::Vector2f position = sf::Vector2f(50.f, 50.f); // Default player position
 	sf::Vector2f direction = sf::Vector2f(0.f, 0.75f);

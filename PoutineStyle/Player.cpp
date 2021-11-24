@@ -63,6 +63,8 @@ void Player::loseLife()
 	if (health > 1)
 	{
 		health -= rand() % 6+1;
+		//debug mode
+		//health -= 100;
 	}
 	else
 	{
@@ -74,8 +76,14 @@ void Player::loseLife()
 		else
 		{
 			//mort
-			std::cout << "tu es mort looser" << std::endl;
+			//std::cout << "tu es mort looser" << std::endl;
+			isDead = true;
 		}
 	}
 
+}
+
+bool Player::dead()
+{
+	return this->isDead;
 }
