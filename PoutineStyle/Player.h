@@ -36,9 +36,16 @@ public:
 		return currentAmmunition;
 	}
 
+	int setCurrentAmmoReloading(int newAmmo) {
+		currentAmmunition = newAmmo;
+	}
+
 	int getScore() {
 		return score;
 	}
+
+	void reload();
+	void loseLife();
 
 	sf::Vector2f position = sf::Vector2f(50.f, 50.f); // Default player position
 	sf::Vector2f direction = sf::Vector2f(0.f, 0.75f);

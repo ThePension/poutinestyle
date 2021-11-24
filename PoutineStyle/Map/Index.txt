@@ -1,10 +1,12 @@
-1 Mur
+1-9 Mur [N = texture]
 0 Sol
 T Entrer du niveau
-P Sortie du niveau
+S Sortie du niveau (Via un pnj ?)
 E Ennemi
 P PNJ
 L Objet
+T Coffre tutoriel Arme
+t Coffre tutoriel Munition
 C Coffre legendaire
 d Verrou 		D porte 
 v Verrou 1		V Porte 1
