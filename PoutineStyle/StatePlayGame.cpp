@@ -1,6 +1,8 @@
 #include "StatePlayGame.h"
 #include "Sprite.h"
 #include "Bullet.h"
+
+
 StatePlayGame::StatePlayGame(GameManager* game)
 {
     this->gameManager = game;
@@ -123,9 +125,9 @@ void StatePlayGame::handleInput(double deltatime)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) sPressed = true;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dPressed = true;
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) isGamePaused = !isGamePaused;
-
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) movingSpeed = 5;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) pause();
         }
 
         if (event.type == sf::Event::KeyReleased)
@@ -138,11 +140,41 @@ void StatePlayGame::handleInput(double deltatime)
             if (event.key.code == sf::Keyboard::LShift) movingSpeed = 3;
         }
 
-        if (event.type == sf::Event::MouseButtonPressed)
+        if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
         {
             player.shoot(bullets, player.direction);
         }
     }
+}
+
+void StatePlayGame::pause()
+{
+    if (!isGamePaused)
+    {
+        isGamePaused = true;
+        reset();
+        StatePauseMenu* statePauseMenu = new StatePauseMenu(this->gameManager);
+        this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
+        this->gameManager->pushState(statePauseMenu);
+    }
+}
+
+void StatePlayGame::resume()
+{
+    if (isGamePaused)
+    {
+        isGamePaused = false;
+        this->gameManager->getRenderWindow()->setMouseCursorVisible(false);
+    }
+}
+
+void StatePlayGame::reset()
+{
+    aPressed = false;
+    sPressed = false;
+    dPressed = false;
+    wPressed = false;
+    movingSpeed = 3;
 }
 
 void StatePlayGame::update(float deltaTime)

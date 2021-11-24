@@ -10,6 +10,7 @@
 #include <numbers>
 #include <vector>
 #include <math.h>
+#include "StatePauseMenu.h"
 
 class StatePlayGame : public GameState
 {
@@ -65,11 +66,15 @@ protected:
 	void RenderingFloor(double dt);
 	void updatePlayerPosition(sf::Vector2f newPos);
 	void hud();
+	void pause();
+	void reset();
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
 
 public:
 	StatePlayGame(GameManager * game);
 	~StatePlayGame();
+
 	void update(float deltaTime) override;
+	void resume();
 };
 
