@@ -13,7 +13,6 @@ void Player::update(float dt) {
 	}	
 }
 void Player::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction){
-	loseLife();
 	if (Player::currentAmmunition > 0)
 	{
 		if (weapon->getShootAnimation().isAnimationOver) {

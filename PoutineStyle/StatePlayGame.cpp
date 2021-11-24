@@ -420,12 +420,11 @@ void StatePlayGame::drawMap3D(double dt)
         else if (nextX == floor(player.position.x) && nextY == floor(player.position.y) // Ennemies bullets and Player collision
                  && !bullet->getIsPlayerBullet()) 
         { 
+             if (bullet->isExplosing == false) player.loseLife();
              bullet->isTravelling = false;
              bullet->isExplosing = true;
 
-             // Decrease player health
-
-             // Check if player is dead
+             
 
              // If player is dead, lauch gameOver menu
 
