@@ -126,6 +126,7 @@ void StatePlayGame::handleInput(double deltatime)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) isGamePaused = !isGamePaused;
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) movingSpeed = 5;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) InteractedEntity = getInteractedEntity();
         }
 
         if (event.type == sf::Event::KeyReleased)
@@ -260,6 +261,15 @@ void StatePlayGame::RenderingFloor(double dt) {
 
 void StatePlayGame::drawMap3D(double dt)
 {
+#pragma region Entity Interaction Management
+    if (InteractedEntity != nullptr) {
+        if (typeid(*InteractedEntity).name() == typeid(Chest).name()) { // Chest interaction
+            Chest* chest = static_cast<Chest*>(InteractedEntity);
+            chest->setIsOpening();
+            InteractedEntity = nullptr;
+        }
+    }
+#pragma endregion
 
 #pragma region Rendering Walls
     yOffset = 50; // Used to create the illusion of a taller player
@@ -652,4 +662,23 @@ void StatePlayGame::showCursor()
     aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 4.5), centerWindowPos.y - (cursorHeigth / 4) + yOffset);
 
     this->gameManager->getRenderWindow()->draw(aimCursor);
+}
+
+/// <summary>
+/// Return the first entity found near the player (1 cell around)
+/// </summary>
+/// <returns>Return * Entity</returns>
+Entity* StatePlayGame::getInteractedEntity() {
+    int playerPosX = floor(player.position.x);
+    int playerPosY = floor(player.position.y);
+    for (int x = -1; x <= 1; x++) {
+        for (int y = -1; y <= 1; y++) {
+            int entityPosX = playerPosX + x;
+            int entityPosY = playerPosY + y;
+            if (entityPosX > 0 && entityPosX < mapSize && entityPosY > 0 && entityPosY < mapSize) {
+                if (this->entityMap[entityPosX][entityPosY] != nullptr) return entityMap[entityPosX][entityPosY];
+            }
+        }
+    }
+    return nullptr;
 }

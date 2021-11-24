@@ -48,13 +48,14 @@ private:
 	std::list<Bullet*> bullets;
 
 	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
-	std::string mapFileName = "Map_Example.txt";
+	std::string mapFileName = "Map_Example3.txt";
 
 	sf::Texture wallTextures, weaponTexture, imgAimCursor;
 	sf::Sprite weaponSprite;
 	double ZBuffer[1032]; // Contains perpendicular distance from player to closest wall (usefull for rendering Entity object)
 
-protected:
+	Entity* InteractedEntity = nullptr;
+
 	void draw(double dt) override;
 	void handleInput(double deltatime) override;
 	void parseMap2D();
@@ -66,6 +67,8 @@ protected:
 	void updatePlayerPosition(sf::Vector2f newPos);
 	void hud();
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
+	Entity* getInteractedEntity();
+
 public:
 	StatePlayGame(GameManager * game);
 	~StatePlayGame();
