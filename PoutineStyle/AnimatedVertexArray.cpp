@@ -8,7 +8,7 @@ AnimatedVertexArray::AnimatedVertexArray(std::string texturesPath, int spriteHei
     this->y = y;
 	this->nbFrames = totalFrame;
 }
-void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapPos, Player player, double* ZBuffer, int viewWidth, int viewHeight) {
+void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapPos, Player player, double* ZBuffer, int viewWidth, int viewHeight) { 
     int yOffset = 50;
     // Raycast the entity
     double w = viewWidth;

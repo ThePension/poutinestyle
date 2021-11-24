@@ -1,7 +1,6 @@
 #include "Chest.h"
-Chest::Chest(int hp, sf::Vector2f pos) {
-	this->HP = hp;
-	this->mapPos = pos;
+Chest::Chest(int hp, sf::Vector2f pos) : Entity(hp, pos) {
+	// Entity* droppedEntity = new Medikit(1, this->mapPos);
 }
 void Chest::draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) {
 	if (isOpening) { // Opening chest
@@ -19,6 +18,7 @@ void Chest::update(float dt) {
 		this->OpeningAnimVA.update(dt);
 		if (this->OpeningAnimVA.getIsAnimationOver()) {
 			this->isOpening = false;
+			this->toRemove = true;
 		}
 	}
 	else if (!isOpen) { // Closed chest

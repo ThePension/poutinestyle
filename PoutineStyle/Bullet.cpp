@@ -1,7 +1,5 @@
 #include "Bullet.h"
-Bullet::Bullet(int hp, sf::Vector2f pos, sf::Vector2f vel, bool isPlayerBullet) {
-	this->HP = hp;
-	this->mapPos = pos;
+Bullet::Bullet(int hp, sf::Vector2f pos, sf::Vector2f vel, bool isPlayerBullet) : Entity(hp, pos) {
 	this->vel = vel;
 	this->isPlayerBullet = isPlayerBullet;
 }

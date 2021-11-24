@@ -333,8 +333,8 @@ void StatePlayGame::drawMap3D(double dt)
                 isWallHitHorizontal = false;
             }
 
-            if (map[playerMapPos.y][playerMapPos.x] == '1') wallHit = true; // Inversion des composantes car sinon rotation de 90° ! Pas compris pourquoi ?
-            else if (map[playerMapPos.y][playerMapPos.x] == 'E' || map[playerMapPos.y][playerMapPos.x] == 'C') {
+            if (map[playerMapPos.y][playerMapPos.x] == '1') wallHit = true;
+            else if (map[playerMapPos.y][playerMapPos.x] == 'E' || map[playerMapPos.y][playerMapPos.x] == 'C' || map[playerMapPos.y][playerMapPos.x] == 'L') {
                 // Add the entity in entitiesToDraw list if it's not already in
                 if (entityMap[playerMapPos.x][playerMapPos.y] != nullptr) {
                     bool isContained = false;
@@ -457,7 +457,7 @@ void StatePlayGame::drawMap3D(double dt)
         bullet->calculateDistanceUntilPlayer(this->player);
     }
 
-    // Delete bullets the must be deleted
+    // Delete bullets that must be deleted
     bullets.remove_if([](Bullet* b) {
         if (b->getToRemove()) {
             delete b;
@@ -466,7 +466,7 @@ void StatePlayGame::drawMap3D(double dt)
         return false;
     });
 
-    // Clear dead ennemies
+    // Clear dead ennemies and opened chests
     for (int x = 0; x < 32; x++) {
         for (int y = 0; y < 32; y++) {
             Entity* entity = entityMap[x][y];
@@ -479,6 +479,17 @@ void StatePlayGame::drawMap3D(double dt)
                         entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = nullptr;
                         map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = '0';
                         delete ennemy; ennemy = nullptr;
+                    }
+                }
+                else if (typeid(*entity).name() == typeid(Chest).name()) {
+                    // Replace opened chests by their dropped entity
+                    Chest* chest = static_cast<Chest*>(entity);
+                    if (chest->getToRemove()) {
+                        Entity* droppedEntity = chest->getDroppedEntity();
+                        entityMap[(int)chest->mapPos.x][(int)chest->mapPos.y] = droppedEntity;
+                        map[(int)chest->mapPos.y][(int)chest->mapPos.x] = 'L';
+                        entitiesToDraw.remove(chest);
+                        delete chest; chest = nullptr;
                     }
                 }
             }

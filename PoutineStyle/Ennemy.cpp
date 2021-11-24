@@ -1,9 +1,7 @@
 #include "Ennemy.h"
 #include <random>
 
-Ennemy::Ennemy(int hp, sf::Vector2f pos) {
-	this->HP = hp;
-	this->mapPos = pos;
+Ennemy::Ennemy(int hp, sf::Vector2f pos) : Entity(hp, pos) {
 	srand(time(NULL)); // Randomize seed
 }
 
