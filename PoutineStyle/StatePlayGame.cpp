@@ -32,13 +32,6 @@ StatePlayGame::StatePlayGame(GameManager* game)
     weaponTexture.loadFromFile("../PoutineStyle/pics/arme.png");
     https://www.tilingtextures.com/stone-wall-with-mortar/
 
-    //Gun texture (move with player)
-    /*
-    weaponSprite.setTexture(weaponTexture);
-    weaponSprite.setScale(0.5, 0.5);
-    weaponSprite.setPosition(sf::Vector2f(450, 750));
-    */
-
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
 }
@@ -313,7 +306,7 @@ void StatePlayGame::drawMap3D(double dt)
 #pragma endregion
 
 #pragma region Rendering Walls
-    yOffset = 50; // Used to create the illusion of a taller player
+    yOffset = 0; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
     sf::VertexArray lines(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
@@ -750,7 +743,7 @@ void StatePlayGame::showCursor()
 
     sf::Vector2f centerWindowPos = sf::Vector2f(this->gameManager->getWindowWidth() / 2, this->gameManager->getWindowHeight() / 2);
 
-    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 4.5), centerWindowPos.y - (cursorHeigth / 4) + yOffset);
+    aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 4.5), centerWindowPos.y - (cursorHeigth / 4));
 
     this->gameManager->getRenderWindow()->draw(aimCursor);
 }

@@ -1,7 +1,7 @@
 #include "Weapon.h"
 Weapon::Weapon() {
 	weaponSprite.scale(1, 1);
-	weaponSprite.setPosition(300, 500 - 105);
+	weaponSprite.setPosition(300, 500 - 160);
 	shootAnimation.ApplyToSprite(weaponSprite);
 }
 Weapon::Weapon(double shootCadency, int damage, Animation shootAnim) {

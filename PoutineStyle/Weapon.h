@@ -15,4 +15,3 @@ public:
 	void update(float dt);
 	Animation getShootAnimation() { return this->shootAnimation; }
 };
-

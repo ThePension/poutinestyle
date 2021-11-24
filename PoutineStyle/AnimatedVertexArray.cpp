@@ -9,7 +9,7 @@ AnimatedVertexArray::AnimatedVertexArray(std::string texturesPath, int spriteHei
 	this->nbFrames = totalFrame;
 }
 void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapPos, Player player, double* ZBuffer, int viewWidth, int viewHeight) { 
-    int yOffset = 50;
+    int yOffset = 0;
     // Raycast the entity
     double w = viewWidth;
     // Translate sprite pos relative to the camera
