@@ -12,6 +12,8 @@
 #include <numbers>
 #include <vector>
 #include <math.h>
+#include "StatePauseMenu.h"
+#include "StateGameOverMenu.h"
 
 class StatePlayGame : public GameState
 {
@@ -63,16 +65,20 @@ private:
 	void parseMap2D();
 	void drawMap2D();
 	void drawMap3D(double dt);
-	void displayPauseMenu();
 	void showCursor();
 	void RenderingFloor(double dt);
 	void updatePlayerPosition(sf::Vector2f newPos);
 	void hud();
+	void pause();
+	void reset();
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
 	Entity* getInteractedEntity();
 
 public:
 	StatePlayGame(GameManager * game);
 	~StatePlayGame();
+
 	void update(float deltaTime) override;
+	void resume();
 };
+

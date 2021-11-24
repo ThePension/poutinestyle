@@ -59,9 +59,7 @@ void GameManager::gameLoop()
 }
 
 void GameManager::pushState(GameState* state) {
-    if (peekState() == nullptr) {
-        this->states.push(state);
-    }
+    this->states.push(state);
 }
 
 void GameManager::popState() {
@@ -80,9 +78,34 @@ void GameManager::changeState(GameState* state) {
     pushState(state);
 }
 
-GameState* GameManager::peekState()
+GameState* GameManager::peekState(int n)
 {
-    if (this->states.empty()) return nullptr;
-    else return this->states.top();
+    int size = this->states.size();
+
+    std::list<GameState*> backup;
+    GameState* state;
+
+    if (size < n)
+    {
+        return nullptr;
+    }
+    else
+    {
+        for (int i = 0; i < n; i++)
+        {
+            backup.push_back(this->states.top());
+            this->states.pop();
+        }
+
+        state = this->states.top();
+
+        for (int i = 0; i < n; i++)
+        {
+            this->states.push(backup.back());
+            backup.pop_back();
+        }
+    }
+
+    return state;
 }
 
