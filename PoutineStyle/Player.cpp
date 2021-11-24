@@ -24,7 +24,7 @@ void Player::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction){
 		double yNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
 
 		yNoise = AnimatedVertexArray::map(yNoise, 0, 0.1, -0.1, 0.1);
-		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise, direction.y + yNoise);
+		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise/10, direction.y + yNoise/10);
 
 			// Create a bullet
 			sf::Vector2f bulletPos = sf::Vector2f(this->position.x - 0.5 + 2.0 * this->direction.x, this->position.y - 0.5 + 2.0 * this->direction.y);

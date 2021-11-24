@@ -358,7 +358,7 @@ void StatePlayGame::drawMap3D(double dt)
         int drawEnd = lineHeight / 2 + gameManager->getWindowHeight() / 2;
 
         // Texture stuff
-        int wallTextureNum = 0; // Need to be set depending on wall type (char)
+        int wallTextureNum = 3; // Need to be set depending on wall type (char)
         sf::Vector2i texture_coords(
             wallTextureNum * textureSize,
             0 // For the moment, all textures are on the same line (y coord) in textures.png file
