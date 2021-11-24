@@ -548,6 +548,9 @@ void StatePlayGame::parseMap2D()
     std::string mapLocation = mapFileFolder + mapFileName;
     mapFile.open(mapLocation);
 
+    srand(time(NULL)); // Randomize seed
+    int rnd = 0;
+
     int indexX = 0, indexY = 0;
     while (std::getline(mapFile, tempText))
     {
@@ -564,7 +567,8 @@ void StatePlayGame::parseMap2D()
                 entityMap[indexY][indexX] = ennemy;
             }
             else if (map[indexX][indexY] == 'C') { // Chest
-                Chest* chest = new Chest(1, sf::Vector2f((float)indexY, (float)indexX));
+                rnd = (rand() % 2); // Between 0 and 1
+                Chest* chest = new Chest(1, sf::Vector2f((float)indexY, (float)indexX), rnd);
                 /*chests.push_back(chest);
                 entities.push_back(chest);*/
                 entityMap[indexY][indexX] = chest;

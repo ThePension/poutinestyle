@@ -1,6 +1,15 @@
 #include "Chest.h"
-Chest::Chest(int hp, sf::Vector2f pos) : Entity(hp, pos) {
-	// Entity* droppedEntity = new Medikit(1, this->mapPos);
+Chest::Chest(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
+	// Create random entity for drop
+	switch (dropNumber)
+	{
+		case 0: // Ammo pack
+			droppedEntity = new Ammo(1, this->mapPos);
+			break;
+		case 1: // Medikit
+			droppedEntity = new Medikit(1, this->mapPos);
+			break;
+	}
 }
 void Chest::draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) {
 	if (isOpening) { // Opening chest

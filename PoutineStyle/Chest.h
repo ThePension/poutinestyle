@@ -2,14 +2,16 @@
 #include "Entity.h"
 #include "AnimatedVertexArray.h"
 #include "Medikit.h"
+#include "Ammo.h"
+
 class Chest : public Entity
 {
 private:
 	bool isOpening = false; // Must be False by default
 	bool isOpen = false;
-	Entity* droppedEntity = new Medikit(1, this->mapPos);;
+	Entity* droppedEntity = nullptr;
 public:
-	Chest(int hp, sf::Vector2f pos);
+	Chest(int hp, sf::Vector2f pos, int dropNumber);
 	void draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) override;
 	void update(float dt) override;
 	void setIsOpening() { isOpening = true; }

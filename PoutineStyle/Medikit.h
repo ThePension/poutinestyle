@@ -11,4 +11,3 @@ public:
 
 	AnimatedVertexArray RotatingAnimVA = AnimatedVertexArray("../PoutineStyle/pics/heartSprites.png", 64, 64, 0, 10);
 };
-
