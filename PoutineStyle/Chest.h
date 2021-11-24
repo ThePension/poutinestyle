@@ -4,7 +4,7 @@
 class Chest : public Entity
 {
 private:
-	bool isOpening = true; // Must be False by default
+	bool isOpening = false; // Must be False by default
 	bool isOpen = false;
 public:
 	Chest(int hp, sf::Vector2f pos);
@@ -12,5 +12,6 @@ public:
 	void update(float dt) override;
 
 	AnimatedVertexArray OpeningAnimVA = AnimatedVertexArray("../PoutineStyle/pics/chest.png", 32, 32, 0, 8);
+	AnimatedVertexArray ClosedChestAnimVA = AnimatedVertexArray("../PoutineStyle/pics/chest.png", 32, 32, 0, 1);
 };
 

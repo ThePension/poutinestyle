@@ -9,6 +9,7 @@ void Chest::draw(sf::RenderTarget& target, Player player, double* ZBuffer, int v
 	}
 	else if (!isOpen) { // Closed chest
 		// TO DO
+		this->ClosedChestAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
 	}
 	else if (isOpen) { // Open chest
 		// TO DO
@@ -19,7 +20,7 @@ void Chest::update(float dt) {
 		this->OpeningAnimVA.update(dt);
 	}
 	else if (!isOpen) { // Closed chest
-		// TO DO
+		// Nothing to do, no animation for closed chest
 	}
 	else if (isOpen) { // Open chest
 		// TO DO
