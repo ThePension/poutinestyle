@@ -449,17 +449,14 @@ void StatePlayGame::drawMap3D(double dt)
             bullet->isTravelling = false;
             bullet->isExplosing = true;
         }
-        else if (nextX == floor(player.position.x) && nextY == floor(player.position.y) // Ennemies bullets and Player collision
-                 && !bullet->getIsPlayerBullet()) 
+        else if (nextX == floor(player.position.x) && nextY == floor(player.position.y) && !bullet->getIsPlayerBullet()) // Ennemies bullets and Player collision
         { 
              if (bullet->isExplosing == false) player.loseLife();
-             bullet->isTravelling = false;
-             bullet->isExplosing = true;
 
-             
+             bullet->isTravelling = false;
+             bullet->isExplosing = true;             
 
              // If player is dead, lauch gameOver menu
-
         }
         else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
             if (bullet->isExplosing == false) {
@@ -696,6 +693,14 @@ void StatePlayGame::hud()
     gameManager->getRenderWindow()->draw(currentAmmunition);
     gameManager->getRenderWindow()->draw(score);
     gameManager->getRenderWindow()->draw(currentScore);
+
+    if (player.dead())
+    {
+        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false);
+        this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
+        this->gameManager->changeState(gameOverMenu);
+        return;
+    }
 
 }
 
