@@ -1,5 +1,7 @@
 #include "StatePauseMenu.h"
-StatePauseMenu::StatePauseMenu() {
+
+StatePauseMenu::StatePauseMenu()
+{
 
 }
 StatePauseMenu::~StatePauseMenu() {
