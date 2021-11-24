@@ -5,6 +5,8 @@
 #include "Button.h"
 #include "Entity.h"
 #include "Chest.h"
+#include "Ammo.h"
+#include "Medikit.h"
 #include "Bullet.h"
 #include <list>
 #include <numbers>

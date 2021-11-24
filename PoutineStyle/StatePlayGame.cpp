@@ -1,5 +1,5 @@
 #include "StatePlayGame.h"
-#include "Bullet.h"
+
 StatePlayGame::StatePlayGame(GameManager* game)
 {
     this->gameManager = game;
@@ -275,7 +275,17 @@ void StatePlayGame::drawMap3D(double dt)
             entitiesToDraw.remove(InteractedEntity);
             delete InteractedEntity; InteractedEntity = nullptr;
 
-            // Increase Player life
+            // Increase Player's life
+
+        }
+        else if (typeid(*InteractedEntity).name() == typeid(Ammo).name()) {
+            // Delete Ammo Entity
+            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
+            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
+            entitiesToDraw.remove(InteractedEntity);
+            delete InteractedEntity; InteractedEntity = nullptr;
+
+            // Increase player's Ammo
 
         }
     }
