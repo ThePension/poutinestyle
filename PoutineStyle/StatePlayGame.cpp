@@ -268,6 +268,16 @@ void StatePlayGame::drawMap3D(double dt)
             chest->setIsOpening();
             InteractedEntity = nullptr;
         }
+        else if (typeid(*InteractedEntity).name() == typeid(Medikit).name()) {
+            // Delete Medikit Entity
+            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
+            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
+            entitiesToDraw.remove(InteractedEntity);
+            delete InteractedEntity; InteractedEntity = nullptr;
+
+            // Increase Player life
+
+        }
     }
 #pragma endregion
 
