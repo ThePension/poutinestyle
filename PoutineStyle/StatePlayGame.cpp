@@ -336,8 +336,9 @@ void StatePlayGame::drawMap3D(double dt)
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
     sf::VertexArray lines(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
-
+    
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
+        int wallTextureNum = 3; // Need to be set depending on wall type (char)
         // Cell where the player is standing
         sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x), int(player.position.y));
 
@@ -393,13 +394,31 @@ void StatePlayGame::drawMap3D(double dt)
                 isWallHitHorizontal = false;
             }
 
-            if (   map[playerMapPos.y][playerMapPos.x] == '1'
-                || map[playerMapPos.y][playerMapPos.x] == 'D'
-                || map[playerMapPos.y][playerMapPos.x] == 'V'
-                || map[playerMapPos.y][playerMapPos.x] == 'W'
-                || map[playerMapPos.y][playerMapPos.x] == 'X'
-                || map[playerMapPos.y][playerMapPos.x] == 'Y'
-                || map[playerMapPos.y][playerMapPos.x] == 'Z') wallHit = true;
+            if (map[playerMapPos.y][playerMapPos.x] == '1') wallHit = true;
+            else if (map[playerMapPos.y][playerMapPos.x] == 'D') {
+                wallHit = true;
+                wallTextureNum = 8;
+            }
+            else if (map[playerMapPos.y][playerMapPos.x] == 'V') {
+                wallHit = true;
+                wallTextureNum = 9;
+            }
+            else if (map[playerMapPos.y][playerMapPos.x] == 'W') {
+                wallHit = true;
+                wallTextureNum = 10;
+            }
+            else if (map[playerMapPos.y][playerMapPos.x] == 'X') {
+                wallHit = true;
+                wallTextureNum = 11;
+            }
+            else if (map[playerMapPos.y][playerMapPos.x] == 'Y') {
+                wallHit = true;
+                wallTextureNum = 12;
+            }
+            else if (map[playerMapPos.y][playerMapPos.x] == 'Z') {
+                wallHit = true;
+                wallTextureNum = 13;
+            }
             else { //if (map[playerMapPos.y][playerMapPos.x] == 'E' || map[playerMapPos.y][playerMapPos.x] == 'C' || map[playerMapPos.y][playerMapPos.x] == 'L') {
                 // Add the entity in entitiesToDraw list if it's not already in
                 if (entityMap[playerMapPos.x][playerMapPos.y] != nullptr) {
@@ -434,7 +453,6 @@ void StatePlayGame::drawMap3D(double dt)
         int drawEnd = lineHeight / 2 + gameManager->getWindowHeight() / 2;
 
         // Texture stuff
-        int wallTextureNum = 3; // Need to be set depending on wall type (char)
         sf::Vector2i texture_coords(
             wallTextureNum * textureSize,
             0 // For the moment, all textures are on the same line (y coord) in textures.png file
