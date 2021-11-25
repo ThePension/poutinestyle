@@ -53,7 +53,7 @@ private:
 	std::list<Bullet*> bullets;
 
 	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
-	std::string mapFileName = "Map_Example3.txt";
+	std::string mapFileName = "Lvl1.txt";
 
 	sf::Texture wallTextures, weaponTexture, imgAimCursor;
 	sf::Sprite weaponSprite;
