@@ -504,10 +504,11 @@ void StatePlayGame::drawMap3D(double dt)
                 if(typeid(*entity).name() == typeid(Ennemy).name()){
                     Ennemy* ennemy = static_cast<Ennemy*>(entity);
                     if (ennemy->getToRemove()) {
+                        Entity* droppedEntity = ennemy->getDroppedEntity();
+                        entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = droppedEntity;
+                        map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = 'L';
                         entitiesToDraw.remove(ennemy);
                         ennemies.remove(ennemy);
-                        entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = nullptr;
-                        map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = '0';
                         delete ennemy; ennemy = nullptr;
                     }
                 }
