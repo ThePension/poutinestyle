@@ -207,7 +207,14 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
     newPosMapY = newPos.x;
     newPosMapX = newPos.y;
 
-    if (map[newPosMapX][newPosMapY] != '1')
+    if (   map[newPosMapX][newPosMapY] != '1'
+        && map[newPosMapX][newPosMapY] != 'D'
+        && map[newPosMapX][newPosMapY] != 'V'
+        && map[newPosMapX][newPosMapY] != 'W'
+        && map[newPosMapX][newPosMapY] != 'X'
+        && map[newPosMapX][newPosMapY] != 'Y'
+        && map[newPosMapX][newPosMapY] != 'Z'
+        )
     {
         // Move the player position (backward) depending on player direction
         player.position = newPos;
@@ -302,6 +309,25 @@ void StatePlayGame::drawMap3D(double dt)
             // Increase player's Ammo
             player.increaseAmmo();
         }
+        else if (typeid(*InteractedEntity).name() == typeid(Key).name()) {
+            // Delete Ammo Entity
+            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
+            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
+            entitiesToDraw.remove(InteractedEntity);
+
+            Key* key = static_cast<Key*>(InteractedEntity);
+
+            // Opened the corresponding door
+            for (int x = 0; x < mapSize; x++) {
+                for (int y = 0; y < mapSize; y++) {
+                    if (map[x][y] == key->getKeyCode()) map[x][y] = '0';
+                }
+            }
+
+            // Delete the key object
+            delete key; key = nullptr;
+            InteractedEntity = nullptr;
+        }
     }
 #pragma endregion
 
@@ -367,8 +393,14 @@ void StatePlayGame::drawMap3D(double dt)
                 isWallHitHorizontal = false;
             }
 
-            if (map[playerMapPos.y][playerMapPos.x] == '1') wallHit = true;
-            else if (map[playerMapPos.y][playerMapPos.x] == 'E' || map[playerMapPos.y][playerMapPos.x] == 'C' || map[playerMapPos.y][playerMapPos.x] == 'L') {
+            if (   map[playerMapPos.y][playerMapPos.x] == '1'
+                || map[playerMapPos.y][playerMapPos.x] == 'D'
+                || map[playerMapPos.y][playerMapPos.x] == 'V'
+                || map[playerMapPos.y][playerMapPos.x] == 'W'
+                || map[playerMapPos.y][playerMapPos.x] == 'X'
+                || map[playerMapPos.y][playerMapPos.x] == 'Y'
+                || map[playerMapPos.y][playerMapPos.x] == 'Z') wallHit = true;
+            else { //if (map[playerMapPos.y][playerMapPos.x] == 'E' || map[playerMapPos.y][playerMapPos.x] == 'C' || map[playerMapPos.y][playerMapPos.x] == 'L') {
                 // Add the entity in entitiesToDraw list if it's not already in
                 if (entityMap[playerMapPos.x][playerMapPos.y] != nullptr) {
                     bool isContained = false;
@@ -597,6 +629,12 @@ void StatePlayGame::parseMap2D()
             else if (map[indexX][indexY] == '1' || map[indexX][indexY] == '0') {
                 entityMap[indexY][indexX] = nullptr;
             }
+            else if (map[indexX][indexY] == 'd') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
+            else if (map[indexX][indexY] == 'v') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 1, 1), 'V');
+            else if (map[indexX][indexY] == 'w') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 2, 1), 'W');
+            else if (map[indexX][indexY] == 'x') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 3, 1), 'X');
+            else if (map[indexX][indexY] == 'y') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 4, 1), 'Y');
+            else if (map[indexX][indexY] == 'z') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
             indexY++;
         }
         indexX++;

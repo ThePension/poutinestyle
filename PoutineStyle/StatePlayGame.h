@@ -14,6 +14,7 @@
 #include <math.h>
 #include "StatePauseMenu.h"
 #include "StateGameOverMenu.h"
+#include "Key.h"
 
 class StatePlayGame : public GameState
 {
