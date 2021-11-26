@@ -15,6 +15,8 @@
 #include "StatePauseMenu.h"
 #include "StateGameOverMenu.h"
 #include "Key.h"
+#include "Portal.h"
+#include "StateMainMenu.h"
 
 class StatePlayGame : public GameState
 {
@@ -49,7 +51,7 @@ private:
 	std::list<Entity*> entities; // Contains every entities
 
 	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
-	std::string mapFileName = "Map_Example3.txt";
+	std::string mapFileName = "Lvl2.txt";
 
 	sf::Texture wallTextures, weaponTexture, imgAimCursor;
 	sf::Sprite weaponSprite;

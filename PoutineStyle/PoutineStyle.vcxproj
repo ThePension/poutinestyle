@@ -165,6 +165,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Medikit.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Portal.cpp" />
     <ClCompile Include="StateGameOverMenu.cpp" />
     <ClCompile Include="StateMainMenu.cpp" />
     <ClCompile Include="StatePauseMenu.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Key.h" />
     <ClInclude Include="Medikit.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Portal.h" />
     <ClInclude Include="StateGameOverMenu.h" />
     <ClInclude Include="StateMainMenu.h" />
     <ClInclude Include="StatePauseMenu.h" />

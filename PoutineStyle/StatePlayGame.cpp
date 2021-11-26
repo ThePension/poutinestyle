@@ -324,6 +324,11 @@ void StatePlayGame::drawMap3D(double dt)
             delete key; key = nullptr;
             InteractedEntity = nullptr;
         }
+        else if (typeid(*InteractedEntity).name() == typeid(Portal).name()) {
+            // StateMainMenu* stateMainMenu = new StateMainMenu(this->gameManager);
+            // this->gameManager->changeState(stateMainMenu);
+            // return;
+        }
     }
 #pragma endregion
 
@@ -617,7 +622,7 @@ void StatePlayGame::parseMap2D()
                 player.position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
             else if (map[indexX][indexY] == 'E') { // Ennemy
-                Ennemy* ennemy = new Ennemy(2, sf::Vector2f((float)indexY, (float)indexX));
+                Ennemy* ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX));
                 entities.push_back(ennemy);
                 entityMap[indexY][indexX] = ennemy;
             }
@@ -659,6 +664,11 @@ void StatePlayGame::parseMap2D()
                 Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
+            }
+            else if (map[indexX][indexY] == 'S') {
+                Portal* portal = new Portal(1, sf::Vector2f((float)indexY, (float)indexX));
+                entityMap[indexY][indexX] = portal;
+                entities.push_back(portal);
             }
             indexY++;
         }
@@ -813,9 +823,9 @@ void StatePlayGame::showCursor()
 }
 
 /// <summary>
-/// Return the first entity found near the player (1 cell around)
+/// Get the entity facing the player (1 block away max), otherwise nullptr
 /// </summary>
-/// <returns>Return * Entity</returns>
+/// <returns>Return * Entity or nullptr</returns>
 Entity* StatePlayGame::getInteractedEntity() {
     int playerDirectionPosX = floor(player.position.x + 1.0 * player.direction.x);
     int playerDirectionPosY = floor(player.position.y + 1.0 * player.direction.y);
