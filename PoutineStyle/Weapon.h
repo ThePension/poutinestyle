@@ -1,17 +1,20 @@
 #pragma once
 #include "Animation.h"
+class Bullet;
+class AnimatedVertexArray;
+
 class Weapon
 {
-private:
+protected:
 	sf::Sprite weaponSprite = sf::Sprite();
-	Animation shootAnimation = Animation(0, 0, 105, 105, "../PoutineStyle/pics/gunTexture.png");
-	double shootCadendy = 1;
+	Animation shootAnimation;
 	int damage = 1;
+	bool isShooting = false;
 
 public:
-	Weapon();
-	Weapon(double shootCadency, int damage, Animation shootAnim);
-	void draw(sf::RenderTarget& target) const;
-	void update(float dt);
+	Weapon(int damage, Animation shootAnim = Animation(0, 0, 105, 105, "../PoutineStyle/pics/gunTexture.png"));
+	virtual void draw(sf::RenderTarget& target) = 0;
+	virtual void update(float dt) = 0;
+	virtual Bullet* shoot(sf::Vector2f direction, sf::Vector2f position) = 0;
 	Animation getShootAnimation() { return this->shootAnimation; }
 };
