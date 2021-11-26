@@ -2,8 +2,7 @@
 #include <random>
 
 Ennemy::Ennemy(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
-	srand(time(NULL)); // Randomize seed
-        // Create random entity for drop
+    // Create random entity for drop
     switch (dropNumber)
     {
         case 0: // Ammo pack

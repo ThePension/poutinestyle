@@ -622,7 +622,8 @@ void StatePlayGame::parseMap2D()
                 player.position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
             else if (map[indexX][indexY] == 'E') { // Ennemy
-                Ennemy* ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX));
+                rnd = (rand() % 2); // Between 0 and 1
+                Ennemy* ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(ennemy);
                 entityMap[indexY][indexX] = ennemy;
             }
