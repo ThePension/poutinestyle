@@ -27,6 +27,6 @@ public:
 	Entity* getDroppedEntity() { return this->droppedEntity; }
 
 	AnimatedVertexArray walkAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 64, 0, 8);
-	AnimatedVertexArray shootAnimVA = AnimatedVertexArray("../PoutineStyle/pics/shootingEnnemy.png", 64, 64, 0, 3, 1.0);
+	AnimatedVertexArray shootAnimVA = AnimatedVertexArray("../PoutineStyle/pics/shootingEnnemy.png", 64, 64, 0, 5, 0.3);
 	AnimatedVertexArray dieAnimVA = AnimatedVertexArray("../PoutineStyle/pics/dyingEnnemy.png", 64, 64, 0, 4, 0.3);
 };

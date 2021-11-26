@@ -222,7 +222,8 @@ void StatePlayGame::draw(double dt)
     if(isMapDisplayed) drawMap2D();
     else
     {
-        drawMap3D(dt);
+        renderingWalls(dt);
+        renderingEntities(dt);
         hud();
     }
 }
@@ -272,66 +273,8 @@ void StatePlayGame::drawMap2D()
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
 
-void StatePlayGame::RenderingFloor(double dt) {
-    
-}
-
-void StatePlayGame::drawMap3D(double dt)
+void StatePlayGame::renderingWalls(double dt)
 {
-#pragma region Entity Interaction Management
-    if (InteractedEntity != nullptr) {
-        if (typeid(*InteractedEntity).name() == typeid(Chest).name()) { // Chest interaction
-            Chest* chest = static_cast<Chest*>(InteractedEntity);
-            chest->setIsOpening();
-            InteractedEntity = nullptr;
-        }
-        else if (typeid(*InteractedEntity).name() == typeid(Medikit).name()) {
-            // Delete Medikit Entity
-            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
-            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
-            entities.remove(InteractedEntity);
-            delete InteractedEntity; InteractedEntity = nullptr;
-
-            // Increase Player's life
-            player.increaseLife();
-        }
-        else if (typeid(*InteractedEntity).name() == typeid(Ammo).name()) {
-            // Delete Ammo Entity
-            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
-            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
-            entities.remove(InteractedEntity);
-            delete InteractedEntity; InteractedEntity = nullptr;
-
-            // Increase player's Ammo
-            player.increaseAmmo();
-        }
-        else if (typeid(*InteractedEntity).name() == typeid(Key).name()) {
-            // Delete Ammo Entity
-            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
-            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
-            entities.remove(InteractedEntity);
-
-            Key* key = static_cast<Key*>(InteractedEntity);
-
-            // Opened the corresponding door
-            for (int x = 0; x < mapSize; x++) {
-                for (int y = 0; y < mapSize; y++) {
-                    if (map[x][y] == key->getKeyCode()) map[x][y] = '0';
-                }
-            }
-
-            // Delete the key object
-            delete key; key = nullptr;
-            InteractedEntity = nullptr;
-        }
-        else if (typeid(*InteractedEntity).name() == typeid(Portal).name()) {
-            // StateMainMenu* stateMainMenu = new StateMainMenu(this->gameManager);
-            // this->gameManager->changeState(stateMainMenu);
-            // return;
-        }
-    }
-#pragma endregion
-
 #pragma region Rendering Walls
     yOffset = 0; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
@@ -486,11 +429,67 @@ void StatePlayGame::drawMap3D(double dt)
     lines.resize(2 * w);
 
 #pragma endregion
+}
+
+void StatePlayGame::renderingEntities(double dt) {
+#pragma region Entity Interaction Management
+    if (InteractedEntity != nullptr) {
+        if (typeid(*InteractedEntity).name() == typeid(Chest).name()) { // Chest interaction
+            Chest* chest = static_cast<Chest*>(InteractedEntity);
+            chest->setIsOpening();
+            InteractedEntity = nullptr;
+        }
+        else if (typeid(*InteractedEntity).name() == typeid(Medikit).name()) {
+            // Delete Medikit Entity
+            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
+            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
+            entities.remove(InteractedEntity);
+            delete InteractedEntity; InteractedEntity = nullptr;
+
+            // Increase Player's life
+            player.increaseLife();
+        }
+        else if (typeid(*InteractedEntity).name() == typeid(Ammo).name()) {
+            // Delete Ammo Entity
+            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
+            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
+            entities.remove(InteractedEntity);
+            delete InteractedEntity; InteractedEntity = nullptr;
+
+            // Increase player's Ammo
+            player.increaseAmmo();
+        }
+        else if (typeid(*InteractedEntity).name() == typeid(Key).name()) {
+            // Delete Ammo Entity
+            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
+            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
+            entities.remove(InteractedEntity);
+
+            Key* key = static_cast<Key*>(InteractedEntity);
+
+            // Opened the corresponding door
+            for (int x = 0; x < mapSize; x++) {
+                for (int y = 0; y < mapSize; y++) {
+                    if (map[x][y] == key->getKeyCode()) map[x][y] = '0';
+                }
+            }
+
+            // Delete the key object
+            delete key; key = nullptr;
+            InteractedEntity = nullptr;
+        }
+        else if (typeid(*InteractedEntity).name() == typeid(Portal).name()) {
+            // StateMainMenu* stateMainMenu = new StateMainMenu(this->gameManager);
+            // this->gameManager->changeState(stateMainMenu);
+            // return;
+        }
+    }
+#pragma endregion
 
 #pragma region Rendering Textured Entities (Sprites)
     // Calculate distance for every entities
     for (Entity* entity : entities) {
-        if(entity->getToDraw()) entity->calculateDistanceUntilPlayer(player);
+        if (entity->getToDraw()) entity->calculateDistanceUntilPlayer(player);
 
         if (typeid(*entity).name() == typeid(Bullet).name()) {
             Bullet* bullet = static_cast<Bullet*>(entity);
@@ -538,7 +537,7 @@ void StatePlayGame::drawMap3D(double dt)
         for (int y = 0; y < 32; y++) {
             Entity* entity = entityMap[x][y];
             if (entity != nullptr) {
-                if(typeid(*entity).name() == typeid(Ennemy).name()){
+                if (typeid(*entity).name() == typeid(Ennemy).name()) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entity);
                     if (ennemy->getToRemove()) {
                         Entity* droppedEntity = ennemy->getDroppedEntity();
@@ -575,7 +574,7 @@ void StatePlayGame::drawMap3D(double dt)
 
     // Sort entities by distanceFromPlayer using lambda expression (needed to avoid overlapping sprites)
     entities.sort([](Entity* e1, Entity* e2) { return (abs(e1->getDistance()) > abs(e2->getDistance())); });
-    
+
     // Draw and update all entities
     for (Entity* entity : entities) {
         if (typeid(*entity).name() == typeid(Ennemy).name()) {
@@ -587,12 +586,12 @@ void StatePlayGame::drawMap3D(double dt)
             // Get the unit vector
             sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
             Bullet* bullet = ennemy->shoot(bulletDirUnit, this->player.position, this->map);
-            if(bullet != nullptr) entities.push_back(bullet);
+            if (bullet != nullptr) entities.push_back(bullet);
         }
         entity->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight());
         entity->update(dt); // Update the animation
     }
-    
+
 #pragma endregion
 
 #pragma region Rendering player sprites
@@ -600,8 +599,8 @@ void StatePlayGame::drawMap3D(double dt)
     player.update(dt);
     showCursor();
 #pragma endregion
-
 }
+
 void StatePlayGame::parseMap2D()
 {
     std::string tempText;

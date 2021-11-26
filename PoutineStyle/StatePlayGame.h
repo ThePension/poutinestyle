@@ -63,9 +63,9 @@ private:
 	void handleInput(double deltatime) override;
 	void parseMap2D();
 	void drawMap2D();
-	void drawMap3D(double dt);
+	void renderingWalls(double dt);
+	void renderingEntities(double dt);
 	void showCursor();
-	void RenderingFloor(double dt);
 	void updatePlayerPosition(sf::Vector2f newPos);
 	void hud();
 	void pause();
