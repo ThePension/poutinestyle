@@ -2,12 +2,13 @@
 Bullet::Bullet(int hp, sf::Vector2f pos, sf::Vector2f vel, bool isPlayerBullet) : Entity(hp, pos) {
 	this->vel = vel;
 	this->isPlayerBullet = isPlayerBullet;
+	this->toDraw = true;
 }
 void Bullet::draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) {
 	if (isTravelling) {
 		this->travellingAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
 	}
-	else if(isExplosing) {
+	else if (isExplosing) {
 		this->explosingAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
 	}
 }

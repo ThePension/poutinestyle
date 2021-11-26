@@ -12,14 +12,13 @@ Chest::Chest(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
 	}
 }
 void Chest::draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) {
-	if (isOpening) { // Opening chest
-		this->OpeningAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
-	}
-	else if (!isOpen) { // Closed chest
-		this->ClosedChestAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
-	}
-	else if (isOpen) { // Open chest
-		// TO DO
+	if (toDraw) {
+		if (isOpening) { // Opening chest
+			this->OpeningAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+		}
+		else if (!isOpen) { // Closed chest
+			this->ClosedChestAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+		}
 	}
 }
 void Chest::update(float dt) {
@@ -29,11 +28,5 @@ void Chest::update(float dt) {
 			this->isOpening = false;
 			this->toRemove = true;
 		}
-	}
-	else if (!isOpen) { // Closed chest
-		// Nothing to do, no animation for closed chest
-	}
-	else if (isOpen) { // Open chest
-		// TO DO
 	}
 }

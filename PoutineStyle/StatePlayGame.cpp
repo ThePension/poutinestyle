@@ -53,18 +53,11 @@ StatePlayGame::~StatePlayGame()
 {
     for (int x = 0; x < gameManager->getWindowWidth(); x++) {
         for (int y = 0; y < gameManager->getWindowHeight(); y++) {
-            // delete map[x][y];
-            delete entityMap[x][y]; entityMap[x][y] = nullptr;
+            if (entityMap[x][y] != nullptr) {
+                entities.remove(entityMap[x][y]);
+                delete entityMap[x][y]; entityMap[x][y] = nullptr;
+            }
         }
-    }
-    for(Entity * entity : entitiesToDraw) {
-        delete entity; entity = nullptr;
-    }
-    for (Ennemy* ennemy : ennemies) {
-        delete ennemy; ennemy = nullptr;
-    }
-    for (Chest* chest : chests) {
-        delete chest; chest = nullptr;
     }
 }
 void StatePlayGame::handleInput(double deltatime)
@@ -131,7 +124,10 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
         {
-            player.shoot(bullets, player.direction);
+            Bullet * bullet = player.shoot(player.direction);
+            if (bullet != nullptr) {
+                entities.push_back(bullet);
+            }
         }
     }
 }
@@ -293,7 +289,7 @@ void StatePlayGame::drawMap3D(double dt)
             // Delete Medikit Entity
             entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
             map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
-            entitiesToDraw.remove(InteractedEntity);
+            entities.remove(InteractedEntity);
             delete InteractedEntity; InteractedEntity = nullptr;
 
             // Increase Player's life
@@ -303,7 +299,7 @@ void StatePlayGame::drawMap3D(double dt)
             // Delete Ammo Entity
             entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
             map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
-            entitiesToDraw.remove(InteractedEntity);
+            entities.remove(InteractedEntity);
             delete InteractedEntity; InteractedEntity = nullptr;
 
             // Increase player's Ammo
@@ -313,7 +309,7 @@ void StatePlayGame::drawMap3D(double dt)
             // Delete Ammo Entity
             entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
             map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
-            entitiesToDraw.remove(InteractedEntity);
+            entities.remove(InteractedEntity);
 
             Key* key = static_cast<Key*>(InteractedEntity);
 
@@ -420,13 +416,8 @@ void StatePlayGame::drawMap3D(double dt)
                 wallTextureNum = 13;
             }
             else { //if (map[playerMapPos.y][playerMapPos.x] == 'E' || map[playerMapPos.y][playerMapPos.x] == 'C' || map[playerMapPos.y][playerMapPos.x] == 'L') {
-                // Add the entity in entitiesToDraw list if it's not already in
                 if (entityMap[playerMapPos.x][playerMapPos.y] != nullptr) {
-                    bool isContained = false;
-                    for (Entity* entity : entitiesToDraw) {
-                        if (entityMap[playerMapPos.x][playerMapPos.y]->mapPos == entity->mapPos) isContained = true;
-                    }
-                    if(!isContained) entitiesToDraw.push_back(entityMap[playerMapPos.x][playerMapPos.y]);
+                    entityMap[playerMapPos.x][playerMapPos.y]->setToDraw(true);
                 }
             }
             if (isWallHitHorizontal) perpWallDist = sideDistX - deltaDistX;
@@ -492,59 +483,49 @@ void StatePlayGame::drawMap3D(double dt)
 #pragma endregion
 
 #pragma region Rendering Textured Entities (Sprites)
-    // Calculate distance between every entities and the player (needed for sorting entities)
-    for (Entity* entity : entitiesToDraw) {
-        entity->calculateDistanceUntilPlayer(this->player);
-    }
+    // Calculate distance for every entities
+    for (Entity* entity : entities) {
+        if(entity->getToDraw()) entity->calculateDistanceUntilPlayer(player);
 
-    // Calculate distance for bullets
-    for (Bullet* bullet : bullets) {
-        // Check if the bullet hit something
-        int nextX = floor((float)bullet->mapPos.x + 0.5 + bullet->getVelocity().x * dt * 10.f);
-        int nextY = floor((float)bullet->mapPos.y + 0.5 + bullet->getVelocity().y * dt * 10.f);
+        if (typeid(*entity).name() == typeid(Bullet).name()) {
+            Bullet* bullet = static_cast<Bullet*>(entity);
+            // Check if the bullet hit something
+            int nextX = floor((float)bullet->mapPos.x + 0.5 + bullet->getVelocity().x * dt * 10.f);
+            int nextY = floor((float)bullet->mapPos.y + 0.5 + bullet->getVelocity().y * dt * 10.f);
 
-        if (nextX < 0 || nextY < 0 || nextX > mapSize - 1 || nextY > mapSize - 1){
-            bullet->isTravelling = false;
-            bullet->isExplosing = true;
-        }
-        else if (map[nextY][nextX] == '1') { // Bullet and Wall collision
-            bullet->isTravelling = false;
-            bullet->isExplosing = true;
-        }
-        else if (nextX == floor(player.position.x) && nextY == floor(player.position.y) && !bullet->getIsPlayerBullet()) // Ennemies bullets and Player collision
-        { 
-             if (bullet->isExplosing == false) player.loseLife();
+            if (nextX < 0 || nextY < 0 || nextX > mapSize - 1 || nextY > mapSize - 1) {
+                bullet->isTravelling = false;
+                bullet->isExplosing = true;
+            }
+            else if (map[nextY][nextX] == '1') { // Bullet and Wall collision
+                bullet->isTravelling = false;
+                bullet->isExplosing = true;
+            }
+            else if (nextX == floor(player.position.x) && nextY == floor(player.position.y) && !bullet->getIsPlayerBullet()) // Ennemies bullets and Player collision
+            {
+                if (bullet->isExplosing == false) player.loseLife();
 
-             bullet->isTravelling = false;
-             bullet->isExplosing = true;             
+                bullet->isTravelling = false;
+                bullet->isExplosing = true;
 
-             // If player is dead, lauch gameOver menu
-        }
-        else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
-            if (bullet->isExplosing == false) {
-                Ennemy* ennemy = static_cast<Ennemy*>(entityMap[nextX][nextY]);
-                if (ennemy != nullptr) {
-                    ennemy->decreaseHP(bullet->getDamage());
-                    // Remove the ennemy if his HP are under 1
-                    if (ennemy->getHP() <= 0) {
-                        ennemy->setIsDying();
+                // If player is dead, lauch gameOver menu
+            }
+            else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
+                if (bullet->isExplosing == false) {
+                    Ennemy* ennemy = static_cast<Ennemy*>(entityMap[nextX][nextY]);
+                    if (ennemy != nullptr) {
+                        ennemy->decreaseHP(bullet->getDamage());
+                        // Remove the ennemy if his HP are under 1
+                        if (ennemy->getHP() <= 0) {
+                            ennemy->setIsDying();
+                        }
                     }
                 }
+                bullet->isTravelling = false;
+                bullet->isExplosing = true;
             }
-            bullet->isTravelling = false;
-            bullet->isExplosing = true;
         }
-        bullet->calculateDistanceUntilPlayer(this->player);
     }
-
-    // Delete bullets that must be deleted
-    bullets.remove_if([](Bullet* b) {
-        if (b->getToRemove()) {
-            delete b;
-            return true;
-        }
-        return false;
-    });
 
     // Clear dead ennemies and opened chests
     for (int x = 0; x < 32; x++) {
@@ -556,9 +537,9 @@ void StatePlayGame::drawMap3D(double dt)
                     if (ennemy->getToRemove()) {
                         Entity* droppedEntity = ennemy->getDroppedEntity();
                         entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = droppedEntity;
+                        entities.push_back(droppedEntity);
                         map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = 'L';
-                        entitiesToDraw.remove(ennemy);
-                        ennemies.remove(ennemy);
+                        entities.remove(ennemy);
                         delete ennemy; ennemy = nullptr;
                     }
                 }
@@ -568,8 +549,9 @@ void StatePlayGame::drawMap3D(double dt)
                     if (chest->getToRemove()) {
                         Entity* droppedEntity = chest->getDroppedEntity();
                         entityMap[(int)chest->mapPos.x][(int)chest->mapPos.y] = droppedEntity;
+                        entities.push_back(droppedEntity);
                         map[(int)chest->mapPos.y][(int)chest->mapPos.x] = 'L';
-                        entitiesToDraw.remove(chest);
+                        entities.remove(chest);
                         delete chest; chest = nullptr;
                     }
                 }
@@ -577,32 +559,34 @@ void StatePlayGame::drawMap3D(double dt)
         }
     }
 
-    // Add remaining bullets in entitiesToDraw list
-    for (Bullet* bullet : bullets) {
-        entitiesToDraw.push_back(bullet);
-    }
-    // Sort entities by distanceFromPlayer using lambda expression (needed to avoid overlapping sprites)
-    entitiesToDraw.sort([](Entity* e1, Entity* e2) { return (abs(e1->getDistance()) > abs(e2->getDistance())); });
-    
-    // Draw all visible entities
-    for (Entity* entity : entitiesToDraw) {
-        entity->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight()); // Draw entity
-        if (typeid(*entity).name() != typeid(Ennemy).name()) entity->update(dt); // Ennemy update is already done behind
-    }
+    entities.remove_if([](Entity* b) {
+        if (b->getToRemove()) {
+            delete b;
+            return true;
+        }
+        return false;
+    });
 
-    for (Ennemy* ennemy : ennemies) {
-        // Calculate the direction of the bullet (aiming the player)
-        sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
-        // Get the norm of the direction vector
-        double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
-        // Get the unit vector
-        sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
-        ennemy->shoot(bullets, bulletDirUnit, this->player.position, this->map);
-        ennemy->update(dt); // Update the animation
+    // Sort entities by distanceFromPlayer using lambda expression (needed to avoid overlapping sprites)
+    entities.sort([](Entity* e1, Entity* e2) { return (abs(e1->getDistance()) > abs(e2->getDistance())); });
+    
+    // Draw and update all entities
+    for (Entity* entity : entities) {
+        if (typeid(*entity).name() == typeid(Ennemy).name()) {
+            Ennemy* ennemy = static_cast<Ennemy*>(entity);
+            // Calculate the direction of the bullet (aiming the player)
+            sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
+            // Get the norm of the direction vector
+            double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
+            // Get the unit vector
+            sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
+            Bullet* bullet = ennemy->shoot(bulletDirUnit, this->player.position, this->map);
+            if(bullet != nullptr) entities.push_back(bullet);
+        }
+        entity->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight());
+        entity->update(dt); // Update the animation
     }
     
-    // Clear entitiesToDraw list
-    entitiesToDraw.clear();
 #pragma endregion
 
 #pragma region Rendering player sprites
@@ -632,27 +616,50 @@ void StatePlayGame::parseMap2D()
             {
                 player.position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
-            else if(map[indexX][indexY] == 'E'){ // Ennemy
-                Ennemy *ennemy = new Ennemy(2, sf::Vector2f((float)indexY, (float)indexX));
-                ennemies.push_back(ennemy);
+            else if (map[indexX][indexY] == 'E') { // Ennemy
+                Ennemy* ennemy = new Ennemy(2, sf::Vector2f((float)indexY, (float)indexX));
+                entities.push_back(ennemy);
                 entityMap[indexY][indexX] = ennemy;
             }
             else if (map[indexX][indexY] == 'C') { // Chest
                 rnd = (rand() % 2); // Between 0 and 1
                 Chest* chest = new Chest(1, sf::Vector2f((float)indexY, (float)indexX), rnd);
-                /*chests.push_back(chest);
-                entities.push_back(chest);*/
+                entities.push_back(chest);
                 entityMap[indexY][indexX] = chest;
             }
             else if (map[indexX][indexY] == '1' || map[indexX][indexY] == '0') {
                 entityMap[indexY][indexX] = nullptr;
             }
-            else if (map[indexX][indexY] == 'd') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
-            else if (map[indexX][indexY] == 'v') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 1, 1), 'V');
-            else if (map[indexX][indexY] == 'w') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 2, 1), 'W');
-            else if (map[indexX][indexY] == 'x') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 3, 1), 'X');
-            else if (map[indexX][indexY] == 'y') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 4, 1), 'Y');
-            else if (map[indexX][indexY] == 'z') entityMap[indexY][indexX] = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
+            else if (map[indexX][indexY] == 'd') {
+                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
+                entityMap[indexY][indexX] = key;
+                entities.push_back(key);
+            }
+            else if (map[indexX][indexY] == 'v') {
+                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 1, 1), 'V');
+                entityMap[indexY][indexX] = key;
+                entities.push_back(key);
+            }
+            else if (map[indexX][indexY] == 'w'){
+                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 2, 1), 'W');
+                entityMap[indexY][indexX] = key;
+                entities.push_back(key);
+            }
+            else if (map[indexX][indexY] == 'x') {
+                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 3, 1), 'X');
+                entityMap[indexY][indexX] = key;
+                entities.push_back(key);
+            }
+            else if (map[indexX][indexY] == 'y') {
+                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 4, 1), 'Y');
+                entityMap[indexY][indexX] = key;
+                entities.push_back(key);
+            }
+            else if (map[indexX][indexY] == 'z'){
+                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
+                entityMap[indexY][indexX] = key;
+                entities.push_back(key);
+            }
             indexY++;
         }
         indexX++;

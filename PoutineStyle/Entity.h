@@ -7,6 +7,7 @@ protected:
 	int HP = 1;
 	float distUntilPlay = 0;
 	bool toRemove = false;
+	bool toDraw = false;
 public:
 	Entity(int HP, sf::Vector2f mapPos);
 	virtual void draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) = 0;
@@ -21,4 +22,6 @@ public:
 	void decreaseHP(int damage) { this->HP -= damage; }
 	void setToRemove(bool b) { this->toRemove = b; }
 	bool getToRemove() { return this->toRemove; }
+	void setToDraw(bool toDraw) { this->toDraw = toDraw; }
+	bool getToDraw() { return this->toDraw; }
 };

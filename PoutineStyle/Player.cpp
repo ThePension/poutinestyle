@@ -12,7 +12,7 @@ void Player::update(float dt) {
 		if (weapon->getShootAnimation().isAnimationOver) isShooting = false;
 	}	
 }
-void Player::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction){
+Bullet* Player::shoot(sf::Vector2f direction){
 	if (Player::currentAmmunition > 0)
 	{
 		if (weapon->getShootAnimation().isAnimationOver) {
@@ -29,12 +29,14 @@ void Player::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction){
 			// Create a bullet
 			sf::Vector2f bulletPos = sf::Vector2f(this->position.x - 0.5 + 2.0 * this->direction.x, this->position.y - 0.5 + 2.0 * this->direction.y);
 			Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, true);
-			bullets.push_back(bullet);
 
 			// Decrement ammunition
 			Player::currentAmmunition--;
+
+			return bullet;
 		}
 	}
+	return nullptr;
 }
 
 void Player::reload()

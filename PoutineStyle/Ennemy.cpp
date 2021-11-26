@@ -16,16 +16,18 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
 }
 
 void Ennemy::draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) {
-	if (isShooting) {
-		this->shootAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
-	}
-	else if(isWalking) { /* Do stuff */ }
-    else if (isDying) {
-        this->dieAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+    if (toDraw) {
+        if (isShooting) {
+            this->shootAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+        }
+        else if (isWalking) { /* Do stuff */ }
+        else if (isDying) {
+            this->dieAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+        }
+        else {
+            this->shootAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+        }
     }
-	else {
-		this->shootAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
-	}
 }
 
 void Ennemy::update(float dt) {
@@ -43,7 +45,7 @@ void Ennemy::update(float dt) {
     }
 }
 
-void Ennemy::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction, sf::Vector2f playerPos, char** map) {
+Bullet* Ennemy::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map) {
     bool bIsPlayerVisible = isPlayerVisible(playerPos, map);
 	if (shootAnimVA.getIsAnimationOver() && bIsPlayerVisible) {
 		isShooting = true;
@@ -57,8 +59,9 @@ void Ennemy::shoot(std::list<Bullet*>& bullets, sf::Vector2f direction, sf::Vect
 		// Create a bullet
 		sf::Vector2f bulletPos = sf::Vector2f((this->mapPos.x), (this->mapPos.y));
 		Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, false);
-		bullets.push_back(bullet);
+        return bullet;
 	}
+    return nullptr;
 }
 bool Ennemy::isPlayerVisible(sf::Vector2f playerPos, char** map) {
     // Get the player position relative to the ennemy position

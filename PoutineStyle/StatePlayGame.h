@@ -46,14 +46,10 @@ private:
 
 	char** map;
 	Entity* entityMap[32][32]; // A map with entity Objects
-	std::list<Entity*> entitiesToDraw; // Contains Entity Objects that must be drawn
-
-	std::list<Ennemy*> ennemies; // Contains Ennemy Objects
-	std::list<Chest*> chests; // Contains Chest Objects
-	std::list<Bullet*> bullets;
+	std::list<Entity*> entities; // Contains every entities
 
 	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
-	std::string mapFileName = "Lvl1.txt";
+	std::string mapFileName = "Map_Example3.txt";
 
 	sf::Texture wallTextures, weaponTexture, imgAimCursor;
 	sf::Sprite weaponSprite;

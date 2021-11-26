@@ -20,7 +20,7 @@ public:
 	Ennemy(int hp, sf::Vector2f pos, int dropNumber = 0);
 	void draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) override;
 	void update(float dt) override;
-	void shoot(std::list<Bullet*>& bullets, sf::Vector2f direction, sf::Vector2f playerPos, char** map);
+	Bullet * shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map);
 	bool isPlayerVisible(sf::Vector2f playerPos, char** map);
 	void setIsDying() { this->isDying = true; this->isShooting = false; this->isWalking = false; }
 	Entity* getDroppedEntity() { return this->droppedEntity; }

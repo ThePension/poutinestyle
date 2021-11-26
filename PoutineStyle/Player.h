@@ -19,7 +19,7 @@ public:
 	Player();
 	void draw(sf::RenderTarget& target) const;
 	void update(float dt);
-	void shoot(std::list<Bullet*>& bullets, sf::Vector2f direction);
+	Bullet * shoot(sf::Vector2f direction);
 
 	int getLive() {
 		return live;
