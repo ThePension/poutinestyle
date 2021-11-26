@@ -16,6 +16,7 @@ private:
 	bool isWalking = false;
 	bool isDying = false;
 	Entity* droppedEntity = nullptr;
+	double shootCooldown = 1.0;
 public:
 	Ennemy(int hp, sf::Vector2f pos, int dropNumber = 0);
 	void draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) override;
@@ -25,7 +26,7 @@ public:
 	void setIsDying() { this->isDying = true; this->isShooting = false; this->isWalking = false; }
 	Entity* getDroppedEntity() { return this->droppedEntity; }
 
-	AnimatedVertexArray walkAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 55, 6, 8);
-	AnimatedVertexArray shootAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 55, 6, 8);
-	AnimatedVertexArray dieAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 55, 7, 8);
+	AnimatedVertexArray walkAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 64, 0, 8);
+	AnimatedVertexArray shootAnimVA = AnimatedVertexArray("../PoutineStyle/pics/shootingEnnemy.png", 64, 64, 0, 3, 1.0);
+	AnimatedVertexArray dieAnimVA = AnimatedVertexArray("../PoutineStyle/pics/dyingEnnemy.png", 64, 64, 0, 4, 0.3);
 };

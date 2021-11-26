@@ -1,12 +1,13 @@
 #include "AnimatedVertexArray.h"
 sf::VertexArray AnimatedVertexArray::vertStripesArray = sf::VertexArray(sf::Lines, 0);
-AnimatedVertexArray::AnimatedVertexArray(std::string texturesPath, int spriteHeight, int spriteWidth, int y, int totalFrame) {
+AnimatedVertexArray::AnimatedVertexArray(std::string texturesPath, int spriteHeight, int spriteWidth, int y, int totalFrame, double holdTime) {
     this->textures = sf::Texture();
     this->textures.loadFromFile(texturesPath);
 	this->spriteHeight = spriteHeight;
     this->spriteWidth = spriteWidth;
     this->y = y;
 	this->nbFrames = totalFrame;
+    this->frameDuration = holdTime;
 }
 void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapPos, Player player, double* ZBuffer, int viewWidth, int viewHeight) { 
     int yOffset = 0;

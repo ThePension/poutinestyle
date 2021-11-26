@@ -510,8 +510,9 @@ void StatePlayGame::drawMap3D(double dt)
             {
                 if (bullet->isExplosing == false) player.loseLife();
 
-                bullet->isTravelling = false;
-                bullet->isExplosing = true;
+                // bullet->isTravelling = false;
+                // bullet->isExplosing = true;
+                bullet->setToRemove(true);
 
                 // If player is dead, lauch gameOver menu
             }

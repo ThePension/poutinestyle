@@ -18,7 +18,7 @@ private:
 
 	static sf::VertexArray vertStripesArray;
 public:
-	AnimatedVertexArray(std::string texturesPath, int spriteHeight, int spriteWidth, int y, int totalFrame);
+	AnimatedVertexArray(std::string texturesPath, int spriteHeight, int spriteWidth, int y, int totalFrame, double holdTime = 0.1);
 	void draw(sf::RenderTarget& target, sf::Vector2f entityMapPos, Player player, double* ZBuffer, int viewWidth, int viewHeight); // Draw the VertexArray on screen (do the raycast)
 	void update(float dt); // Anime the VertexArray
 	static double map(double value, double start1, double stop1, double start2, double stop2) {
