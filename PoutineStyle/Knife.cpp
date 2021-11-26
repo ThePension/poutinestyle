@@ -20,7 +20,7 @@ Bullet * Knife::shoot(sf::Vector2f direction, sf::Vector2f position)
 {
 	if (shootAnimation.isAnimationOver) {
 		isShooting = true;
-
+		/*
 		// Add noise to the bullet direction
 		double xNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
 		xNoise = AnimatedVertexArray::map(xNoise, 0, 0.1, -0.1, 0.1);
@@ -33,6 +33,8 @@ Bullet * Knife::shoot(sf::Vector2f direction, sf::Vector2f position)
 		sf::Vector2f bulletPos = sf::Vector2f(position.x - 0.5 + 2.0 * direction.x, position.y - 0.5 + 2.0 * direction.y);
 		Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, true);
 
-		return bullet;
+		return bullet;*/
+		return nullptr;
 	}
+	return nullptr;
 }

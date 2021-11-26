@@ -53,7 +53,7 @@ private:
 	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
 	std::string mapFileName = "Map_Example3.txt";
 
-	sf::Texture wallTextures, weaponTexture, imgAimCursor;
+	sf::Texture wallTextures, imgAimCursor;
 	sf::Sprite weaponSprite;
 	double ZBuffer[1032]; // Contains perpendicular distance from player to closest wall (usefull for rendering Entity object)
 

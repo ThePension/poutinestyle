@@ -162,6 +162,7 @@
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="Key.cpp" />
+    <ClCompile Include="Knife.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Medikit.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Key.h" />
+    <ClInclude Include="Knife.h" />
     <ClInclude Include="Medikit.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Portal.h" />

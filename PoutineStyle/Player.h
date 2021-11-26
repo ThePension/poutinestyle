@@ -1,13 +1,15 @@
 #pragma once
 #include "Weapon.h"
 #include "Animation.h"
+#include "Knife.h"
 class Bullet;
 #include <list>
 class Player
 {
 private:
-	Weapon * weapon;
-	bool isShooting = false;
+	Knife * knife;
+	Weapon * currentWeapon = nullptr;
+	Weapon * secondaryWeapon = nullptr;
 	bool isDead = false;
 	int live = 3;
 	int health = 100;
@@ -20,7 +22,8 @@ public:
 	void draw(sf::RenderTarget& target) const;
 	void update(float dt);
 	Bullet * shoot(sf::Vector2f direction);
-
+	Weapon* getCurrentWeapon() { return this->currentWeapon; }
+	void switchWeapon();
 	int getLive() {
 		return live;
 	}

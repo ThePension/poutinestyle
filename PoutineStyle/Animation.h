@@ -3,6 +3,7 @@
 class Animation
 {
 public:
+	Animation() {}
 	Animation(int x, int y, int width, int height, std::string texturePath);
 
 	int ApplyToSprite(sf::Sprite& sprite)

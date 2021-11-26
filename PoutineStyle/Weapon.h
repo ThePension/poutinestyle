@@ -17,4 +17,5 @@ public:
 	virtual void update(float dt) = 0;
 	virtual Bullet* shoot(sf::Vector2f direction, sf::Vector2f position) = 0;
 	Animation getShootAnimation() { return this->shootAnimation; }
+	int getDamage() { return this->damage; }
 };

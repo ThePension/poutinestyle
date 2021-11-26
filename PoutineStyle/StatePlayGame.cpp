@@ -25,12 +25,8 @@ StatePlayGame::StatePlayGame(GameManager* game)
     
 	parseMap2D();
 
-    wallTextures = sf::Texture();
-    weaponTexture = sf::Texture();
-    
+    wallTextures = sf::Texture();    
     wallTextures.loadFromFile("../PoutineStyle/pics/textures.png");
-    weaponTexture.loadFromFile("../PoutineStyle/pics/arme.png");
-    https://www.tilingtextures.com/stone-wall-with-mortar/
 
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
@@ -124,9 +120,25 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
         {
-            Bullet * bullet = player.shoot(player.direction);
-            if (bullet != nullptr) {
-                entities.push_back(bullet);
+            if (typeid(*player.getCurrentWeapon()).name() == typeid(Knife).name()) {
+                player.shoot(player.direction);
+                Entity* entity = getInteractedEntity();
+                if (entity != nullptr) {
+                    if (typeid(*entity).name() == typeid(Ennemy).name()) {
+                        Ennemy* ennemy = static_cast<Ennemy*>(entity);
+                        ennemy->decreaseHP(player.getCurrentWeapon()->getDamage());
+                        // Remove the ennemy if his HP are under 1
+                        if (ennemy->getHP() <= 0) {
+                            ennemy->setIsDying();
+                        }
+                    }
+                }
+            }
+            else{
+                Bullet* bullet = player.shoot(player.direction);
+                if (bullet != nullptr) {
+                    entities.push_back(bullet);
+                }
             }
         }
     }
