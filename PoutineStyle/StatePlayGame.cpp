@@ -107,6 +107,7 @@ void StatePlayGame::handleInput(double deltatime)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) movingSpeed = 5;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) InteractedEntity = getInteractedEntity();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) pause();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) player.switchWeapon();
         }
 
         if (event.type == sf::Event::KeyReleased)

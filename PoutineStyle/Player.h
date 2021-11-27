@@ -2,6 +2,7 @@
 #include "Weapon.h"
 #include "Animation.h"
 #include "Knife.h"
+#include "Pistol.h"
 class Bullet;
 #include <list>
 class Player

@@ -3,6 +3,7 @@
 Player::Player() {
 	this->knife = new Knife();
 	this->currentWeapon = this->knife;
+	this->secondaryWeapon = new Pistol();
 }
 void Player::draw(sf::RenderTarget& target) const {
 	currentWeapon->draw(target);
@@ -22,10 +23,11 @@ Bullet* Player::shoot(sf::Vector2f direction){
 
 void Player::switchWeapon()
 {
-	if (this->secondaryWeapon != this->currentWeapon && this->secondaryWeapon != nullptr) {
+	if (this->secondaryWeapon != nullptr && this->secondaryWeapon != this->currentWeapon) {
 		this->currentWeapon = this->secondaryWeapon;
 	}
 	else {
+		if (this->currentWeapon != this->knife) this->secondaryWeapon = this->currentWeapon;
 		this->currentWeapon = this->knife;
 	}
 }
@@ -34,7 +36,7 @@ void Player::reload()
 {
 	if (ammunition > 0)
 	{
-		//Reload animation
+		// Reload animation
 		if (ammunition >= 7)
 		{
 			currentAmmunition = 7;
