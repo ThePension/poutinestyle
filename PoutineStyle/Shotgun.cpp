@@ -1,18 +1,18 @@
-#include "Pistol.h"
+#include "Shotgun.h"
 #include "Bullet.h"
-Pistol::Pistol() : Weapon(1, Animation(0, 0, 105, 105, 4, "../PoutineStyle/pics/pistolTexture.png")) {
-	weaponSprite.scale(1.2, 1.2);
+Shotgun::Shotgun() : Weapon(1, Animation(0, 0, 64, 64, 11, "../PoutineStyle/pics/shotgun.png")) {
+	weaponSprite.scale(2, 2);
 	weaponSprite.setPosition(300, 320);
 }
 
-void Pistol::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
-	pistolAnim.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+void Shotgun::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
+	shotgunAnim.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
 }
-void Pistol::draw(sf::RenderTarget& target)
+void Shotgun::draw(sf::RenderTarget& target)
 {
 	target.draw(weaponSprite);
 }
-void Pistol::update(float dt) {
+void Shotgun::update(float dt) {
 	if (isShooting) {
 		shootAnimation.update(dt);
 		if (shootAnimation.isAnimationOver) isShooting = false;
@@ -20,7 +20,7 @@ void Pistol::update(float dt) {
 	shootAnimation.ApplyToSprite(weaponSprite);
 }
 
-Bullet* Pistol::shoot(sf::Vector2f direction, sf::Vector2f position)
+Bullet* Shotgun::shoot(sf::Vector2f direction, sf::Vector2f position)
 {
 	if (shootAnimation.isAnimationOver) {
 		isShooting = true;
@@ -40,4 +40,3 @@ Bullet* Pistol::shoot(sf::Vector2f direction, sf::Vector2f position)
 	}
 	return nullptr;
 }
-

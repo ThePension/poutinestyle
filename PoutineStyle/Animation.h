@@ -4,7 +4,7 @@ class Animation
 {
 public:
 	Animation() {}
-	Animation(int x, int y, int width, int height, std::string texturePath);
+	Animation(int x, int y, int width, int height, int frameCount, std::string texturePath);
 
 	int ApplyToSprite(sf::Sprite& sprite)
 	{
@@ -33,10 +33,10 @@ private:
 		}
 	}
 
-	static const int nbFrames = 4;
+	int nbFrames = 4;
 	int currentRenderedFrameNum = 0;
 	sf::Texture texture;
-	sf::IntRect frames[nbFrames];
+	sf::IntRect* frames;
 	float frameDuration = 0.1f;
 	float time = 0;
 };

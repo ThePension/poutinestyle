@@ -17,6 +17,7 @@
 #include "Key.h"
 #include "Portal.h"
 #include "StateMainMenu.h"
+#include "Shotgun.h"
 
 class StatePlayGame : public GameState
 {

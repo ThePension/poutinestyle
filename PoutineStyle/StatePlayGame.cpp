@@ -496,7 +496,7 @@ void StatePlayGame::renderingEntities(double dt) {
             // this->gameManager->changeState(stateMainMenu);
             // return;
         }
-        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name()) {
+        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name()) {
             Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
             Weapon* oldWeapon = player.setWeapon(weapon);
         
@@ -698,7 +698,7 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(portal);
             }
             else if (map[indexX][indexY] == 'L') {
-                rnd = (rand() % 3); // Between 0 and 2
+                rnd = (rand() % 4); // Between 0 and 2
                 Entity* entity;
                 switch (rnd)
                 {
@@ -714,6 +714,12 @@ void StatePlayGame::parseMap2D()
                     break;
                 case 2:
                     entity = new Pistol();
+                    entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
+                    entityMap[indexY][indexX] = entity;
+                    entities.push_back(entity);
+                    break;
+                case 3:
+                    entity = new Shotgun();
                     entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);

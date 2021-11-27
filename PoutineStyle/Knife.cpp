@@ -1,6 +1,6 @@
 #include "Knife.h"
 #include "Bullet.h"
-Knife::Knife() : Weapon(1, Animation(0, 0, 64, 64, "../PoutineStyle/pics/knife.png")) {
+Knife::Knife() : Weapon(1, Animation(0, 0, 64, 64, 8, "../PoutineStyle/pics/knife.png")) {
 	weaponSprite.scale(2, 2);
 	weaponSprite.setPosition(300, 320);
 }

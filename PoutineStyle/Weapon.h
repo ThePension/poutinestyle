@@ -13,7 +13,7 @@ protected:
 	bool isEntity = false;
 
 public:
-	Weapon(int damage, Animation shootAnim = Animation(0, 0, 105, 105, "../PoutineStyle/pics/gunTexture.png"));
+	Weapon(int damage, Animation shootAnim = Animation(0, 0, 105, 105, 4, "../PoutineStyle/pics/gunTexture.png"));
 	virtual void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) = 0;
 	virtual void draw(sf::RenderTarget& target) = 0;
 	virtual void update(float dt) = 0;

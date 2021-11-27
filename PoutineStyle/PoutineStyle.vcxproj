@@ -168,6 +168,7 @@
     <ClCompile Include="Pistol.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Portal.cpp" />
+    <ClCompile Include="Shotgun.cpp" />
     <ClCompile Include="StateGameOverMenu.cpp" />
     <ClCompile Include="StateMainMenu.cpp" />
     <ClCompile Include="StatePauseMenu.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="Pistol.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Portal.h" />
+    <ClInclude Include="Shotgun.h" />
     <ClInclude Include="StateGameOverMenu.h" />
     <ClInclude Include="StateMainMenu.h" />
     <ClInclude Include="StatePauseMenu.h" />
