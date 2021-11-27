@@ -1,5 +1,6 @@
 #pragma once
 #include "Animation.h"
+// #include "Entity.h"
 class Bullet;
 class AnimatedVertexArray;
 

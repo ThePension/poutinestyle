@@ -14,17 +14,17 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
     }
 }
 
-void Ennemy::draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) {
+void Ennemy::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
     if (toDraw) {
         if (isShooting) {
-            this->shootAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+            this->shootAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
         }
         else if (isWalking) { /* Do stuff */ }
         else if (isDying) {
-            this->dieAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+            this->dieAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
         }
         else {
-            this->shootAnimVA.draw(target, this->mapPos, player, ZBuffer, viewWidth, viewHeight);
+            this->shootAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
         }
     }
 }

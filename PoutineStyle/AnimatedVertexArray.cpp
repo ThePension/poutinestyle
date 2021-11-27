@@ -9,21 +9,21 @@ AnimatedVertexArray::AnimatedVertexArray(std::string texturesPath, int spriteHei
 	this->nbFrames = totalFrame;
     this->frameDuration = holdTime;
 }
-void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapPos, Player player, double* ZBuffer, int viewWidth, int viewHeight) { 
+void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapPos, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
     int yOffset = 0;
     // Raycast the entity
     double w = viewWidth;
     // Translate sprite pos relative to the camera
-    double spriteX = (double)entityMapPos.x - (double)player.position.x + 0.5;
+    double spriteX = (double)entityMapPos.x - (double)playerPos.x + 0.5;
     //spriteX += map(entityMapPos.x, 0, 16, 0.5, -0.5); // Center the sprite in the cell
-    double spriteY = (double)entityMapPos.y - (double)player.position.y + 0.5;
+    double spriteY = (double)entityMapPos.y - (double)playerPos.y + 0.5;
     //spriteY += map(entityMapPos.y, 0, 16, 0.5, -0.5); // Center the sprite in the cell
 
     // Projection values
-    double invDet = 1.0 / ((double)player.planeVec.x * (double)player.direction.y - (double)player.direction.x * (double)player.planeVec.y);
+    double invDet = 1.0 / ((double)playerPlaneVec.x * (double)playerDir.y - (double)playerDir.x * (double)playerPlaneVec.y);
 
-    double transformX = invDet * ((double)player.direction.y * spriteX - (double)player.direction.x * spriteY);
-    double transformY = invDet * (-(double)player.planeVec.y * spriteX + (double)player.planeVec.x * spriteY);
+    double transformX = invDet * ((double)playerDir.y * spriteX - (double)playerDir.x * spriteY);
+    double transformY = invDet * (-(double)playerPlaneVec.y * spriteX + (double)playerPlaneVec.x * spriteY);
 
     if (transformY > 0) {
         double spriteScreenX = floor((w / 2.0) * (1.0 + transformX / transformY));

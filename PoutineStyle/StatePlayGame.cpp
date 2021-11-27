@@ -502,7 +502,7 @@ void StatePlayGame::renderingEntities(double dt) {
 #pragma region Rendering Textured Entities (Sprites)
     // Calculate distance for every entities
     for (Entity* entity : entities) {
-        if (entity->getToDraw()) entity->calculateDistanceUntilPlayer(player);
+        if (entity->getToDraw()) entity->calculateDistanceUntilPlayer(player.position);
 
         if (typeid(*entity).name() == typeid(Bullet).name()) {
             Bullet* bullet = static_cast<Bullet*>(entity);
@@ -601,7 +601,7 @@ void StatePlayGame::renderingEntities(double dt) {
             Bullet* bullet = ennemy->shoot(bulletDirUnit, this->player.position, this->map);
             if (bullet != nullptr) entities.push_back(bullet);
         }
-        entity->draw(*gameManager->getRenderWindow(), player, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight());
+        entity->draw(*gameManager->getRenderWindow(), player.position, player.direction, player.planeVec, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight());
         entity->update(dt); // Update the animation
     }
 

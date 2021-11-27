@@ -12,7 +12,7 @@ private:
 	Entity* droppedEntity = nullptr;
 public:
 	Chest(int hp, sf::Vector2f pos, int dropNumber);
-	void draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) override;
+	void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) override;
 	void update(float dt) override;
 	void setIsOpening() { isOpening = true; }
 	Entity* getDroppedEntity() { return this->droppedEntity; }

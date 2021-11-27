@@ -1,6 +1,6 @@
 #pragma once
 #include "SFML/Graphics.hpp"
-#include "Player.h"
+
 class Entity
 {
 protected:
@@ -10,12 +10,12 @@ protected:
 	bool toDraw = false;
 public:
 	Entity(int HP, sf::Vector2f mapPos);
-	virtual void draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) = 0;
+	virtual void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) = 0;
 	virtual void update(float dt) = 0;
 	sf::Vector2f mapPos;
 	void setDistanceFromPlayer(float dist) { distUntilPlay = dist; }
-	void calculateDistanceUntilPlayer(Player player) {
-		distUntilPlay = ((player.position.x - this->mapPos.x) * (player.position.x - this->mapPos.x) + (player.position.y - this->mapPos.y) * (player.position.y - this->mapPos.y));
+	void calculateDistanceUntilPlayer(sf::Vector2f playerPos) {
+		distUntilPlay = ((playerPos.x - this->mapPos.x) * (playerPos.x - this->mapPos.x) + (playerPos.y - this->mapPos.y) * (playerPos.y - this->mapPos.y));
 	}
 	float getDistance() { return this->distUntilPlay; }
 	int getHP() { return this->HP; }

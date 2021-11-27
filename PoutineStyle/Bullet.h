@@ -9,7 +9,7 @@ private:
 	bool isPlayerBullet = false;
 public:
 	Bullet(int hp, sf::Vector2f pos, sf::Vector2f vel, bool isPlayerBullet);
-	void draw(sf::RenderTarget& target, Player player, double* ZBuffer, int viewWidth, int viewHeight) override;
+	void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) override;
 	void update(float dt) override;
 	sf::Vector2f getVelocity() { return this->vel; }
 	bool getIsPlayerBullet() { return this->isPlayerBullet; }
