@@ -5,7 +5,11 @@ Pistol::Pistol() : Weapon(1, Animation(0, 0, 105, 105, "../PoutineStyle/pics/pis
 	weaponSprite.setPosition(300, 320);
 }
 
-void Pistol::draw(sf::RenderTarget& target) {
+void Pistol::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
+	pistolAnim.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+}
+void Pistol::draw(sf::RenderTarget& target)
+{
 	target.draw(weaponSprite);
 }
 void Pistol::update(float dt) {

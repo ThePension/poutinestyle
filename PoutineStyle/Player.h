@@ -24,6 +24,13 @@ public:
 	void update(float dt);
 	Bullet * shoot(sf::Vector2f direction);
 	Weapon* getCurrentWeapon() { return this->currentWeapon; }
+	Weapon* getSecondaryWeapon() { return this->secondaryWeapon; }
+	Weapon* setWeapon(Weapon* w) {
+		Weapon* oldWeapon = this->secondaryWeapon;
+		this->secondaryWeapon = w;
+		this->currentWeapon = w; 
+		return oldWeapon;
+	}
 	void switchWeapon();
 	int getLive() {
 		return live;

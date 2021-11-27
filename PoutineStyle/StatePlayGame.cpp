@@ -496,6 +496,19 @@ void StatePlayGame::renderingEntities(double dt) {
             // this->gameManager->changeState(stateMainMenu);
             // return;
         }
+        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name()) {
+            Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
+            Weapon* oldWeapon = player.setWeapon(weapon);
+        
+            entities.remove(weapon);
+            if (oldWeapon != nullptr) {
+                entities.push_back(oldWeapon);
+                oldWeapon->mapPos = weapon->mapPos;
+                map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
+            }
+            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = oldWeapon;
+            InteractedEntity = nullptr;
+        }
     }
 #pragma endregion
 
@@ -685,7 +698,7 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(portal);
             }
             else if (map[indexX][indexY] == 'L') {
-                rnd = (rand() % 2); // Between 0 and 1
+                rnd = (rand() % 3); // Between 0 and 2
                 Entity* entity;
                 switch (rnd)
                 {
@@ -696,6 +709,12 @@ void StatePlayGame::parseMap2D()
                     break;
                 case 1:
                     entity = new Medikit(1, sf::Vector2f((float)indexY, (float)indexX));
+                    entityMap[indexY][indexX] = entity;
+                    entities.push_back(entity);
+                    break;
+                case 2:
+                    entity = new Pistol();
+                    entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
                     break;
