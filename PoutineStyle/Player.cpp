@@ -5,12 +5,15 @@ Player::Player() {
 	this->currentWeapon = this->knife;
 	this->secondaryWeapon = new Pistol();
 }
+
 void Player::draw(sf::RenderTarget& target) const {
 	currentWeapon->draw(target);
 }
+
 void Player::update(float dt) {
 	currentWeapon->update(dt);
 }
+
 Bullet* Player::shoot(sf::Vector2f direction){
 	if (Player::currentAmmunition > 0)
 	{

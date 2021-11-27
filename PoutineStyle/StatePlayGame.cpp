@@ -684,6 +684,23 @@ void StatePlayGame::parseMap2D()
                 entityMap[indexY][indexX] = portal;
                 entities.push_back(portal);
             }
+            else if (map[indexX][indexY] == 'L') {
+                rnd = (rand() % 2); // Between 0 and 1
+                Entity* entity;
+                switch (rnd)
+                {
+                case 0:
+                    entity = new Ammo(1, sf::Vector2f((float)indexY, (float)indexX));
+                    entityMap[indexY][indexX] = entity;
+                    entities.push_back(entity);
+                    break;
+                case 1:
+                    entity = new Medikit(1, sf::Vector2f((float)indexY, (float)indexX));
+                    entityMap[indexY][indexX] = entity;
+                    entities.push_back(entity);
+                    break;
+                }
+            }
             indexY++;
         }
         indexX++;
