@@ -1,6 +1,7 @@
 #pragma once
 #include "Animation.h"
 #include "Entity.h"
+#include <stack>
 class Bullet;
 
 class Weapon : public Entity
@@ -17,7 +18,7 @@ public:
 	virtual void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) = 0;
 	virtual void draw(sf::RenderTarget& target) = 0;
 	virtual void update(float dt) = 0;
-	virtual Bullet* shoot(sf::Vector2f direction, sf::Vector2f position) = 0;
+	virtual std::stack<Bullet*> shoot(sf::Vector2f direction, sf::Vector2f position) = 0;
 	Animation getShootAnimation() { return this->shootAnimation; }
 	int getDamage() { return this->damage; }
 	bool getIsEntity() { return this->isEntity; }

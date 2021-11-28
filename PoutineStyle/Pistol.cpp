@@ -20,8 +20,9 @@ void Pistol::update(float dt) {
 	shootAnimation.ApplyToSprite(weaponSprite);
 }
 
-Bullet* Pistol::shoot(sf::Vector2f direction, sf::Vector2f position)
+std::stack<Bullet*> Pistol::shoot(sf::Vector2f direction, sf::Vector2f position)
 {
+	std::stack<Bullet*> bullets;
 	if (shootAnimation.isAnimationOver) {
 		isShooting = true;
 		// Add noise to the bullet direction
@@ -35,9 +36,8 @@ Bullet* Pistol::shoot(sf::Vector2f direction, sf::Vector2f position)
 		// Create a bullet
 		sf::Vector2f bulletPos = sf::Vector2f(position.x - 0.5 + 2.0 * direction.x, position.y - 0.5 + 2.0 * direction.y);
 		Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, true);
-
-		return bullet;
+		bullets.push(bullet);
 	}
-	return nullptr;
+	return bullets;
 }
 

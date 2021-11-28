@@ -20,8 +20,9 @@ void Shotgun::update(float dt) {
 	shootAnimation.ApplyToSprite(weaponSprite);
 }
 
-Bullet* Shotgun::shoot(sf::Vector2f direction, sf::Vector2f position)
+std::stack<Bullet*> Shotgun::shoot(sf::Vector2f direction, sf::Vector2f position)
 {
+	std::stack<Bullet*> bullets;
 	if (shootAnimation.isAnimationOver) {
 		isShooting = true;
 		// Add noise to the bullet direction
@@ -31,12 +32,15 @@ Bullet* Shotgun::shoot(sf::Vector2f direction, sf::Vector2f position)
 
 		yNoise = AnimatedVertexArray::map(yNoise, 0, 0.1, -0.1, 0.1);
 		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise / 10, direction.y + yNoise / 10);
-
+		double shotgunDirX = AnimatedVertexArray::map(direction.x, -1, 1, 1.01, 1.02);
+		double shotgunDirY = AnimatedVertexArray::map(direction.y, -1, 1, 1.01, 1.02);
 		// Create a bullet
-		sf::Vector2f bulletPos = sf::Vector2f(position.x - 0.5 + 2.0 * direction.x, position.y - 0.5 + 2.0 * direction.y);
-		Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, true);
-
-		return bullet;
+		sf::Vector2f bulletPos1 = sf::Vector2f((position.x - 0.5) * (shotgunDirX) + 2.0 * direction.x, (position.y - 0.5) * (shotgunDirY) + 2.0 * direction.y);
+		sf::Vector2f bulletPos2 = sf::Vector2f((position.x - 0.5) * (2.0 - shotgunDirX) + 2.0 * direction.x, (position.y - 0.5) * (2.0 - shotgunDirY) + 2.0 * direction.y);
+		Bullet* bullet1 = new Bullet(1, bulletPos1, directionWithNoise, true);
+		Bullet* bullet2 = new Bullet(1, bulletPos2, directionWithNoise, true);
+		bullets.push(bullet1);
+		bullets.push(bullet2);
 	}
-	return nullptr;
+	return bullets;
 }

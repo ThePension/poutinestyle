@@ -22,7 +22,7 @@ public:
 	Player();
 	void draw(sf::RenderTarget& target) const;
 	void update(float dt);
-	Bullet * shoot(sf::Vector2f direction);
+	std::stack<Bullet*> shoot(sf::Vector2f direction);
 	Weapon* getCurrentWeapon() { return this->currentWeapon; }
 	Weapon* getSecondaryWeapon() { return this->secondaryWeapon; }
 	Weapon* setWeapon(Weapon* w) {

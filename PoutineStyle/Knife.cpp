@@ -22,11 +22,11 @@ void Knife::update(float dt) {
 	shootAnimation.ApplyToSprite(weaponSprite);
 }
 
-Bullet * Knife::shoot(sf::Vector2f direction, sf::Vector2f position)
+std::stack<Bullet*> Knife::shoot(sf::Vector2f direction, sf::Vector2f position)
 {
+	std::stack<Bullet*> bullets;
 	if (shootAnimation.isAnimationOver) {
 		isShooting = true;
-		return nullptr;
 	}
-	return nullptr;
+	return bullets;
 }

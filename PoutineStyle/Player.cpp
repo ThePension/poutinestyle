@@ -14,14 +14,15 @@ void Player::update(float dt) {
 	currentWeapon->update(dt);
 }
 
-Bullet* Player::shoot(sf::Vector2f direction){
+std::stack<Bullet*> Player::shoot(sf::Vector2f direction){
+	std::stack<Bullet*> bullets;
 	if (Player::currentAmmunition > 0)
 	{
-		Bullet* bullet = currentWeapon->shoot(direction, this->position);
-		if(bullet != nullptr) Player::currentAmmunition--;
-		return bullet;
+		bullets = currentWeapon->shoot(direction, this->position);
+		currentAmmunition -= bullets.size();
+		return bullets;
 	}
-	return nullptr;
+	return bullets;
 }
 
 void Player::switchWeapon()

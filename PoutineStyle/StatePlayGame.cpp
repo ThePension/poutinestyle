@@ -136,9 +136,13 @@ void StatePlayGame::handleInput(double deltatime)
                 }
             }
             else{
-                Bullet* bullet = player.shoot(player.direction);
-                if (bullet != nullptr) {
-                    entities.push_back(bullet);
+                std::stack<Bullet*> bullets = player.shoot(player.direction);
+                while(!bullets.empty()) {
+                    Bullet* bullet = bullets.top();
+                    if (bullet != nullptr) {
+                        entities.push_back(bullet);
+                    }
+                    bullets.pop();
                 }
             }
         }
@@ -649,7 +653,7 @@ void StatePlayGame::parseMap2D()
             }
             else if (map[indexX][indexY] == 'E') { // Ennemy
                 rnd = (rand() % 2); // Between 0 and 1
-                Ennemy* ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX), rnd);
+                Ennemy* ennemy = new Ennemy(2, sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(ennemy);
                 entityMap[indexY][indexX] = ennemy;
             }
