@@ -297,16 +297,16 @@ void StatePlayGame::drawMiniMap()
     sf::RectangleShape rectBackground = sf::RectangleShape();
     rectBackground.setFillColor(sf::Color::White);
     rectBackground.setPosition(blockWidth - 2, 2 * blockHeight - 2);
-    rectBackground.setSize(sf::Vector2f(5*blockWidth + 4, 5*blockHeight + 4));
+    rectBackground.setSize(sf::Vector2f(7*blockWidth + 4, 7*blockHeight + 4));
     gameManager->getRenderWindow()->draw(rectBackground);
 
-    for (int x = -2; x <= 2; x++) {
-        for (int y = -2; y <= 2; y++) {
+    for (int x = -3; x <= 3; x++) {
+        for (int y = -3; y <= 3; y++) {
             int positionX = floor(player.position.x) + x;
             int positionY = floor(player.position.y) + y;
             
                 sf::RectangleShape cell = sf::RectangleShape();
-                cell.setPosition(sf::Vector2f((2 - x) * blockWidth + blockWidth, (3 - y) * blockHeight + blockHeight));
+                cell.setPosition(sf::Vector2f((3 - x) * blockWidth + blockWidth, (4 - y) * blockHeight + blockHeight));
                 cell.setSize(sf::Vector2f(blockWidth, blockHeight));
                 if (positionX >= 0 && positionX < mapSize && positionY >= 0 && positionY < mapSize) {
                     if (map[positionY][positionX] == '1') {
@@ -326,7 +326,7 @@ void StatePlayGame::drawMiniMap()
     // Draw player
     sf::CircleShape circle = sf::CircleShape();
     circle.setFillColor(sf::Color::Green);
-    circle.setPosition(2 * blockWidth + blockWidth, 3 * blockHeight + blockHeight);
+    circle.setPosition(3 * blockWidth + blockWidth, 4 * blockHeight + blockHeight);
     circle.setRadius(blockWidth / 2);
     gameManager->getRenderWindow()->draw(circle);
 
@@ -334,7 +334,7 @@ void StatePlayGame::drawMiniMap()
     sf::Vertex playerDirLine[] =
     {
         sf::Vertex(sf::Vector2f(circle.getPosition().x + circle.getRadius(), circle.getPosition().y + circle.getRadius()), sf::Color::Green),
-        sf::Vertex(sf::Vector2f(circle.getPosition().x + circle.getRadius() + -16 * player.direction.x, circle.getPosition().y + circle.getRadius() + -16 * player.direction.y), sf::Color::Green)
+        sf::Vertex(sf::Vector2f(circle.getPosition().x + circle.getRadius() + -8 * player.direction.x, circle.getPosition().y + circle.getRadius() + -8 * player.direction.y), sf::Color::Green)
     };
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
