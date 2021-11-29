@@ -26,7 +26,7 @@ public:
 	void setIsDying() { this->isDying = true; this->isShooting = false; this->isWalking = false; }
 	Entity* getDroppedEntity() { return this->droppedEntity; }
 
-	AnimatedVertexArray walkAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 64, 0, 8);
+	// AnimatedVertexArray walkAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 64, 0, 8);
 	AnimatedVertexArray shootAnimVA = AnimatedVertexArray("../PoutineStyle/pics/shootingEnnemy.png", 64, 64, 0, 5, 0.3);
 	AnimatedVertexArray dieAnimVA = AnimatedVertexArray("../PoutineStyle/pics/dyingEnnemy.png", 64, 64, 0, 4, 0.3);
 };

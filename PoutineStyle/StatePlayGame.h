@@ -64,6 +64,7 @@ private:
 	void handleInput(double deltatime) override;
 	void parseMap2D();
 	void drawMap2D();
+	void drawMiniMap();
 	void renderingWalls(double dt);
 	void renderingEntities(double dt);
 	void showCursor();

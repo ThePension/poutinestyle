@@ -242,6 +242,7 @@ void StatePlayGame::draw(double dt)
         renderingWalls(dt);
         renderingEntities(dt);
         hud();
+        drawMiniMap();
     }
 }
 
@@ -285,6 +286,48 @@ void StatePlayGame::drawMap2D()
     {
         sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius(), player_circle.getPosition().y + player_circle.getRadius())),
         sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius() + 16 * player.direction.x, player_circle.getPosition().y + player_circle.getRadius() + 16 * player.direction.y))
+    };
+
+    gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
+}
+
+void StatePlayGame::drawMiniMap()
+{
+    for (int x = -2; x <= 2; x++) {
+        for (int y = -2; y <= 2; y++) {
+            int positionX = floor(player.position.x) + x;
+            int positionY = floor(player.position.y) + y;
+            
+                sf::RectangleShape cell = sf::RectangleShape();
+                cell.setPosition(sf::Vector2f((2 - x) * blockWidth + blockWidth, (3 - y) * blockHeight + blockHeight));
+                cell.setSize(sf::Vector2f(blockWidth, blockHeight));
+                if (positionX >= 0 && positionX < mapSize && positionY >= 0 && positionY < mapSize) {
+                    if (map[positionY][positionX] == '1') {
+                        cell.setFillColor(sf::Color::Red);
+                    }
+                    else {
+                        cell.setFillColor(sf::Color::White);
+                    }
+                }else{
+                    cell.setFillColor(sf::Color::Black);
+                }
+                gameManager->getRenderWindow()->draw(cell);
+            
+        }
+    }
+
+    // Draw player
+    sf::CircleShape circle = sf::CircleShape();
+    circle.setFillColor(sf::Color::Green);
+    circle.setPosition(2 * blockWidth + blockWidth, 3 * blockHeight + blockHeight);
+    circle.setRadius(blockWidth / 2);
+    gameManager->getRenderWindow()->draw(circle);
+
+    // Draw player direction vector
+    sf::Vertex playerDirLine[] =
+    {
+        sf::Vertex(sf::Vector2f(circle.getPosition().x + circle.getRadius(), circle.getPosition().y + circle.getRadius()), sf::Color::Green),
+        sf::Vertex(sf::Vector2f(circle.getPosition().x + circle.getRadius() + -16 * player.direction.x, circle.getPosition().y + circle.getRadius() + -16 * player.direction.y), sf::Color::Green)
     };
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
