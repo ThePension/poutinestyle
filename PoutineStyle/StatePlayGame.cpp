@@ -293,6 +293,13 @@ void StatePlayGame::drawMap2D()
 
 void StatePlayGame::drawMiniMap()
 {
+    // Draw background rectangle
+    sf::RectangleShape rectBackground = sf::RectangleShape();
+    rectBackground.setFillColor(sf::Color::White);
+    rectBackground.setPosition(blockWidth - 2, 2 * blockHeight - 2);
+    rectBackground.setSize(sf::Vector2f(5*blockWidth + 4, 5*blockHeight + 4));
+    gameManager->getRenderWindow()->draw(rectBackground);
+
     for (int x = -2; x <= 2; x++) {
         for (int y = -2; y <= 2; y++) {
             int positionX = floor(player.position.x) + x;

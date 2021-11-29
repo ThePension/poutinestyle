@@ -3,7 +3,7 @@
 Player::Player() {
 	this->knife = new Knife();
 	this->currentWeapon = this->knife;
-	this->secondaryWeapon = new Shotgun();
+	this->secondaryWeapon = nullptr;
 }
 
 void Player::draw(sf::RenderTarget& target) const {
