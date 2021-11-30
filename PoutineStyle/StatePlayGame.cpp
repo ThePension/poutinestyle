@@ -331,13 +331,18 @@ void StatePlayGame::drawMiniMap()
     gameManager->getRenderWindow()->draw(circle);
 
     // Draw player direction vector
-    sf::Vertex playerDirLine[] =
-    {
-        sf::Vertex(sf::Vector2f(circle.getPosition().x + circle.getRadius(), circle.getPosition().y + circle.getRadius()), sf::Color::Green),
-        sf::Vertex(sf::Vector2f(circle.getPosition().x + circle.getRadius() + -8 * player.direction.x, circle.getPosition().y + circle.getRadius() + -8 * player.direction.y), sf::Color::Green)
-    };
+    sf::RectangleShape rect = sf::RectangleShape();
+    rect.setPosition(sf::Vector2f(circle.getPosition().x + circle.getRadius(), circle.getPosition().y + circle.getRadius()));
+    rect.setSize(sf::Vector2f(2.5, 15));
+    rect.setFillColor(sf::Color::Green);
 
-    gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
+    // Update rotation
+    double delta = player.direction.x / player.direction.y;
+    double angleInRad = atan(delta);
+    double angleInDegrees = angleInRad * 180.0 / 3.1415 + 180.0; // Use a constant
+    if (player.direction.y < 0) angleInDegrees += 180.0;
+    rect.rotate(-angleInDegrees);
+    gameManager->getRenderWindow()->draw(rect);
 }
 
 void StatePlayGame::renderingWalls(double dt)
