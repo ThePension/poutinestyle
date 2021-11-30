@@ -11,7 +11,14 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
         case 1: // Medikit
             droppedEntity = new Medikit(1, this->mapPos);
             break;
+        case 2:
+            droppedEntity = new Pistol();
+            break;
+        case 3:
+            droppedEntity = new Shotgun();
+            break;
     }
+    droppedEntity->mapPos = this->mapPos;
 }
 
 void Ennemy::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {

@@ -7,6 +7,8 @@
 #include "Weapon.h"
 #include "Medikit.h"
 #include "Ammo.h"
+#include "Pistol.h"
+#include "Shotgun.h"
 
 
 class Ennemy : public Entity

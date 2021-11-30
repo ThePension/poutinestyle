@@ -325,21 +325,31 @@ void StatePlayGame::drawMiniMap()
             int positionX = floor(player.position.x) + x;
             int positionY = floor(player.position.y) + y;
             
-                sf::RectangleShape cell = sf::RectangleShape();
-                cell.setPosition(sf::Vector2f((3 - x) * blockWidth + blockWidth, (4 - y) * blockHeight + blockHeight));
-                cell.setSize(sf::Vector2f(blockWidth, blockHeight));
-                if (positionX >= 0 && positionX < mapSize && positionY >= 0 && positionY < mapSize) {
-                    if (map[positionY][positionX] == '1') {
-                        cell.setFillColor(sf::Color::Red);
-                    }
-                    else {
-                        cell.setFillColor(sf::Color::White);
-                    }
-                }else{
-                    cell.setFillColor(sf::Color::Black);
-                }
-                gameManager->getRenderWindow()->draw(cell);
+            sf::RectangleShape cell = sf::RectangleShape();
+            cell.setPosition(sf::Vector2f((3 - x) * blockWidth + blockWidth, (4 - y) * blockHeight + blockHeight));
+            cell.setSize(sf::Vector2f(blockWidth, blockHeight));
             
+            if (positionX >= 0 && positionX < mapSize && positionY >= 0 && positionY < mapSize) {
+                char charCell = map[positionY][positionX];
+                if (charCell == '1') {
+                    cell.setFillColor(sf::Color::Red);
+                }
+                else if(charCell == 'D' ||
+                        charCell == 'V' ||
+                        charCell == 'W' ||
+                        charCell == 'X' ||
+                        charCell == 'Y' ||
+                        charCell == 'Z') 
+                {
+                    cell.setFillColor(sf::Color(125, 125, 125, 255));
+                }
+                else {
+                    cell.setFillColor(sf::Color::White);
+                }
+            }else{
+                cell.setFillColor(sf::Color::Black);
+            }
+            gameManager->getRenderWindow()->draw(cell);   
         }
     }
 
@@ -727,8 +737,8 @@ void StatePlayGame::parseMap2D()
                 player.position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
             else if (map[indexX][indexY] == 'E') { // Ennemy
-                rnd = (rand() % 2); // Between 0 and 1
-                Ennemy* ennemy = new Ennemy(2, sf::Vector2f((float)indexY, (float)indexX), rnd);
+                rnd = (rand() % 4); // Between 0 and 3
+                Ennemy* ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(ennemy);
                 entityMap[indexY][indexX] = ennemy;
             }
