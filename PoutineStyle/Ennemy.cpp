@@ -17,6 +17,9 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
         case 3:
             droppedEntity = new Shotgun();
             break;
+        default:
+            droppedEntity = new Ammo(1, this->mapPos);
+            break;
     }
     droppedEntity->mapPos = this->mapPos;
 }
