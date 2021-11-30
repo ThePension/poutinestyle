@@ -219,22 +219,38 @@ void StatePlayGame::update(float deltaTime)
 
 void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
 {
-    int newPosMapY, newPosMapX;
+    int newPosMapY, newPosMapX, oldPosMapX, oldPosMapY;
 
+    oldPosMapY = floor(player.position.x);
     newPosMapY = newPos.x;
+    oldPosMapX = floor(player.position.y);
     newPosMapX = newPos.y;
 
-    if (   map[newPosMapX][newPosMapY] != '1'
-        && map[newPosMapX][newPosMapY] != 'D'
-        && map[newPosMapX][newPosMapY] != 'V'
-        && map[newPosMapX][newPosMapY] != 'W'
-        && map[newPosMapX][newPosMapY] != 'X'
-        && map[newPosMapX][newPosMapY] != 'Y'
-        && map[newPosMapX][newPosMapY] != 'Z'
+    // Check X axis
+    if (   map[newPosMapX][oldPosMapY] != '1'
+        && map[newPosMapX][oldPosMapY] != 'D'
+        && map[newPosMapX][oldPosMapY] != 'V'
+        && map[newPosMapX][oldPosMapY] != 'W'
+        && map[newPosMapX][oldPosMapY] != 'X'
+        && map[newPosMapX][oldPosMapY] != 'Y'
+        && map[newPosMapX][oldPosMapY] != 'Z'
         )
     {
-        // Move the player position (backward) depending on player direction
-        player.position = newPos;
+        // Update player position on the Y axis
+        player.position.y = newPos.y;
+    }
+    // Check Y axis
+    if (   map[oldPosMapX][newPosMapY] != '1'
+        && map[oldPosMapX][newPosMapY] != 'D'
+        && map[oldPosMapX][newPosMapY] != 'V'
+        && map[oldPosMapX][newPosMapY] != 'W'
+        && map[oldPosMapX][newPosMapY] != 'X'
+        && map[oldPosMapX][newPosMapY] != 'Y'
+        && map[oldPosMapX][newPosMapY] != 'Z'
+        )
+    {
+        // Update the player position on the X axis
+        player.position.x = newPos.x;
     }
 }
 
