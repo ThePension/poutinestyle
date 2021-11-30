@@ -16,10 +16,10 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
 
 void Ennemy::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
     if (toDraw) {
-        if (isShooting) {
+        if (isShooting && !isDying) {
             this->shootAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
         }
-        else if (isWalking) { /* Do stuff */ }
+        else if (isWalking && !isDying) { /* Do stuff */ }
         else if (isDying) {
             this->dieAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
         }
@@ -30,7 +30,7 @@ void Ennemy::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f
 }
 
 void Ennemy::update(float dt) {
-	if (isShooting) {
+	if (isShooting && !isDying) {
 		this->shootAnimVA.update(dt);
 		if (shootAnimVA.getIsAnimationOver()) {
 			isShooting = false;
@@ -46,7 +46,7 @@ void Ennemy::update(float dt) {
 
 Bullet* Ennemy::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map) {
     bool bIsPlayerVisible = isPlayerVisible(playerPos, map);
-	if (shootAnimVA.getIsAnimationOver() && bIsPlayerVisible) {
+	if (shootAnimVA.getIsAnimationOver() && bIsPlayerVisible && !isDying) {
 		isShooting = true;
 		// Add noise to the bullet direction
 		double xNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1

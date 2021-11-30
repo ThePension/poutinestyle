@@ -122,15 +122,19 @@ void StatePlayGame::handleInput(double deltatime)
         if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
         {
             if (typeid(*player.getCurrentWeapon()).name() == typeid(Knife).name()) {
-                player.shoot(player.direction);
-                Entity* entity = getInteractedEntity();
-                if (entity != nullptr) {
-                    if (typeid(*entity).name() == typeid(Ennemy).name()) {
-                        Ennemy* ennemy = static_cast<Ennemy*>(entity);
-                        ennemy->decreaseHP(player.getCurrentWeapon()->getDamage());
-                        // Remove the ennemy if his HP are under 1
-                        if (ennemy->getHP() <= 0) {
-                            ennemy->setIsDying();
+                if (player.getCurrentWeapon()->getShootAnimation().isAnimationOver) {
+                    player.shoot(player.direction);
+                    Entity* entity = getInteractedEntity();
+                    if (entity != nullptr) {
+                        if (typeid(*entity).name() == typeid(Ennemy).name()) {
+                            Ennemy* ennemy = static_cast<Ennemy*>(entity);
+                            if (!ennemy->getIsDying()) {
+                                ennemy->decreaseHP(player.getCurrentWeapon()->getDamage());
+                                // Remove the ennemy if his HP are under 1
+                                if (ennemy->getHP() <= 0) {
+                                    ennemy->setIsDying();
+                                }
+                            }
                         }
                     }
                 }

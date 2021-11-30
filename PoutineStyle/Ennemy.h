@@ -24,6 +24,7 @@ public:
 	Bullet * shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map);
 	bool isPlayerVisible(sf::Vector2f playerPos, char** map);
 	void setIsDying() { this->isDying = true; this->isShooting = false; this->isWalking = false; }
+	bool getIsDying() { return this->isDying; }
 	Entity* getDroppedEntity() { return this->droppedEntity; }
 
 	// AnimatedVertexArray walkAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 64, 0, 8);
