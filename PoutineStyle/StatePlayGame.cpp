@@ -650,7 +650,6 @@ void StatePlayGame::renderingEntities(double dt) {
 
                 parseMap2D();
                 InteractedEntity = nullptr;
-
                 return;
             }
             else
