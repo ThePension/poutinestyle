@@ -11,7 +11,6 @@ StatePlayGame::StatePlayGame(GameManager* game, std::string mapFilePath, int map
     this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
     this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
     this->levels.insert(std::pair<std::string, int>("Lvl5.txt", 64));
-
     this->actualLevel = this->levels.begin();
     
     gameManager->getRenderWindow()->setMouseCursorVisible(false);

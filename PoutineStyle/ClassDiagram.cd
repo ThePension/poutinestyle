@@ -1,23 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Animation">
-    <Position X="2.25" Y="5" Width="1.5" />
+    <Position X="0.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAgBAEAAAAgAAAAAgEAAAAAAAAAAAgAAAAAAAQQEAAA=</HashCode>
       <FileName>Animation.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="AnimatedVertexArray">
-    <Position X="2.25" Y="0.5" Width="1.5" />
+    <Position X="0.5" Y="8.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>CAABEEQIAEgAAAAAEEIAAAAAAAAAAEAAAAAgAAAUAAA=</HashCode>
       <FileName>AnimatedVertexArray.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Bullet">
-    <Position X="8.25" Y="5" Width="1.5" />
+    <Position X="5.25" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAIAIAAAAAAgAAABACIAAAAAAgAAAAAAABBAAAAUAAA=</HashCode>
+      <HashCode>QAIAKAAAAAAggAAAACIAAAAAAgAAAAAAAABAAAAUAAA=</HashCode>
       <FileName>Bullet.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -29,88 +29,133 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Chest">
-    <Position X="6.5" Y="6.5" Width="1.5" />
+    <Position X="7" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAgAQAAAAAIAAAAAAAAAAAAAAAAAACAEAAA=</HashCode>
+      <HashCode>AAAABAAAAAgAQAAAIAIAAAQAAAAAACAAAAAAACCEAAA=</HashCode>
       <FileName>Chest.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Ennemy">
-    <Position X="4.75" Y="5.75" Width="1.5" />
+    <Position X="10.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAggEAAAAIAAAAAIAAAAAAAIAgEAAAAEAAAAEAAA=</HashCode>
+      <HashCode>CAAAAggEAACAIAAAIAIAAAAAgAAAgEAAAAEBAACEAAA=</HashCode>
       <FileName>Ennemy.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Entity">
-    <Position X="6.5" Y="3.5" Width="1.5" />
+    <Position X="7" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAQAAAAAIAAACAQAAACAAAAAAQAAAEAAA=</HashCode>
+      <HashCode>EAAAAAAAAABAQAABAAIAAACAQQAADEAAABAQAEAEAAA=</HashCode>
       <FileName>Entity.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameManager">
-    <Position X="4.75" Y="0.5" Width="1.5" />
+    <Position X="5.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAEAAAAAAgQACIEAAgAAAAAMAAAiAABIAMA=</HashCode>
       <FileName>GameManager.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameState">
-    <Position X="12.25" Y="0.5" Width="1.5" />
+    <Position X="14.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AMAAAAAAAAAAAAAAAAIAAAAAAAgAAAAAAAAAAAAEIAA=</HashCode>
       <FileName>GameState.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Player">
-    <Position X="8.25" Y="0.5" Width="1.5" />
+    <Position X="3.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AACAAgAEAAAAIAAAAAIAIAAACAAAAAAAAAAAAQAEAAA=</HashCode>
+      <HashCode>ABGEAAAEAAAAIoAAAAYIKgAAAFAIQIDIIAAAaQAFCAg=</HashCode>
       <FileName>Player.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="StateGameOverMenu">
-    <Position X="14.25" Y="3.5" Width="1.5" />
+    <Position X="15.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAEAAAAAAAIEIAAAAAAAAAAAAAAQAAAEAAE=</HashCode>
+      <HashCode>AIAAAAAAAAEAQAAAAAIAIAAAAAAAAAAIQAgQAAAEAAE=</HashCode>
       <FileName>StateGameOverMenu.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="StateMainMenu">
-    <Position X="10.75" Y="3.5" Width="1.5" />
+    <Position X="17.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAAAQAAAEAAAAAACIAAAAAAIAAAAIAAAAAAAAEAAA=</HashCode>
       <FileName>StateMainMenu.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="StatePauseMenu">
-    <Position X="12.5" Y="3.5" Width="1.5" />
+    <Position X="13.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAAAAAAAAIACAAAAAAAAAAAAQAAEAAEAAA=</HashCode>
+      <HashCode>AIAAAAAAAAEAAAAAAAIACAAAAACAAAIAQQgAEAAEIAA=</HashCode>
       <FileName>StatePauseMenu.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="StatePlayGame">
-    <Position X="16" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AYCAUwlAAJAQIAAAQEKAABAAAACKQIWRCQAhBACPAAA=</HashCode>
-      <FileName>StatePlayGame.h</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Weapon">
-    <Position X="6.5" Y="0.5" Width="1.5" />
+    <Position X="8.75" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAgIAAAAIIAAAAAAAAACgAAAAAAACEAAA=</HashCode>
+      <HashCode>CAAAAAAEAAAAgIAAAAIIAIAAAAAAACgAAAAAAACEAAg=</HashCode>
       <FileName>Weapon.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Struct Name="Sprite">
-    <Position X="0.5" Y="5.25" Width="1.5" />
+  <Class Name="Ammo">
+    <Position X="10.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAEABAAAAAAAAADAAAAA=</HashCode>
-      <FileName>Sprite.h</FileName>
+      <HashCode>ACAAAAAAAAAAAAAAAAIAAAAAAAAACAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Ammo.h</FileName>
     </TypeIdentifier>
-  </Struct>
+  </Class>
+  <Class Name="Key">
+    <Position X="9" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAJAAAAAIAACAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Key.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Knife">
+    <Position X="9.25" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAAIAAABAAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Knife.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Medikit">
+    <Position X="10.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAACBAAAAAAAAAEAAA=</HashCode>
+      <FileName>Medikit.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Pistol">
+    <Position X="7.5" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAEAAAIAAABAAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Pistol.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Portal">
+    <Position X="9" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAAAAIAAAAAAAAAAAAAAAAAAAAFAAA=</HashCode>
+      <FileName>Portal.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Shotgun">
+    <Position X="5.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAEAAAAAAAAAAIAAAAAAAAEAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Shotgun.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StatePlayGame">
+    <Position X="19" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="wallTextures" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>CYCAExgEABAQgAAASEKAAQgAAAGCQQWRAQAhQASPIAA=</HashCode>
+      <FileName>StatePlayGame.h</FileName>
+    </TypeIdentifier>
+  </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
