@@ -1,8 +1,18 @@
 #include "StatePlayGame.h"
 
-StatePlayGame::StatePlayGame(GameManager* game)
+StatePlayGame::StatePlayGame(GameManager* game, std::string mapFilePath, int mapSize)
 {
     this->gameManager = game;
+    this->mapFilePath = "Map/" + mapFilePath;
+    this->mapSize = mapSize;
+
+    this->levels.insert(std::pair<std::string, int>("Lvl1.txt", 16));
+    this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
+    this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
+    this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
+    this->levels.insert(std::pair<std::string, int>("Lvl5.txt", 64));
+
+    this->actualLevel = this->levels.begin();
     
     gameManager->getRenderWindow()->setMouseCursorVisible(false);
     gameManager->getRenderWindow()->setMouseCursorGrabbed(true); // The mouse can't leave the window
@@ -31,6 +41,7 @@ StatePlayGame::StatePlayGame(GameManager* game)
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
 }
+
 sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     // Rotation matrix (used to rotate vector by an angle)
     // [cosa  -sina]
@@ -45,6 +56,7 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     resVec.y /= vecLen;*/
     return resVec;
 }
+
 StatePlayGame::~StatePlayGame()
 {
     for (int x = 0; x < gameManager->getWindowWidth(); x++) {
@@ -56,6 +68,7 @@ StatePlayGame::~StatePlayGame()
         }
     }
 }
+
 void StatePlayGame::handleInput(double deltatime)
 {
     sf::Event event;
@@ -311,13 +324,19 @@ void StatePlayGame::drawMap2D()
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
 
-void StatePlayGame::drawMiniMap()
+void StatePlayGame::drawMiniMap() 
 {
     // Draw background rectangle
+    int w = this->gameManager->getWindowWidth();
+    int h = this->gameManager->getWindowHeight();
+
+    int blockWUnit = w / 32;
+    int blockHUnit = h / 32;
+
     sf::RectangleShape rectBackground = sf::RectangleShape();
     rectBackground.setFillColor(sf::Color::White);
-    rectBackground.setPosition(blockWidth - 2, 2 * blockHeight - 2);
-    rectBackground.setSize(sf::Vector2f(7*blockWidth + 4, 7*blockHeight + 4));
+    rectBackground.setPosition(blockWUnit - 2, 2 * blockHUnit - 2); // problème ici
+    rectBackground.setSize(sf::Vector2f(7* blockWUnit + 4, 7* blockHUnit + 4));
     gameManager->getRenderWindow()->draw(rectBackground);
 
     for (int x = -3; x <= 3; x++) {
@@ -326,8 +345,8 @@ void StatePlayGame::drawMiniMap()
             int positionY = floor(player.position.y) + y;
             
             sf::RectangleShape cell = sf::RectangleShape();
-            cell.setPosition(sf::Vector2f((3 - x) * blockWidth + blockWidth, (4 - y) * blockHeight + blockHeight));
-            cell.setSize(sf::Vector2f(blockWidth, blockHeight));
+            cell.setPosition(sf::Vector2f((3 - x) * blockWUnit + blockWUnit, (4 - y) * blockHUnit + blockHUnit));
+            cell.setSize(sf::Vector2f(blockWUnit, blockHUnit));
             
             if (positionX >= 0 && positionX < mapSize && positionY >= 0 && positionY < mapSize) {
                 char charCell = map[positionY][positionX];
@@ -356,8 +375,8 @@ void StatePlayGame::drawMiniMap()
     // Draw player
     sf::CircleShape circle = sf::CircleShape();
     circle.setFillColor(sf::Color::Green);
-    circle.setPosition(3 * blockWidth + blockWidth, 4 * blockHeight + blockHeight);
-    circle.setRadius(blockWidth / 2);
+    circle.setPosition(3 * blockWUnit + blockWUnit, 4 * blockHUnit + blockHUnit);
+    circle.setRadius(blockWUnit / 2);
     gameManager->getRenderWindow()->draw(circle);
 
     // Draw player direction vector
@@ -373,6 +392,14 @@ void StatePlayGame::drawMiniMap()
     if (player.direction.y < 0) angleInDegrees += 180.0;
     rect.rotate(-angleInDegrees);
     gameManager->getRenderWindow()->draw(rect);
+
+    if (player.dead())
+    {
+        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false);
+        this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
+        this->gameManager->changeState(gameOverMenu);
+        return;
+    }
 }
 
 void StatePlayGame::renderingWalls(double dt)
@@ -534,7 +561,9 @@ void StatePlayGame::renderingWalls(double dt)
 }
 
 void StatePlayGame::renderingEntities(double dt) {
+
 #pragma region Entity Interaction Management
+
     if (InteractedEntity != nullptr) {
         if (typeid(*InteractedEntity).name() == typeid(Chest).name()) { // Chest interaction
             Chest* chest = static_cast<Chest*>(InteractedEntity);
@@ -580,10 +609,46 @@ void StatePlayGame::renderingEntities(double dt) {
             delete key; key = nullptr;
             InteractedEntity = nullptr;
         }
-        else if (typeid(*InteractedEntity).name() == typeid(Portal).name()) {
-            // StateMainMenu* stateMainMenu = new StateMainMenu(this->gameManager);
-            // this->gameManager->changeState(stateMainMenu);
-            // return;
+        else if (typeid(*InteractedEntity).name() == typeid(Portal).name())
+        {
+            // from a level to another 
+            // ******************** code ci-dessous dangereux effacer si y a de gros soucis!! ********************
+            if (this->actualLevel != this->levels.end())
+            {
+                this->mapFilePath = "Map/" + this->actualLevel->first;
+                this->mapSize = this->actualLevel->second;
+                this->actualLevel++;
+
+                delete[] map;
+                map = nullptr;
+
+                cleanAllEntitys();
+
+                this->blockWidth = gameManager->getWindowWidth() / mapSize;
+                this->blockHeight = gameManager->getWindowHeight() / mapSize;
+
+                map = new char* [mapSize];
+                for (int i = 0; i < mapSize; i++)
+                {
+                    map[i] = new char[mapSize];
+                    for (int j = 0; j < mapSize; j++)
+                    {
+                        map[i][j] = '0';
+                    }
+                }
+
+                parseMap2D();
+                InteractedEntity = nullptr;
+
+                return;
+            }
+            else
+            {
+                std::cout << "The end you win !!!" << std::endl;
+
+            }
+            // ****************************************************************************************************
+
         }
         else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name()) {
             Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
@@ -627,8 +692,6 @@ void StatePlayGame::renderingEntities(double dt) {
                 // bullet->isTravelling = false;
                 // bullet->isExplosing = true;
                 bullet->setToRemove(true);
-
-                // If player is dead, lauch gameOver menu
             }
             else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
                 if (bullet->isExplosing == false) {
@@ -720,8 +783,8 @@ void StatePlayGame::parseMap2D()
 {
     std::string tempText;
     std::ifstream mapFile;
-    std::string mapLocation = mapFileFolder + mapFileName;
-    mapFile.open(mapLocation);
+
+    mapFile.open(this->mapFilePath);
 
     srand(time(NULL)); // Randomize seed
     int rnd = 0;
@@ -939,15 +1002,6 @@ void StatePlayGame::hud()
     gameManager->getRenderWindow()->draw(currentAmmunition);
     gameManager->getRenderWindow()->draw(score);
     gameManager->getRenderWindow()->draw(currentScore);
-
-    if (player.dead())
-    {
-        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false);
-        this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
-        this->gameManager->changeState(gameOverMenu);
-        return;
-    }
-
 }
 
 void StatePlayGame::showCursor()
@@ -965,6 +1019,24 @@ void StatePlayGame::showCursor()
     aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 4.5), centerWindowPos.y - (cursorHeigth / 4));
 
     this->gameManager->getRenderWindow()->draw(aimCursor);
+}
+
+void StatePlayGame::cleanAllEntitys()
+{
+    for (int i = 0; i < this->mapSize; i++)
+    {
+        for (int j = 0; j < this->mapSize; j++)
+        {
+            Entity* entity = entityMap[i][j];
+            if (entity != nullptr)
+            {
+                this->entities.remove(entity);
+                delete entity;
+                entity = nullptr;
+                entityMap[i][j] = nullptr;
+            }
+        }
+    }
 }
 
 /// <summary>
