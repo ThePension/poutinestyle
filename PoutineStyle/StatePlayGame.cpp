@@ -59,14 +59,10 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
 
 StatePlayGame::~StatePlayGame()
 {
-    for (int x = 0; x < gameManager->getWindowWidth(); x++) {
-        for (int y = 0; y < gameManager->getWindowHeight(); y++) {
-            if (entityMap[x][y] != nullptr) {
-                entities.remove(entityMap[x][y]);
-                delete entityMap[x][y]; entityMap[x][y] = nullptr;
-            }
-        }
-    }
+    cleanAllEntitys();
+
+    delete[] *(this->map);
+    delete[] this->map;
 }
 
 void StatePlayGame::handleInput(double deltatime)
@@ -630,7 +626,8 @@ void StatePlayGame::renderingEntities(double dt) {
                 this->mapSize = this->actualLevel->second;
                 this->actualLevel++;
 
-                delete[] map;
+                delete[] *(this->map);
+                delete[] this->map;
                 map = nullptr;
 
                 cleanAllEntitys();

@@ -52,12 +52,7 @@ private:
 	Entity* entityMap[32][32]; // A map with entity Objects
 	std::list<Entity*> entities; // Contains every entities
 
-	/*
-	* std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
-	std::string mapFileName = "Lvl1.txt"; // Map_Example3.txt
-	*/
-
-	std::string mapFilePath; // new attribute
+	std::string mapFilePath;
 	std::map<std::string, int> levels;
 	std::map<std::string, int>::iterator actualLevel;
 
