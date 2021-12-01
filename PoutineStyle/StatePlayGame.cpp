@@ -276,6 +276,26 @@ void StatePlayGame::draw(double dt)
         renderingEntities(dt);
         hud();
         drawMiniMap();
+        endGameManagment(); // IMPORTANT ! need to be the last function called here
+    }
+}
+
+void StatePlayGame::endGameManagment()
+{
+    if (player.dead())
+    {
+        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false);
+        this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
+        this->gameManager->changeState(gameOverMenu);
+        return;
+    }
+
+    if (this->isFinished)
+    {
+        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, true);
+        this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
+        this->gameManager->changeState(gameOverMenu);
+        return;
     }
 }
 
@@ -392,14 +412,6 @@ void StatePlayGame::drawMiniMap()
     if (player.direction.y < 0) angleInDegrees += 180.0;
     rect.rotate(-angleInDegrees);
     gameManager->getRenderWindow()->draw(rect);
-
-    if (player.dead())
-    {
-        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false);
-        this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
-        this->gameManager->changeState(gameOverMenu);
-        return;
-    }
 }
 
 void StatePlayGame::renderingWalls(double dt)
@@ -612,7 +624,6 @@ void StatePlayGame::renderingEntities(double dt) {
         else if (typeid(*InteractedEntity).name() == typeid(Portal).name())
         {
             // from a level to another 
-            // ******************** code ci-dessous dangereux effacer si y a de gros soucis!! ********************
             if (this->actualLevel != this->levels.end())
             {
                 this->mapFilePath = "Map/" + this->actualLevel->first;
@@ -644,11 +655,8 @@ void StatePlayGame::renderingEntities(double dt) {
             }
             else
             {
-                std::cout << "The end you win !!!" << std::endl;
-
+                this->isFinished = true;
             }
-            // ****************************************************************************************************
-
         }
         else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name()) {
             Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
@@ -1037,6 +1045,8 @@ void StatePlayGame::cleanAllEntitys()
             }
         }
     }
+
+    this->entities.clear();
 }
 
 /// <summary>

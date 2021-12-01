@@ -35,6 +35,7 @@ private:
 
 	bool isMapDisplayed = false;
 	bool isGamePaused = false;
+	bool isFinished = false;
 
 	int mapSize;
 	int movingSpeed = 3;
@@ -77,6 +78,7 @@ private:
 	void updatePlayerPosition(sf::Vector2f newPos);
 	void hud();
 	void pause();
+	void endGameManagment();
 	void reset();
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
 	Entity* getInteractedEntity();
