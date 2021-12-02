@@ -1,18 +1,18 @@
-#include "Shotgun.h"
+#include "Uzi.h"
 #include "Bullet.h"
-Shotgun::Shotgun() : Weapon(1, Animation(0, 0, 64, 64, 11, "../PoutineStyle/pics/Uzi.png")) {
+Uzi::Uzi() : Weapon(1, Animation(0, 0, 64, 64, 11, "../PoutineStyle/pics/shotgun.png")) {
 	weaponSprite.scale(2, 2);
 	weaponSprite.setPosition(300, 320);
 }
 
-void Shotgun::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
+void Uzi::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
 	shotgunAnim.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
 }
-void Shotgun::draw(sf::RenderTarget& target)
+void Uzi::draw(sf::RenderTarget& target)
 {
 	target.draw(weaponSprite);
 }
-void Shotgun::update(float dt) {
+void Uzi::update(float dt) {
 	if (isShooting) {
 		shootAnimation.update(dt);
 		if (shootAnimation.isAnimationOver) isShooting = false;
@@ -20,7 +20,7 @@ void Shotgun::update(float dt) {
 	shootAnimation.ApplyToSprite(weaponSprite);
 }
 
-std::stack<Bullet*> Shotgun::shoot(sf::Vector2f direction, sf::Vector2f position)
+std::stack<Bullet*> Uzi::shoot(sf::Vector2f direction, sf::Vector2f position)
 {
 	std::stack<Bullet*> bullets;
 	if (shootAnimation.isAnimationOver) {
@@ -36,7 +36,7 @@ std::stack<Bullet*> Shotgun::shoot(sf::Vector2f direction, sf::Vector2f position
 		double shotgunDirY = AnimatedVertexArray::map(direction.y, -1, 1, 1.015, 1.02);
 
 		// Create two bullets
-		sf::Vector2f bulletPos1 = sf::Vector2f((position.x - 0.5) * (shotgunDirX) + 2.0 * direction.x, (position.y - 0.5) * (shotgunDirY) + 2.0 * direction.y);
+		sf::Vector2f bulletPos1 = sf::Vector2f((position.x - 0.5) * (shotgunDirX)+2.0 * direction.x, (position.y - 0.5) * (shotgunDirY)+2.0 * direction.y);
 		sf::Vector2f bulletPos2 = sf::Vector2f((position.x - 0.5) * (2.0 - shotgunDirX) + 2.0 * direction.x, (position.y - 0.5) * (2.0 - shotgunDirY) + 2.0 * direction.y);
 		Bullet* bullet1 = new Bullet(1, bulletPos1, directionWithNoise, true);
 		Bullet* bullet2 = new Bullet(1, bulletPos2, directionWithNoise, true);
@@ -45,3 +45,4 @@ std::stack<Bullet*> Shotgun::shoot(sf::Vector2f direction, sf::Vector2f position
 	}
 	return bullets;
 }
+
