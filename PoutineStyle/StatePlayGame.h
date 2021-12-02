@@ -19,6 +19,7 @@
 #include "StateMainMenu.h"
 #include "Shotgun.h"
 #include "Guard.h"
+#include "General.h"
 
 class StatePlayGame : public GameState
 {

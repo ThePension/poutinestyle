@@ -2,7 +2,8 @@
 0 Sol
 T Entrer du niveau
 S Sortie du niveau (Via un pnj ?)
-E Ennemi
+E Guard
+G General
 P PNJ
 L Objet
 T Coffre tutoriel Arme

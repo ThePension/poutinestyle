@@ -1,0 +1,9 @@
+#pragma once
+#include "Ennemy.h"
+class General : public Ennemy
+{
+public:
+	General(sf::Vector2f pos, int dropNumber = 0);
+	Bullet* shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map) override;
+};
+
