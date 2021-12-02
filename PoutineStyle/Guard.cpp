@@ -7,11 +7,13 @@ Guard::Guard(sf::Vector2f pos, int dropNumber)
     
 }
 
-Bullet* Guard::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map)
+std::stack<Bullet*> Guard::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map)
 {
+	std::stack<Bullet*> bullets;
 	bool bIsPlayerVisible = isPlayerVisible(playerPos, map);
 	if (shootAnimVA.getIsAnimationOver() && bIsPlayerVisible && !isDying) {
 		isShooting = true;
+		
 		// Add noise to the bullet direction
 		double xNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
 		xNoise = AnimatedVertexArray::map(xNoise, 0, 0.1, -0.1, 0.1);
@@ -22,7 +24,8 @@ Bullet* Guard::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map)
 		// Create a bullet
 		sf::Vector2f bulletPos = sf::Vector2f((this->mapPos.x), (this->mapPos.y));
 		Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, false);
-		return bullet;
+		bullets.push(bullet);
+		return bullets;
 	}
-	return nullptr;
+	return bullets;
 }

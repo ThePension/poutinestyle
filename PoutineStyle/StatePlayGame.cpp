@@ -767,8 +767,12 @@ void StatePlayGame::renderingEntities(double dt) {
             double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
             // Get the unit vector
             sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
-            Bullet* bullet = ennemy->shoot(bulletDirUnit, this->player.position, this->map);
-            if (bullet != nullptr) entities.push_back(bullet);
+            std::stack<Bullet*> bullets = ennemy->shoot(bulletDirUnit, this->player.position, this->map);
+            while (!bullets.empty()) {
+                Bullet* bullet = bullets.top();
+                if (bullet != nullptr) entities.push_back(bullet);
+                bullets.pop();
+            }
         }
         entity->draw(*gameManager->getRenderWindow(), player.position, player.direction, player.planeVec, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight());
         entity->update(dt); // Update the animation
