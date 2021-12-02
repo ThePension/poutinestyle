@@ -1,13 +1,13 @@
 #include "Chest.h"
-Chest::Chest(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
+Chest::Chest(sf::Vector2f pos, int dropNumber) : Entity(1, pos) {
 	// Create random entity for drop
 	switch (dropNumber)
 	{
 		case 0: // Ammo pack
-			droppedEntity = new Ammo(1, this->mapPos);
+			droppedEntity = new Ammo(this->mapPos);
 			break;
 		case 1: // Medikit
-			droppedEntity = new Medikit(1, this->mapPos);
+			droppedEntity = new Medikit(this->mapPos);
 			break;
 	}
 }

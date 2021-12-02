@@ -9,10 +9,10 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray shootAnimVA, Animat
     switch (dropNumber)
     {
         case 0: // Ammo pack
-            droppedEntity = new Ammo(1, this->mapPos);
+            droppedEntity = new Ammo(this->mapPos);
             break;
         case 1: // Medikit
-            droppedEntity = new Medikit(1, this->mapPos);
+            droppedEntity = new Medikit(this->mapPos);
             break;
         case 2:
             droppedEntity = new Pistol();
@@ -21,7 +21,7 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray shootAnimVA, Animat
             droppedEntity = new Shotgun();
             break;
         default:
-            droppedEntity = new Ammo(1, this->mapPos);
+            droppedEntity = new Ammo(this->mapPos);
             break;
     }
     droppedEntity->mapPos = this->mapPos;

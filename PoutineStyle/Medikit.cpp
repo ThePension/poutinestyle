@@ -1,6 +1,6 @@
 #include "Medikit.h"
 
-Medikit::Medikit(int hp, sf::Vector2f pos) : Entity(hp, pos) { }
+Medikit::Medikit(sf::Vector2f pos) : Entity(1, pos) { }
 
 void Medikit::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight)
 {

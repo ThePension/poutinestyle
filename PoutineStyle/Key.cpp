@@ -1,6 +1,6 @@
 #include "Key.h"
 
-Key::Key(int hp, sf::Vector2f pos, AnimatedVertexArray anim, char code) : Entity(hp, pos)
+Key::Key(sf::Vector2f pos, AnimatedVertexArray anim, char code) : Entity(1, pos)
 {
 	this->keyAnimVertexArray = anim;
 	this->code = code;

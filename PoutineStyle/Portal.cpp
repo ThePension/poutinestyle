@@ -1,5 +1,5 @@
 #include "Portal.h"
-Portal::Portal(int hp, sf::Vector2f pos) : Entity(hp, pos) {
+Portal::Portal(sf::Vector2f pos) : Entity(1, pos) {
 
 }
 void Portal::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {

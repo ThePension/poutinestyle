@@ -5,7 +5,7 @@
 class Medikit : public Entity
 {
 public:
-	Medikit(int hp, sf::Vector2f pos);
+	Medikit(sf::Vector2f pos);
 	void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) override;
 	void update(float dt) override;
 

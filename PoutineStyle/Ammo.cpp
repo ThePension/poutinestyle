@@ -1,6 +1,6 @@
 #include "Ammo.h"
 
-Ammo::Ammo(int hp, sf::Vector2f pos) : Entity(hp, pos)
+Ammo::Ammo(sf::Vector2f pos) : Entity(1, pos)
 {
 }
 

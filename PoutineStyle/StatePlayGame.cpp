@@ -811,7 +811,7 @@ void StatePlayGame::parseMap2D()
             }
             else if (map[indexX][indexY] == 'C') { // Chest
                 rnd = (rand() % 2); // Between 0 and 1
-                Chest* chest = new Chest(1, sf::Vector2f((float)indexY, (float)indexX), rnd);
+                Chest* chest = new Chest(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(chest);
                 entityMap[indexY][indexX] = chest;
             }
@@ -819,37 +819,37 @@ void StatePlayGame::parseMap2D()
                 entityMap[indexY][indexX] = nullptr;
             }
             else if (map[indexX][indexY] == 'd') {
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'v') {
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 1, 1), 'V');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 1, 1), 'V');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'w'){
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 2, 1), 'W');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 2, 1), 'W');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'x') {
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 3, 1), 'X');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 3, 1), 'X');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'y') {
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 4, 1), 'Y');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 4, 1), 'Y');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'z'){
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'S') {
-                Portal* portal = new Portal(1, sf::Vector2f((float)indexY, (float)indexX));
+                Portal* portal = new Portal(sf::Vector2f((float)indexY, (float)indexX));
                 entityMap[indexY][indexX] = portal;
                 entities.push_back(portal);
             }
@@ -859,12 +859,12 @@ void StatePlayGame::parseMap2D()
                 switch (rnd)
                 {
                 case 0:
-                    entity = new Ammo(1, sf::Vector2f((float)indexY, (float)indexX));
+                    entity = new Ammo(sf::Vector2f((float)indexY, (float)indexX));
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
                     break;
                 case 1:
-                    entity = new Medikit(1, sf::Vector2f((float)indexY, (float)indexX));
+                    entity = new Medikit(sf::Vector2f((float)indexY, (float)indexX));
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
                     break;
