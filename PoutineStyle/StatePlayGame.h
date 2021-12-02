@@ -18,6 +18,7 @@
 #include "Portal.h"
 #include "StateMainMenu.h"
 #include "Shotgun.h"
+#include "Guard.h"
 
 class StatePlayGame : public GameState
 {

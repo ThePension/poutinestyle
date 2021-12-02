@@ -13,17 +13,17 @@
 
 class Ennemy : public Entity
 {
-private:
+protected:
 	bool isShooting = true;
 	bool isWalking = false;
 	bool isDying = false;
 	Entity* droppedEntity = nullptr;
 	double shootCooldown = 1.0;
 public:
-	Ennemy(int hp, sf::Vector2f pos, int dropNumber = 0);
+	Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray shootAnimVA, AnimatedVertexArray dieAnimVA, int dropNumber = 0);
 	void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) override;
 	void update(float dt) override;
-	Bullet * shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map);
+	virtual Bullet * shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map) = 0;
 	bool isPlayerVisible(sf::Vector2f playerPos, char** map);
 	void setIsDying() { this->isDying = true; this->isShooting = false; this->isWalking = false; }
 	bool getIsDying() { return this->isDying; }

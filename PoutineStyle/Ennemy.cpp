@@ -1,7 +1,10 @@
 #include "Ennemy.h"
 #include <random>
 
-Ennemy::Ennemy(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
+Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray shootAnimVA, AnimatedVertexArray dieAnimVA, int dropNumber) : Entity(hp, pos) {
+    this->shootAnimVA = shootAnimVA;
+    this->dieAnimVA = dieAnimVA;
+    
     // Create random entity for drop
     switch (dropNumber)
     {
@@ -54,24 +57,6 @@ void Ennemy::update(float dt) {
     }
 }
 
-Bullet* Ennemy::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map) {
-    bool bIsPlayerVisible = isPlayerVisible(playerPos, map);
-	if (shootAnimVA.getIsAnimationOver() && bIsPlayerVisible && !isDying) {
-		isShooting = true;
-		// Add noise to the bullet direction
-		double xNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
-        xNoise = AnimatedVertexArray::map(xNoise, 0, 0.1, -0.1, 0.1);
-		double yNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
-        yNoise = AnimatedVertexArray::map(yNoise, 0, 0.1, -0.1, 0.1);
-		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise, direction.y + yNoise);
-
-		// Create a bullet
-		sf::Vector2f bulletPos = sf::Vector2f((this->mapPos.x), (this->mapPos.y));
-		Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, false);
-        return bullet;
-	}
-    return nullptr;
-}
 bool Ennemy::isPlayerVisible(sf::Vector2f playerPos, char** map) {
     // Get the player position relative to the ennemy position
     double playerMapPosX = playerPos.x; // = (double)this->mapPos.x - (double)playerPos.x;

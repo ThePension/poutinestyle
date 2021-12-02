@@ -135,7 +135,7 @@ void StatePlayGame::handleInput(double deltatime)
                     player.shoot(player.direction);
                     Entity* entity = getInteractedEntity();
                     if (entity != nullptr) {
-                        if (typeid(*entity).name() == typeid(Ennemy).name()) {
+                        if (typeid(*entity).name() == typeid(Guard).name()) {
                             Ennemy* ennemy = static_cast<Ennemy*>(entity);
                             if (!ennemy->getIsDying()) {
                                 ennemy->decreaseHP(player.getCurrentWeapon()->getDamage());
@@ -719,7 +719,7 @@ void StatePlayGame::renderingEntities(double dt) {
         for (int y = 0; y < 32; y++) {
             Entity* entity = entityMap[x][y];
             if (entity != nullptr) {
-                if (typeid(*entity).name() == typeid(Ennemy).name()) {
+                if (typeid(*entity).name() == typeid(Guard).name()) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entity);
                     if (ennemy->getToRemove()) {
                         Entity* droppedEntity = ennemy->getDroppedEntity();
@@ -759,7 +759,7 @@ void StatePlayGame::renderingEntities(double dt) {
 
     // Draw and update all entities
     for (Entity* entity : entities) {
-        if (typeid(*entity).name() == typeid(Ennemy).name()) {
+        if (typeid(*entity).name() == typeid(Guard).name()) {
             Ennemy* ennemy = static_cast<Ennemy*>(entity);
             // Calculate the direction of the bullet (aiming the player)
             sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
@@ -805,9 +805,9 @@ void StatePlayGame::parseMap2D()
             }
             else if (map[indexX][indexY] == 'E') { // Ennemy
                 rnd = (rand() % 4); // Between 0 and 3
-                Ennemy* ennemy = new Ennemy(1, sf::Vector2f((float)indexY, (float)indexX), rnd);
-                entities.push_back(ennemy);
-                entityMap[indexY][indexX] = ennemy;
+                Ennemy* guard = new Guard(sf::Vector2f((float)indexY, (float)indexX), rnd);
+                entities.push_back(guard);
+                entityMap[indexY][indexX] =guard;
             }
             else if (map[indexX][indexY] == 'C') { // Chest
                 rnd = (rand() % 2); // Between 0 and 1
