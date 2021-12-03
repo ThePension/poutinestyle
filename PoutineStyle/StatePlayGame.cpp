@@ -63,6 +63,7 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
 StatePlayGame::~StatePlayGame()
 {
     cleanAllEntitys();
+    delete hudUp; delete hudDownL; delete hudDownML; delete hudDownM; delete hudDownMR; delete hudDownR;
     delete player; player = nullptr;
     delete[] *(this->map);
     delete[] this->map;

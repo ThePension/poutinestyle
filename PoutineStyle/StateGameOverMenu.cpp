@@ -38,8 +38,7 @@ void StateGameOverMenu::update(float deltaTime)
 
 void StateGameOverMenu::draw(double deltatime)
 {
-	sf::Font font = sf::Font();
-	font.loadFromFile("CollegiateBlackFLF.ttf");
+	sf::Font font = gameManager->getFont();
 
 	text.setFont(font);
 	text.setCharacterSize(34);
