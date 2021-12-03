@@ -697,7 +697,7 @@ void StatePlayGame::renderingEntities(double dt) {
                 // bullet->isExplosing = true;
                 bullet->setToRemove(true);
             }
-            else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
+            else if ((map[nextY][nextX] == 'E' || map[nextY][nextX] == 'G') && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
                 if (bullet->isExplosing == false) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entityMap[nextX][nextY]);
                     if (ennemy != nullptr) {
