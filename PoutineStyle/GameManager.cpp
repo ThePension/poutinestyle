@@ -17,12 +17,13 @@ GameManager::GameManager()
     states.push(stateMainMenu);
 
     window->setPosition(sf::Vector2i(500, 0));
+
+    font = sf::Font();
+    font.loadFromFile("CollegiateBlackFLF.ttf");
 }
 
 void GameManager::gameLoop()
 {
-    sf::Font font = sf::Font();
-    font.loadFromFile("CollegiateBlackFLF.ttf");
     sf::Text fpsText("", font, 15);
     fpsText.setFillColor(sf::Color::Red);
     float dt_counter = 0.0f; // delta time for multiple frames, for calculating FPS smoothly

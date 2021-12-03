@@ -24,7 +24,7 @@
 class StatePlayGame : public GameState
 {
 private:
-	Player player;
+	Player * player;
 
 	bool isPlayerMoving = false;
 	sf::Keyboard::Key keysPressed;
@@ -64,6 +64,10 @@ private:
 
 	Entity* InteractedEntity = nullptr;
 
+	// HUD static stuff
+	sf::RectangleShape * hudUp, * hudDownL, * hudDownML, * hudDownM, * hudDownMR, * hudDownR;
+
+
 	void draw(double dt) override;
 	void handleInput(double deltatime) override;
 	void parseMap2D();
@@ -73,7 +77,8 @@ private:
 	void renderingEntities(double dt);
 	void showCursor();
 	void updatePlayerPosition(sf::Vector2f newPos);
-	void hud();
+	void setHud();
+	void displayHud();
 	void pause();
 	void endGameManagment();
 	void reset();

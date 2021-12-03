@@ -2,6 +2,8 @@
 
 StatePlayGame::StatePlayGame(GameManager* game, std::string mapFilePath, int mapSize)
 {
+    player = new Player();
+
     this->gameManager = game;
     this->mapFilePath = "Map/" + mapFilePath;
     this->mapSize = mapSize;
@@ -40,6 +42,7 @@ StatePlayGame::StatePlayGame(GameManager* game, std::string mapFilePath, int map
 
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
+    setHud();
 }
 
 sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
@@ -60,7 +63,7 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
 StatePlayGame::~StatePlayGame()
 {
     cleanAllEntitys();
-
+    delete player; player = nullptr;
     delete[] *(this->map);
     delete[] this->map;
 }
@@ -93,13 +96,13 @@ void StatePlayGame::handleInput(double deltatime)
             }
             else if (oldMouseX > mouseX) // go to left | 0 --- mouseX -- < -- oldMouseX --- maxWidth
             {
-                player.direction = rotateVectorMatrix(player.direction, -speedFactor * deltatime); // Rotate the player direction
-                player.planeVec = rotateVectorMatrix(player.planeVec, -speedFactor * deltatime); // Rotate plane direction
+                player->direction = rotateVectorMatrix(player->direction, -speedFactor * deltatime); // Rotate the player direction
+                player->planeVec = rotateVectorMatrix(player->planeVec, -speedFactor * deltatime); // Rotate plane direction
             }
             else if (oldMouseX < mouseX)  // go to right | 0 --- oldMouseX -- < -- mouseX --- maxWidth
             {
-                player.direction = rotateVectorMatrix(player.direction, speedFactor * deltatime); // Rotate the player direction
-                player.planeVec = rotateVectorMatrix(player.planeVec, speedFactor * deltatime); // Rotate plane direction
+                player->direction = rotateVectorMatrix(player->direction, speedFactor * deltatime); // Rotate the player direction
+                player->planeVec = rotateVectorMatrix(player->planeVec, speedFactor * deltatime); // Rotate plane direction
             }
             
             oldMouseX = mouseX;
@@ -108,7 +111,7 @@ void StatePlayGame::handleInput(double deltatime)
         if (event.type == sf::Event::KeyPressed)
         {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) player.reload();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) player->reload();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) wPressed = true;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) aPressed = true;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) sPressed = true;
@@ -116,7 +119,7 @@ void StatePlayGame::handleInput(double deltatime)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) movingSpeed = 5;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) InteractedEntity = getInteractedEntity();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) pause();
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) player.switchWeapon();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) player->switchWeapon();
         }
 
         if (event.type == sf::Event::KeyReleased)
@@ -130,15 +133,15 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
         {
-            if (typeid(*player.getCurrentWeapon()).name() == typeid(Knife).name()) {
-                if (player.getCurrentWeapon()->getShootAnimation().isAnimationOver) {
-                    player.shoot(player.direction);
+            if (typeid(*player->getCurrentWeapon()).name() == typeid(Knife).name()) {
+                if (player->getCurrentWeapon()->getShootAnimation().isAnimationOver) {
+                    player->shoot(player->direction);
                     Entity* entity = getInteractedEntity();
                     if (entity != nullptr) {
                         if (typeid(*entity).name() == typeid(Guard).name() || typeid(*entity).name() == typeid(General).name()) {
                             Ennemy* ennemy = static_cast<Ennemy*>(entity);
                             if (!ennemy->getIsDying()) {
-                                ennemy->decreaseHP(player.getCurrentWeapon()->getDamage());
+                                ennemy->decreaseHP(player->getCurrentWeapon()->getDamage());
                                 // Remove the ennemy if his HP are under 1
                                 if (ennemy->getHP() <= 0) {
                                     ennemy->setIsDying();
@@ -149,7 +152,7 @@ void StatePlayGame::handleInput(double deltatime)
                 }
             }
             else{
-                std::stack<Bullet*> bullets = player.shoot(player.direction);
+                std::stack<Bullet*> bullets = player->shoot(player->direction);
                 while(!bullets.empty()) {
                     Bullet* bullet = bullets.top();
                     if (bullet != nullptr) {
@@ -201,25 +204,25 @@ void StatePlayGame::update(float deltaTime)
 
     if (aPressed)
     {
-        newPlayerPos = sf::Vector2f(player.position.x - player.planeVec.x * movingSpeed * deltaTime, player.position.y - player.planeVec.y * movingSpeed * deltaTime);
+        newPlayerPos = sf::Vector2f(player->position.x - player->planeVec.x * movingSpeed * deltaTime, player->position.y - player->planeVec.y * movingSpeed * deltaTime);
         updatePlayerPosition(newPlayerPos);
     }
 
     if (dPressed)
     {
-        newPlayerPos = sf::Vector2f(player.position.x + player.planeVec.x * movingSpeed * deltaTime, player.position.y + player.planeVec.y * movingSpeed * deltaTime);
+        newPlayerPos = sf::Vector2f(player->position.x + player->planeVec.x * movingSpeed * deltaTime, player->position.y + player->planeVec.y * movingSpeed * deltaTime);
         updatePlayerPosition(newPlayerPos);
     }
 
     if (wPressed)
     {
-        newPlayerPos = sf::Vector2f(player.position.x + player.direction.x * movingSpeed * deltaTime, player.position.y + player.direction.y * movingSpeed * deltaTime);
+        newPlayerPos = sf::Vector2f(player->position.x + player->direction.x * movingSpeed * deltaTime, player->position.y + player->direction.y * movingSpeed * deltaTime);
         updatePlayerPosition(newPlayerPos);
     }
 
     if (sPressed)
     {
-        newPlayerPos = sf::Vector2f(player.position.x - player.direction.x * movingSpeed * deltaTime, player.position.y - player.direction.y * movingSpeed * deltaTime);
+        newPlayerPos = sf::Vector2f(player->position.x - player->direction.x * movingSpeed * deltaTime, player->position.y - player->direction.y * movingSpeed * deltaTime);
         updatePlayerPosition(newPlayerPos);
     }
 
@@ -230,9 +233,9 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
 {
     int newPosMapY, newPosMapX, oldPosMapX, oldPosMapY;
 
-    oldPosMapY = floor(player.position.x);
+    oldPosMapY = floor(player->position.x);
     newPosMapY = newPos.x;
-    oldPosMapX = floor(player.position.y);
+    oldPosMapX = floor(player->position.y);
     newPosMapX = newPos.y;
 
     // Check X axis
@@ -246,7 +249,7 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
         )
     {
         // Update player position on the Y axis
-        player.position.y = newPos.y;
+        player->position.y = newPos.y;
     }
     // Check Y axis
     if (   map[oldPosMapX][newPosMapY] != '1'
@@ -259,7 +262,7 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
         )
     {
         // Update the player position on the X axis
-        player.position.x = newPos.x;
+        player->position.x = newPos.x;
     }
 }
 
@@ -270,7 +273,7 @@ void StatePlayGame::draw(double dt)
     {
         renderingWalls(dt);
         renderingEntities(dt);
-        hud();
+        displayHud();
         drawMiniMap();
         endGameManagment(); // IMPORTANT ! need to be the last function called here
     }
@@ -278,7 +281,7 @@ void StatePlayGame::draw(double dt)
 
 void StatePlayGame::endGameManagment()
 {
-    if (player.dead())
+    if (player->dead())
     {
         StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false);
         this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
@@ -304,7 +307,7 @@ void StatePlayGame::drawMap2D()
 
     sf::CircleShape player_circle;
     player_circle.setRadius(5);
-    player_circle.setPosition(sf::Vector2f(player.position.x * (blockWidth) - player_circle.getRadius(), player.position.y * (blockHeight - 1) - player_circle.getRadius() / 2.0));
+    player_circle.setPosition(sf::Vector2f(player->position.x * (blockWidth) - player_circle.getRadius(), player->position.y * (blockHeight - 1) - player_circle.getRadius() / 2.0));
     player_circle.setFillColor(sf::Color::Green);
 
     for (int i = 0; i < mapSize; i++)
@@ -334,7 +337,7 @@ void StatePlayGame::drawMap2D()
     sf::Vertex playerDirLine[] =
     {
         sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius(), player_circle.getPosition().y + player_circle.getRadius())),
-        sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius() + 16 * player.direction.x, player_circle.getPosition().y + player_circle.getRadius() + 16 * player.direction.y))
+        sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius() + 16 * player->direction.x, player_circle.getPosition().y + player_circle.getRadius() + 16 * player->direction.y))
     };
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
@@ -357,8 +360,8 @@ void StatePlayGame::drawMiniMap()
 
     for (int x = -3; x <= 3; x++) {
         for (int y = -3; y <= 3; y++) {
-            int positionX = floor(player.position.x) + x;
-            int positionY = floor(player.position.y) + y;
+            int positionX = floor(player->position.x) + x;
+            int positionY = floor(player->position.y) + y;
             
             sf::RectangleShape cell = sf::RectangleShape();
             cell.setPosition(sf::Vector2f((3 - x) * blockWUnit + blockWUnit, (4 - y) * blockHUnit + blockHUnit));
@@ -402,10 +405,10 @@ void StatePlayGame::drawMiniMap()
     rect.setFillColor(sf::Color::Green);
 
     // Update rotation
-    double delta = player.direction.x / player.direction.y;
+    double delta = player->direction.x / player->direction.y;
     double angleInRad = atan(delta);
     double angleInDegrees = angleInRad * 180.0 / 3.1415 + 180.0; // Use a constant
-    if (player.direction.y < 0) angleInDegrees += 180.0;
+    if (player->direction.y < 0) angleInDegrees += 180.0;
     rect.rotate(-angleInDegrees);
     gameManager->getRenderWindow()->draw(rect);
 }
@@ -421,12 +424,12 @@ void StatePlayGame::renderingWalls(double dt)
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         int wallTextureNum = 3; // Need to be set depending on wall type (char)
         // Cell where the player is standing
-        sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x), int(player.position.y));
+        sf::Vector2i playerMapPos = sf::Vector2i(int(player->position.x), int(player->position.y));
 
         // Vector representing the direction of the actual ray
         double cameraX = double(2.f * double(x)) / double(w) - 1.0;
 
-        sf::Vector2f rayDir = player.direction + sf::Vector2f(player.planeVec.x * cameraX, player.planeVec.y * cameraX);
+        sf::Vector2f rayDir = player->direction + sf::Vector2f(player->planeVec.x * cameraX, player->planeVec.y * cameraX);
         double rayDirLen = std::sqrt(pow(rayDir.x, 2) + pow(rayDir.y, 2));
 
         // Fisheye effect
@@ -443,19 +446,19 @@ void StatePlayGame::renderingWalls(double dt)
 
         if (rayDir.x < 0) {
             stepX = -1;
-            sideDistX = ((player.position.x) - double(playerMapPos.x)) * deltaDistX;
+            sideDistX = ((player->position.x) - double(playerMapPos.x)) * deltaDistX;
         }
         else {
             stepX = 1;
-            sideDistX = (double(playerMapPos.x) + 1.f - (player.position.x)) * deltaDistX;
+            sideDistX = (double(playerMapPos.x) + 1.f - (player->position.x)) * deltaDistX;
         }
         if (rayDir.y < 0) {
             stepY = -1;
-            sideDistY = ((player.position.y) - double(playerMapPos.y)) * deltaDistY;
+            sideDistY = ((player->position.y) - double(playerMapPos.y)) * deltaDistY;
         }
         else {
             stepY = 1;
-            sideDistY = (double(playerMapPos.y) + 1.f - (player.position.y)) * deltaDistY;
+            sideDistY = (double(playerMapPos.y) + 1.f - (player->position.y)) * deltaDistY;
         }
         int ceilingPixel = 0; // position of ceiling pixel on the screen
         int groundPixel = gameManager->getWindowHeight(); // position of ground pixel on the screen
@@ -536,8 +539,8 @@ void StatePlayGame::renderingWalls(double dt)
 
         // Calculate where the wall was hit
         float wallX;
-        if (isWallHitHorizontal) wallX = (player.position.y) + perpWallDist * rayDir.y;
-        else wallX = (player.position.x) + perpWallDist * rayDir.x;
+        if (isWallHitHorizontal) wallX = (player->position.y) + perpWallDist * rayDir.y;
+        else wallX = (player->position.x) + perpWallDist * rayDir.x;
         wallX -= floor(wallX);
 
         // Get x coordinate on the wall texture
@@ -585,7 +588,7 @@ void StatePlayGame::renderingEntities(double dt) {
             delete InteractedEntity; InteractedEntity = nullptr;
 
             // Increase Player's life
-            player.increaseLife();
+            player->increaseLife();
         }
         else if (typeid(*InteractedEntity).name() == typeid(Ammo).name()) {
             // Delete Ammo Entity
@@ -595,7 +598,7 @@ void StatePlayGame::renderingEntities(double dt) {
             delete InteractedEntity; InteractedEntity = nullptr;
 
             // Increase player's Ammo
-            player.increaseAmmo();
+            player->increaseAmmo();
         }
         else if (typeid(*InteractedEntity).name() == typeid(Key).name()) {
             // Delete Ammo Entity
@@ -655,7 +658,7 @@ void StatePlayGame::renderingEntities(double dt) {
         }
         else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name()) {
             Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
-            Weapon* oldWeapon = player.setWeapon(weapon);
+            Weapon* oldWeapon = player->setWeapon(weapon);
         
             entities.remove(weapon);
             if (oldWeapon != nullptr) {
@@ -672,7 +675,7 @@ void StatePlayGame::renderingEntities(double dt) {
 #pragma region Rendering Textured Entities (Sprites)
     // Calculate distance for every entities
     for (Entity* entity : entities) {
-        if (entity->getToDraw()) entity->calculateDistanceUntilPlayer(player.position);
+        if (entity->getToDraw()) entity->calculateDistanceUntilPlayer(player->position);
 
         if (typeid(*entity).name() == typeid(Bullet).name()) {
             Bullet* bullet = static_cast<Bullet*>(entity);
@@ -688,9 +691,9 @@ void StatePlayGame::renderingEntities(double dt) {
                 bullet->isTravelling = false;
                 bullet->isExplosing = true;
             }
-            else if (nextX == floor(player.position.x) && nextY == floor(player.position.y) && !bullet->getIsPlayerBullet()) // Ennemies bullets and Player collision
+            else if (nextX == floor(player->position.x) && nextY == floor(player->position.y) && !bullet->getIsPlayerBullet()) // Ennemies bullets and Player collision
             {
-                if (bullet->isExplosing == false) player.loseLife();
+                if (bullet->isExplosing == false) player->loseLife();
 
                 // bullet->isTravelling = false;
                 // bullet->isExplosing = true;
@@ -761,27 +764,27 @@ void StatePlayGame::renderingEntities(double dt) {
         if (typeid(*entity).name() == typeid(Guard).name() || typeid(*entity).name() == typeid(General).name()) {
             Ennemy* ennemy = static_cast<Ennemy*>(entity);
             // Calculate the direction of the bullet (aiming the player)
-            sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
+            sf::Vector2f bulletDir = sf::Vector2f(player->position.x - 0.5, player->position.y - 0.5) - ennemy->mapPos;
             // Get the norm of the direction vector
             double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
             // Get the unit vector
             sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
-            std::stack<Bullet*> bullets = ennemy->shoot(bulletDirUnit, this->player.position, this->map);
+            std::stack<Bullet*> bullets = ennemy->shoot(bulletDirUnit, this->player->position, this->map);
             while (!bullets.empty()) {
                 Bullet* bullet = bullets.top();
                 if (bullet != nullptr) entities.push_back(bullet);
                 bullets.pop();
             }
         }
-        entity->draw(*gameManager->getRenderWindow(), player.position, player.direction, player.planeVec, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight());
+        entity->draw(*gameManager->getRenderWindow(), player->position, player->direction, player->planeVec, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight());
         entity->update(dt); // Update the animation
     }
 
 #pragma endregion
 
 #pragma region Rendering player sprites
-    player.draw(*gameManager->getRenderWindow());
-    player.update(dt);
+    player->draw(*gameManager->getRenderWindow());
+    player->update(dt);
     showCursor();
 #pragma endregion
 }
@@ -804,7 +807,7 @@ void StatePlayGame::parseMap2D()
             map[indexX][indexY] = *it;
             if (map[indexX][indexY] == 'T') // Player spawn position
             {
-                player.position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
+                player->position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
             else if (map[indexX][indexY] == 'E') { // Ennemy
                 rnd = (rand() % 4); // Between 0 and 3
@@ -900,76 +903,87 @@ void StatePlayGame::parseMap2D()
     mapFile.close();
 }
 
-void StatePlayGame::hud()
+void StatePlayGame::setHud()
 {
-    sf::RectangleShape hudUp, hudDownL, hudDownML, hudDownM, hudDownMR, hudDownR;
-    float widthPos = gameManager->getWindowWidth() / gameManager->getWindowWidth();
-    float hudDownWidth = widthPos * (gameManager->getWindowWidth() / 5)-3;
-    float heightPos = gameManager->getWindowHeight() / gameManager->getWindowHeight();
+    hudUp = new sf::RectangleShape();
+    hudDownL = new sf::RectangleShape();
+    hudDownML = new sf::RectangleShape();
+    hudDownM = new sf::RectangleShape();
+    hudDownMR = new sf::RectangleShape();
+    hudDownR = new sf::RectangleShape();
+
+    float hudDownWidth = 1.f * (gameManager->getWindowWidth() / 5) - 3;
+
     sf::Color lineCol = sf::Color::Red;
     sf::Color hudBack = sf::Color::White;
 
-    hudUp.setSize(sf::Vector2f(gameManager->getWindowWidth(), gameManager->getWindowHeight() / 25));
-    hudDownL.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 10));
-    hudDownML.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 10));
-    hudDownM.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 10));
-    hudDownMR.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 10));
-    hudDownR.setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 10));
+    hudUp->setSize(sf::Vector2f(gameManager->getWindowWidth(), gameManager->getWindowHeight() / 25));
+    hudDownL->setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 10));
+    hudDownML->setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 10));
+    hudDownM->setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 10));
+    hudDownMR->setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 10));
+    hudDownR->setSize(sf::Vector2f(hudDownWidth, gameManager->getWindowHeight() / 10));
 
-    hudUp.setFillColor(hudBack);
-    hudUp.setOutlineColor(lineCol);
-    hudUp.setOutlineThickness(3);
-    hudUp.setPosition(0, 0);
+    hudUp->setFillColor(hudBack);
+    hudUp->setOutlineColor(lineCol);
+    hudUp->setOutlineThickness(3);
+    hudUp->setPosition(0, 0);
 
-    hudDownL.setFillColor(hudBack);
-    hudDownL.setOutlineColor(lineCol);
-    hudDownL.setOutlineThickness(3);
-    hudDownL.setPosition(3, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10-3);
+    hudDownL->setFillColor(hudBack);
+    hudDownL->setOutlineColor(lineCol);
+    hudDownL->setOutlineThickness(3);
+    hudDownL->setPosition(3, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10 - 3);
 
-    hudDownML.setFillColor(hudBack);
-    hudDownML.setOutlineColor(lineCol);
-    hudDownML.setOutlineThickness(3);
-    hudDownML.setPosition(hudDownWidth+3, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10-3);
+    hudDownML->setFillColor(hudBack);
+    hudDownML->setOutlineColor(lineCol);
+    hudDownML->setOutlineThickness(3);
+    hudDownML->setPosition(hudDownWidth + 3, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10 - 3);
 
-    hudDownM.setFillColor(hudBack);
-    hudDownM.setOutlineColor(lineCol);
-    hudDownM.setOutlineThickness(3);
-    hudDownM.setPosition(hudDownWidth * 2+6, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10-3);
+    hudDownM->setFillColor(hudBack);
+    hudDownM->setOutlineColor(lineCol);
+    hudDownM->setOutlineThickness(3);
+    hudDownM->setPosition(hudDownWidth * 2 + 6, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10 - 3);
 
-    hudDownMR.setFillColor(hudBack);
-    hudDownMR.setOutlineColor(lineCol);
-    hudDownMR.setOutlineThickness(3);
-    hudDownMR.setPosition(hudDownWidth * 3+9, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10-3);
+    hudDownMR->setFillColor(hudBack);
+    hudDownMR->setOutlineColor(lineCol);
+    hudDownMR->setOutlineThickness(3);
+    hudDownMR->setPosition(hudDownWidth * 3 + 9, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10 - 3);
 
-    hudDownR.setFillColor(hudBack);
-    hudDownR.setOutlineColor(lineCol);
-    hudDownR.setOutlineThickness(3);
-    hudDownR.setPosition(hudDownWidth * 4+12, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10-3);
+    hudDownR->setFillColor(hudBack);
+    hudDownR->setOutlineColor(lineCol);
+    hudDownR->setOutlineThickness(3);
+    hudDownR->setPosition(hudDownWidth * 4 + 12, gameManager->getWindowHeight() - gameManager->getWindowHeight() / 10 - 3);
+}
 
-    gameManager->getRenderWindow()->draw(hudUp);
-    gameManager->getRenderWindow()->draw(hudDownL);
-    gameManager->getRenderWindow()->draw(hudDownML);
-    gameManager->getRenderWindow()->draw(hudDownM);
-    gameManager->getRenderWindow()->draw(hudDownMR);
-    gameManager->getRenderWindow()->draw(hudDownR);
+void StatePlayGame::displayHud()
+{
+    // Draw static stuff
+    gameManager->getRenderWindow()->draw(*hudUp);
+    gameManager->getRenderWindow()->draw(*hudDownL);
+    gameManager->getRenderWindow()->draw(*hudDownML);
+    gameManager->getRenderWindow()->draw(*hudDownM);
+    gameManager->getRenderWindow()->draw(*hudDownMR);
+    gameManager->getRenderWindow()->draw(*hudDownR);
 
+    float widthPos = 1.f;
+    float hudDownWidth = widthPos * (gameManager->getWindowWidth() / 5) - 3;
+    float heightPos = gameManager->getWindowHeight() / gameManager->getWindowHeight();
 
-    sf::Font font = sf::Font();
+    sf::Font font = gameManager->getFont();
     sf::Color fontCol = sf::Color::Red;
-    font.loadFromFile("CollegiateBlackFLF.ttf");
 
     sf::Text liveText("Live : ", font, 15);
     sf::Text live("", font, 15);
-    live.setString(std::to_string(player.getLive()));
+    live.setString(std::to_string(player->getLive()));
     sf::Text health("Health :", font, 15);
     sf::RectangleShape visualHealth;
-    sf::Text arme("weapon", font, 15);
+    sf::Text arme("Weapon", font, 15);
     sf::Text ammunition("Ammo :", font, 15);
     sf::Text currentAmmunition("", font, 15);
-    currentAmmunition.setString(std::to_string(player.getCurrentAmmunition()) +" / " + std::to_string(player.getAmmunition()));
+    currentAmmunition.setString(std::to_string(player->getCurrentAmmunition()) + " / " + std::to_string(player->getAmmunition()));
     sf::Text score("Score :", font, 15);
     sf::Text currentScore("", font, 15);
-    currentScore.setString(std::to_string(player.getScore()));
+    currentScore.setString(std::to_string(player->getScore()));
 
     liveText.setFillColor(fontCol);
     liveText.setPosition(sf::Vector2f(5, gameManager->getWindowHeight() - heightPos * 50));
@@ -980,13 +994,13 @@ void StatePlayGame::hud()
     health.setFillColor(fontCol);
     health.setPosition(sf::Vector2f(hudDownWidth+6, gameManager->getWindowHeight() - heightPos * 50));
 
-    if (player.getHealth() <= 0)
+    if (player->getHealth() <= 0)
     {
         visualHealth.setSize(sf::Vector2f(1, 25));
     }
     else
     {
-        visualHealth.setSize(sf::Vector2f((hudDownWidth / 100) * player.getHealth(), 25));
+        visualHealth.setSize(sf::Vector2f((hudDownWidth / 100) * player->getHealth(), 25));
     }
     visualHealth.setFillColor(sf::Color::Green);
     visualHealth.setPosition(sf::Vector2f(hudDownWidth+ 3, gameManager->getWindowHeight() - heightPos * 28));
@@ -1010,7 +1024,7 @@ void StatePlayGame::hud()
     gameManager->getRenderWindow()->draw(live);
     gameManager->getRenderWindow()->draw(health);
     gameManager->getRenderWindow()->draw(visualHealth);
-    gameManager->getRenderWindow()->draw(arme);//TODO remplacere le text par une image de l'arme utilisé
+    gameManager->getRenderWindow()->draw(arme); //TODO remplacere le text par une image de l'arme utilisé
     gameManager->getRenderWindow()->draw(ammunition);
     gameManager->getRenderWindow()->draw(currentAmmunition);
     gameManager->getRenderWindow()->draw(score);
@@ -1059,8 +1073,8 @@ void StatePlayGame::cleanAllEntitys()
 /// </summary>
 /// <returns>Return * Entity or nullptr</returns>
 Entity* StatePlayGame::getInteractedEntity() {
-    int playerDirectionPosX = floor(player.position.x + 1.0 * player.direction.x);
-    int playerDirectionPosY = floor(player.position.y + 1.0 * player.direction.y);
+    int playerDirectionPosX = floor(player->position.x + 1.0 * player->direction.x);
+    int playerDirectionPosY = floor(player->position.y + 1.0 * player->direction.y);
     if (playerDirectionPosX > 0 && playerDirectionPosX < mapSize && playerDirectionPosY > 0 && playerDirectionPosY < mapSize) {
         if (this->entityMap[playerDirectionPosX][playerDirectionPosY] != nullptr) return entityMap[playerDirectionPosX][playerDirectionPosY];
     }
