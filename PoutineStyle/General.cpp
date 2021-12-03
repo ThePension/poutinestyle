@@ -1,8 +1,8 @@
 #include "General.h"
 
 General::General(sf::Vector2f pos, int dropNumber)
-    : Ennemy(3, pos, AnimatedVertexArray("../PoutineStyle/pics/generalTextures.png", 64, 64, 1, 4, 0.1),
-                     AnimatedVertexArray("../PoutineStyle/pics/generalTextures.png", 64, 64, 2, 4, 0.3), dropNumber) {
+    : Ennemy(3, pos, new AnimatedVertexArray("../PoutineStyle/pics/generalTextures.png", 64, 64, 1, 4, 0.1),
+                     new AnimatedVertexArray("../PoutineStyle/pics/generalTextures.png", 64, 64, 2, 4, 0.3), dropNumber) {
 
 }
 
@@ -10,7 +10,7 @@ std::stack<Bullet*> General::shoot(sf::Vector2f direction, sf::Vector2f playerPo
 {
 	bool bIsPlayerVisible = isPlayerVisible(playerPos, map);
 	std::stack<Bullet*> bullets;
-	if (shootAnimVA.getIsAnimationOver() && bIsPlayerVisible && !isDying) {
+	if (shootAnimVA->getIsAnimationOver() && bIsPlayerVisible && !isDying) {
 		isShooting = true;
 		// Add noise to the bullet direction
 		double xNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1

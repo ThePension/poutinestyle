@@ -15,9 +15,11 @@ private:
 	float frameDuration = 0.1f;
 	float time = 0;
 
-	static sf::VertexArray vertStripesArray;
+	sf::VertexArray* vertStripesArray = new sf::VertexArray(sf::Lines, 0);
 public:
+	AnimatedVertexArray();
 	AnimatedVertexArray(std::string texturesPath, int spriteHeight, int spriteWidth, int y, int totalFrame, double holdTime = 0.1);
+	~AnimatedVertexArray();
 	void draw(sf::RenderTarget& target, sf::Vector2f entityMapPos, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight); // Draw the VertexArray on screen (do the raycast)
 	void update(float dt); // Anime the VertexArray
 	static double map(double value, double start1, double stop1, double start2, double stop2) {

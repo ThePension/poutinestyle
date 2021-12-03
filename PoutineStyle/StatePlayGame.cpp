@@ -416,7 +416,7 @@ void StatePlayGame::renderingWalls(double dt)
     yOffset = 0; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
-    sf::VertexArray lines(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
+    sf::VertexArray* lines = new sf::VertexArray(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
     
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         int wallTextureNum = 3; // Need to be set depending on wall type (char)
@@ -424,7 +424,7 @@ void StatePlayGame::renderingWalls(double dt)
         sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x), int(player.position.y));
 
         // Vector representing the direction of the actual ray
-        double cameraX = double(2.f * x) / double(w) - 1;
+        double cameraX = double(2.f * double(x)) / double(w) - 1.0;
 
         sf::Vector2f rayDir = player.direction + sf::Vector2f(player.planeVec.x * cameraX, player.planeVec.y * cameraX);
         double rayDirLen = std::sqrt(pow(rayDir.x, 2) + pow(rayDir.y, 2));
@@ -510,9 +510,9 @@ void StatePlayGame::renderingWalls(double dt)
             // Floor
             double wallHeight = int(gameManager->getWindowHeight() / perpWallDist);
             // Add floor
-            lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
+            lines->append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
             groundPixel = int(wallHeight * 0.495 + double(gameManager->getWindowHeight()) * 0.5f);
-            lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
+            lines->append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
             
             if (floorColor == color1) floorColor = color2;
             else floorColor = color1;
@@ -549,21 +549,20 @@ void StatePlayGame::renderingWalls(double dt)
 
         // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
         // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
-        lines[x * 2].position = sf::Vector2f((float)x, (float)drawStart + yOffset);
-        lines[x * 2].color = wallColor;
-        lines[x * 2].texCoords = sf::Vector2f((float)texture_coords.x, (float)texture_coords.y + 1);
+        (*lines)[x * 2].position = sf::Vector2f((float)x, (float)drawStart + yOffset);
+        (*lines)[x * 2].color = wallColor;
+        (*lines)[x * 2].texCoords = sf::Vector2f((float)texture_coords.x, (float)texture_coords.y + 1);
         // x * 2 + 1 are all the seconds points of the lines (bottom ones)
-        lines[x * 2 + 1].position = sf::Vector2f((float)x, (float)drawEnd + yOffset);
-        lines[x * 2 + 1].color = wallColor;
-        lines[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
+        (*lines)[x * 2 + 1].position = sf::Vector2f((float)x, (float)drawEnd + yOffset);
+        (*lines)[x * 2 + 1].color = wallColor;
+        (*lines)[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
 
         ZBuffer[x] = perpWallDist; // Needed for entities rendering
     }
 
     // Draw walls with textures
-    gameManager->getRenderWindow()->draw(lines, &wallTextures);
-    lines.clear();
-    lines.resize(2 * w);
+    gameManager->getRenderWindow()->draw(*lines, &wallTextures);
+    delete lines; lines = nullptr;
 
 #pragma endregion
 }
@@ -829,32 +828,32 @@ void StatePlayGame::parseMap2D()
                 entityMap[indexY][indexX] = nullptr;
             }
             else if (map[indexX][indexY] == 'd') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'v') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 1, 1), 'V');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 1, 1), 'V');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'w'){
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 2, 1), 'W');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 2, 1), 'W');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'x') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 3, 1), 'X');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 3, 1), 'X');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'y') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 4, 1), 'Y');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 4, 1), 'Y');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'z'){
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }

@@ -20,7 +20,8 @@ protected:
 	Entity* droppedEntity = nullptr;
 	double shootCooldown = 1.0;
 public:
-	Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray shootAnimVA, AnimatedVertexArray dieAnimVA, int dropNumber = 0);
+	Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray* shootAnimVA, AnimatedVertexArray* dieAnimVA, int dropNumber = 0);
+	~Ennemy() override;
 	void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) override;
 	void update(float dt) override;
 	virtual std::stack<Bullet*> shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map) = 0;
@@ -30,6 +31,6 @@ public:
 	Entity* getDroppedEntity() { return this->droppedEntity; }
 
 	// AnimatedVertexArray walkAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 64, 0, 8);
-	AnimatedVertexArray shootAnimVA = AnimatedVertexArray("../PoutineStyle/pics/shootingEnnemy.png", 64, 64, 0, 5, 0.3);
-	AnimatedVertexArray dieAnimVA = AnimatedVertexArray("../PoutineStyle/pics/dyingEnnemy.png", 64, 64, 0, 4, 0.3);
+	AnimatedVertexArray* shootAnimVA = nullptr; // = AnimatedVertexArray("../PoutineStyle/pics/shootingEnnemy.png", 64, 64, 0, 5, 0.3);
+	AnimatedVertexArray* dieAnimVA = nullptr; // = AnimatedVertexArray("../PoutineStyle/pics/dyingEnnemy.png", 64, 64, 0, 4, 0.3);
 };

@@ -1,8 +1,8 @@
 #include "Guard.h"
 
 Guard::Guard(sf::Vector2f pos, int dropNumber)
-    : Ennemy(1, pos, AnimatedVertexArray("../PoutineStyle/pics/shootingEnnemy.png", 64, 64, 0, 5, 0.3), 
-		AnimatedVertexArray("../PoutineStyle/pics/dyingEnnemy.png", 64, 64, 0, 4, 0.3), dropNumber)
+    : Ennemy(1, pos, new AnimatedVertexArray("../PoutineStyle/pics/shootingEnnemy.png", 64, 64, 0, 5, 0.3), 
+		new AnimatedVertexArray("../PoutineStyle/pics/dyingEnnemy.png", 64, 64, 0, 4, 0.3), dropNumber)
 {
     
 }
@@ -11,7 +11,7 @@ std::stack<Bullet*> Guard::shoot(sf::Vector2f direction, sf::Vector2f playerPos,
 {
 	std::stack<Bullet*> bullets;
 	bool bIsPlayerVisible = isPlayerVisible(playerPos, map);
-	if (shootAnimVA.getIsAnimationOver() && bIsPlayerVisible && !isDying) {
+	if (shootAnimVA->getIsAnimationOver() && bIsPlayerVisible && !isDying) {
 		isShooting = true;
 		
 		// Add noise to the bullet direction

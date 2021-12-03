@@ -5,8 +5,13 @@ Shotgun::Shotgun() : Weapon(1, Animation(0, 0, 64, 64, 11, "../PoutineStyle/pics
 	weaponSprite.setPosition(300, 320);
 }
 
+Shotgun::~Shotgun()
+{
+	delete this->shotgunAnim; this->shotgunAnim = nullptr;
+}
+
 void Shotgun::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
-	shotgunAnim.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+	shotgunAnim->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
 }
 void Shotgun::draw(sf::RenderTarget& target)
 {

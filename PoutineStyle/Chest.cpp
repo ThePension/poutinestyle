@@ -11,20 +11,25 @@ Chest::Chest(sf::Vector2f pos, int dropNumber) : Entity(1, pos) {
 			break;
 	}
 }
+Chest::~Chest()
+{
+	delete this->ClosedChestAnimVA; this->ClosedChestAnimVA = nullptr;
+	delete this->OpeningAnimVA; this->OpeningAnimVA = nullptr;
+}
 void Chest::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
 	if (toDraw) {
 		if (isOpening) { // Opening chest
-			this->OpeningAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+			this->OpeningAnimVA->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
 		}
 		else if (!isOpen) { // Closed chest
-			this->ClosedChestAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+			this->ClosedChestAnimVA->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
 		}
 	}
 }
 void Chest::update(float dt) {
 	if (isOpening) { // Opening chest (animation)
-		this->OpeningAnimVA.update(dt);
-		if (this->OpeningAnimVA.getIsAnimationOver()) {
+		this->OpeningAnimVA->update(dt);
+		if (this->OpeningAnimVA->getIsAnimationOver()) {
 			this->isOpening = false;
 			this->toRemove = true;
 		}

@@ -1,7 +1,7 @@
 #include "Ennemy.h"
 #include <random>
 
-Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray shootAnimVA, AnimatedVertexArray dieAnimVA, int dropNumber) : Entity(hp, pos) {
+Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray* shootAnimVA, AnimatedVertexArray* dieAnimVA, int dropNumber) : Entity(hp, pos) {
     this->shootAnimVA = shootAnimVA;
     this->dieAnimVA = dieAnimVA;
     
@@ -27,31 +27,37 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray shootAnimVA, Animat
     droppedEntity->mapPos = this->mapPos;
 }
 
+Ennemy::~Ennemy()
+{
+    delete this->dieAnimVA; this->dieAnimVA = nullptr;
+    delete this->shootAnimVA; this->shootAnimVA = nullptr;
+}
+
 void Ennemy::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
     if (toDraw) {
         if (isShooting && !isDying) {
-            this->shootAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+            this->shootAnimVA->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
         }
         else if (isWalking && !isDying) { /* Do stuff */ }
         else if (isDying) {
-            this->dieAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+            this->dieAnimVA->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
         }
         else {
-            this->shootAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+            this->shootAnimVA->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
         }
     }
 }
 
 void Ennemy::update(float dt) {
 	if (isShooting && !isDying) {
-		this->shootAnimVA.update(dt);
-		if (shootAnimVA.getIsAnimationOver()) {
+		this->shootAnimVA->update(dt);
+		if (shootAnimVA->getIsAnimationOver()) {
 			isShooting = false;
 		}
     }
     else if (isDying) {
-        this->dieAnimVA.update(dt);
-        if (this->dieAnimVA.getIsAnimationOver()) {
+        this->dieAnimVA->update(dt);
+        if (this->dieAnimVA->getIsAnimationOver()) {
             this->toRemove = true;
         }
     }
