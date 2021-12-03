@@ -1,15 +1,18 @@
 #include "Ennemy.h"
 #include <random>
 
-Ennemy::Ennemy(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
+Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray* shootAnimVA, AnimatedVertexArray* dieAnimVA, int dropNumber) : Entity(hp, pos) {
+    this->shootAnimVA = shootAnimVA;
+    this->dieAnimVA = dieAnimVA;
+    
     // Create random entity for drop
     switch (dropNumber)
     {
         case 0: // Ammo pack
-            droppedEntity = new Ammo(1, this->mapPos);
+            droppedEntity = new Ammo(this->mapPos);
             break;
         case 1: // Medikit
-            droppedEntity = new Medikit(1, this->mapPos);
+            droppedEntity = new Medikit(this->mapPos);
             break;
         case 2:
             droppedEntity = new Pistol();
@@ -18,60 +21,48 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, int dropNumber) : Entity(hp, pos) {
             droppedEntity = new Shotgun();
             break;
         default:
-            droppedEntity = new Ammo(1, this->mapPos);
+            droppedEntity = new Ammo(this->mapPos);
             break;
     }
     droppedEntity->mapPos = this->mapPos;
 }
 
+Ennemy::~Ennemy()
+{
+    delete this->dieAnimVA; this->dieAnimVA = nullptr;
+    delete this->shootAnimVA; this->shootAnimVA = nullptr;
+}
+
 void Ennemy::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
     if (toDraw) {
         if (isShooting && !isDying) {
-            this->shootAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+            this->shootAnimVA->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
         }
         else if (isWalking && !isDying) { /* Do stuff */ }
         else if (isDying) {
-            this->dieAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+            this->dieAnimVA->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
         }
         else {
-            this->shootAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+            this->shootAnimVA->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
         }
     }
 }
 
 void Ennemy::update(float dt) {
 	if (isShooting && !isDying) {
-		this->shootAnimVA.update(dt);
-		if (shootAnimVA.getIsAnimationOver()) {
+		this->shootAnimVA->update(dt);
+		if (shootAnimVA->getIsAnimationOver()) {
 			isShooting = false;
 		}
     }
     else if (isDying) {
-        this->dieAnimVA.update(dt);
-        if (this->dieAnimVA.getIsAnimationOver()) {
+        this->dieAnimVA->update(dt);
+        if (this->dieAnimVA->getIsAnimationOver()) {
             this->toRemove = true;
         }
     }
 }
 
-Bullet* Ennemy::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map) {
-    bool bIsPlayerVisible = isPlayerVisible(playerPos, map);
-	if (shootAnimVA.getIsAnimationOver() && bIsPlayerVisible && !isDying) {
-		isShooting = true;
-		// Add noise to the bullet direction
-		double xNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
-        xNoise = AnimatedVertexArray::map(xNoise, 0, 0.1, -0.1, 0.1);
-		double yNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
-        yNoise = AnimatedVertexArray::map(yNoise, 0, 0.1, -0.1, 0.1);
-		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise, direction.y + yNoise);
-
-		// Create a bullet
-		sf::Vector2f bulletPos = sf::Vector2f((this->mapPos.x), (this->mapPos.y));
-		Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, false);
-        return bullet;
-	}
-    return nullptr;
-}
 bool Ennemy::isPlayerVisible(sf::Vector2f playerPos, char** map) {
     // Get the player position relative to the ennemy position
     double playerMapPosX = playerPos.x; // = (double)this->mapPos.x - (double)playerPos.x;
@@ -132,4 +123,9 @@ bool Ennemy::isPlayerVisible(sf::Vector2f playerPos, char** map) {
             map[entityMapPos.y][entityMapPos.x] == 'Z') return false; // The player is not visible for the ennemy
         else if (entityMapPos.x == floor(playerPos.x) && entityMapPos.y == floor(playerPos.y)) return true; // The player is visible for the ennemy
     }
+}
+
+int Ennemy::getCurrentRenderedFrame()
+{
+    return this->shootAnimVA->getCurrentRenderedFrameNum();
 }

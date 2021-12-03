@@ -1,5 +1,9 @@
 #include "AnimatedVertexArray.h"
-sf::VertexArray AnimatedVertexArray::vertStripesArray = sf::VertexArray(sf::Lines, 0);
+AnimatedVertexArray::AnimatedVertexArray()
+{
+    this->vertStripesArray = new sf::VertexArray(sf::Lines, 0);
+}
+// sf::VertexArray* AnimatedVertexArray::vertStripesArray = new sf::VertexArray(sf::Lines, 0);
 AnimatedVertexArray::AnimatedVertexArray(std::string texturesPath, int spriteHeight, int spriteWidth, int y, int totalFrame, double holdTime) {
     this->textures = sf::Texture();
     this->textures.loadFromFile(texturesPath);
@@ -8,6 +12,10 @@ AnimatedVertexArray::AnimatedVertexArray(std::string texturesPath, int spriteHei
     this->y = y;
 	this->nbFrames = totalFrame;
     this->frameDuration = holdTime;
+}
+AnimatedVertexArray::~AnimatedVertexArray()
+{
+    delete this->vertStripesArray; this->vertStripesArray = nullptr;
 }
 void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapPos, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
     int yOffset = 0;
@@ -37,7 +45,7 @@ void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapP
 
             //calculate width of the sprite
             double spriteWidthOnScreen = abs(floor(h / (transformY)));
-            this->vertStripesArray.resize(2 * spriteWidthOnScreen);
+            this->vertStripesArray->resize(2 * spriteWidthOnScreen);
             // Where the sprite should be displayed (on screen x coordinates)
             double drawStartX = -spriteWidthOnScreen / 2.0 + spriteScreenX;
             if (drawStartX < 0) drawStartX = 0;
@@ -54,22 +62,22 @@ void AnimatedVertexArray::draw(sf::RenderTarget& target, sf::Vector2f entityMapP
                     topVertex.color = sf::Color::White;
                     topVertex.texCoords = sf::Vector2f((float)texX + currentRenderedFrameNum * spriteWidth, (float)(spriteHeight * this->y));
 
-                    vertStripesArray.append(topVertex);
+                    vertStripesArray->append(topVertex);
 
                     sf::Vertex bottomVertex = sf::Vertex();
                     bottomVertex.position = sf::Vector2f((float)xCoord, (float)drawEndY + yOffset);
                     bottomVertex.color = sf::Color::White;
                     bottomVertex.texCoords = sf::Vector2f((float)texX + currentRenderedFrameNum * spriteWidth, (float)(spriteHeight * this->y + spriteHeight - 1));
 
-                    vertStripesArray.append(bottomVertex);
+                    vertStripesArray->append(bottomVertex);
 
                     isDrawn = true;
                 }
             }
 
             if (isDrawn) {
-                target.draw(vertStripesArray, &this->textures);
-                this->vertStripesArray.clear(); // Clear the VertexArray only if something was drawn on screen to prevent performance issue            
+                target.draw(*vertStripesArray, &this->textures);
+                this->vertStripesArray->clear(); // Clear the VertexArray only if something was drawn on screen to prevent performance issue            
             }
             isDrawn = false;
         }

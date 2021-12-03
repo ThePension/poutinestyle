@@ -1,13 +1,18 @@
 #include "Medikit.h"
 
-Medikit::Medikit(int hp, sf::Vector2f pos) : Entity(hp, pos) { }
+Medikit::Medikit(sf::Vector2f pos) : Entity(1, pos) { }
+
+Medikit::~Medikit()
+{
+	delete this->RotatingAnimVA; this->RotatingAnimVA = nullptr;
+}
 
 void Medikit::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight)
 {
-	if (toDraw) this->RotatingAnimVA.draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+	if (toDraw) this->RotatingAnimVA->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
 }
 
 void Medikit::update(float dt)
 {
-	if (toDraw) this->RotatingAnimVA.update(dt);
+	if (toDraw) this->RotatingAnimVA->update(dt);
 }
