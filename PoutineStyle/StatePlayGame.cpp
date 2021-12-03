@@ -671,6 +671,7 @@ void StatePlayGame::renderingEntities(double dt) {
             InteractedEntity = nullptr;
         }
     }
+    InteractedEntity = nullptr;
 #pragma endregion
 
 #pragma region Rendering Textured Entities (Sprites)
