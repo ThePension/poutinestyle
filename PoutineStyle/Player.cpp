@@ -25,6 +25,17 @@ std::stack<Bullet*> Player::shoot(sf::Vector2f direction){
 	return bullets;
 }
 
+std::stack<Bullet*> Player::burstShooting(sf::Vector2f direction) {
+	std::stack<Bullet*> bullets;
+	if (Player::currentAmmunition > 0)
+	{
+		bullets = dynamic_cast <Uzi*>(currentWeapon)->burstShooting (direction, this->position);
+		currentAmmunition -= bullets.size();
+		return bullets;
+	}
+	return bullets;
+}
+
 void Player::switchWeapon()
 {
 	if (this->secondaryWeapon != nullptr && this->secondaryWeapon != this->currentWeapon) {

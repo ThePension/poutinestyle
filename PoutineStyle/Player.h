@@ -4,6 +4,7 @@
 #include "Knife.h"
 #include "Pistol.h"
 #include "Shotgun.h"
+#include "Uzi.h"
 class Bullet;
 #include <list>
 class Player
@@ -15,8 +16,8 @@ private:
 	bool isDead = false;
 	int live = 3;
 	int health = 100;
-	int ammunition = 50;
-	int currentAmmunition=7;
+	int ammunition = 500;
+	int currentAmmunition=70;
 	int score = 0;
 
 public:
@@ -24,6 +25,7 @@ public:
 	void draw(sf::RenderTarget& target) const;
 	void update(float dt);
 	std::stack<Bullet*> shoot(sf::Vector2f direction);
+	std::stack<Bullet*> burstShooting(sf::Vector2f direction);
 	Weapon* getCurrentWeapon() { return this->currentWeapon; }
 	Weapon* getSecondaryWeapon() { return this->secondaryWeapon; }
 	Weapon* setWeapon(Weapon* w) {

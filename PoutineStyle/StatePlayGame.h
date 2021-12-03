@@ -18,6 +18,7 @@
 #include "Portal.h"
 #include "StateMainMenu.h"
 #include "Shotgun.h"
+#include "Uzi.h"
 
 class StatePlayGame : public GameState
 {
@@ -26,6 +27,8 @@ private:
 
 	bool isPlayerMoving = false;
 	sf::Keyboard::Key keysPressed;
+
+	bool qPressed = false;//burst firing
 
 	bool aPressed = false;
 	bool dPressed = false;

@@ -104,6 +104,8 @@ void StatePlayGame::handleInput(double deltatime)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) aPressed = true;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) sPressed = true;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) qPressed = !qPressed; //Change Weapon mode (burstshot-oneshot)
+            std::cout << qPressed << std::endl;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) movingSpeed = 5;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) InteractedEntity = getInteractedEntity();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) pause();
@@ -139,9 +141,20 @@ void StatePlayGame::handleInput(double deltatime)
                     }
                 }
             }
-            else{
+            else if (typeid(*player.getCurrentWeapon()).name() == typeid(Uzi).name() && qPressed == true) {
+                std::stack<Bullet*> bullets = player.burstShooting(player.direction);
+                while (!bullets.empty()) {
+                    Bullet* bullet = bullets.top();
+                    if (bullet != nullptr) {
+                        entities.push_back(bullet);
+                    }
+                    bullets.pop();
+                }
+            }
+            else 
+            {
                 std::stack<Bullet*> bullets = player.shoot(player.direction);
-                while(!bullets.empty()) {
+                while (!bullets.empty()) {
                     Bullet* bullet = bullets.top();
                     if (bullet != nullptr) {
                         entities.push_back(bullet);
@@ -575,7 +588,7 @@ void StatePlayGame::renderingEntities(double dt) {
             // this->gameManager->changeState(stateMainMenu);
             // return;
         }
-        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name()) {
+        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(Uzi).name()) {
             Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
             Weapon* oldWeapon = player.setWeapon(weapon);
         
@@ -777,7 +790,7 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(portal);
             }
             else if (map[indexX][indexY] == 'L') {
-                rnd = (rand() % 4); // Between 0 and 2
+                rnd = (rand() % 5); // between 0-4
                 Entity* entity;
                 switch (rnd)
                 {
@@ -799,6 +812,12 @@ void StatePlayGame::parseMap2D()
                     break;
                 case 3:
                     entity = new Shotgun();
+                    entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
+                    entityMap[indexY][indexX] = entity;
+                    entities.push_back(entity);
+                    break;
+                case 4:
+                    entity = new Uzi();
                     entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
