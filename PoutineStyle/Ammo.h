@@ -5,10 +5,11 @@
 class Ammo : public Entity
 {
 public:
-	Ammo(int hp, sf::Vector2f pos);
+	Ammo(sf::Vector2f pos);
+	~Ammo() override;
 	void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) override;
 	void update(float dt) override;
 
-	AnimatedVertexArray RotatingAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ammo.png", 64, 64, 0, 1);
+	AnimatedVertexArray* RotatingAnimVA = new AnimatedVertexArray("../PoutineStyle/pics/ammo.png", 64, 64, 0, 1);
 };
 

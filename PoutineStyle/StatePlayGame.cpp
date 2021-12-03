@@ -1,8 +1,18 @@
 #include "StatePlayGame.h"
 
-StatePlayGame::StatePlayGame(GameManager* game)
+StatePlayGame::StatePlayGame(GameManager* game, std::string mapFilePath, int mapSize)
 {
     this->gameManager = game;
+    this->mapFilePath = "Map/" + mapFilePath;
+    this->mapSize = mapSize;
+
+    this->levels.insert(std::pair<std::string, int>("Lvl1.txt", 16));
+    this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
+    this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
+    this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
+    this->levels.insert(std::pair<std::string, int>("Lvl5.txt", 64));
+
+    this->actualLevel = this->levels.begin();
     
     gameManager->getRenderWindow()->setMouseCursorVisible(false);
     gameManager->getRenderWindow()->setMouseCursorGrabbed(true); // The mouse can't leave the window
@@ -31,6 +41,7 @@ StatePlayGame::StatePlayGame(GameManager* game)
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
 }
+
 sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     // Rotation matrix (used to rotate vector by an angle)
     // [cosa  -sina]
@@ -45,17 +56,15 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     resVec.y /= vecLen;*/
     return resVec;
 }
+
 StatePlayGame::~StatePlayGame()
 {
-    for (int x = 0; x < gameManager->getWindowWidth(); x++) {
-        for (int y = 0; y < gameManager->getWindowHeight(); y++) {
-            if (entityMap[x][y] != nullptr) {
-                entities.remove(entityMap[x][y]);
-                delete entityMap[x][y]; entityMap[x][y] = nullptr;
-            }
-        }
-    }
+    cleanAllEntitys();
+
+    delete[] *(this->map);
+    delete[] this->map;
 }
+
 void StatePlayGame::handleInput(double deltatime)
 {
     sf::Event event;
@@ -128,7 +137,7 @@ void StatePlayGame::handleInput(double deltatime)
                     player.shoot(player.direction);
                     Entity* entity = getInteractedEntity();
                     if (entity != nullptr) {
-                        if (typeid(*entity).name() == typeid(Ennemy).name()) {
+                        if (typeid(*entity).name() == typeid(Guard).name() || typeid(*entity).name() == typeid(General).name()) {
                             Ennemy* ennemy = static_cast<Ennemy*>(entity);
                             if (!ennemy->getIsDying()) {
                                 ennemy->decreaseHP(player.getCurrentWeapon()->getDamage());
@@ -276,6 +285,26 @@ void StatePlayGame::draw(double dt)
         renderingEntities(dt);
         hud();
         drawMiniMap();
+        endGameManagment(); // IMPORTANT ! need to be the last function called here
+    }
+}
+
+void StatePlayGame::endGameManagment()
+{
+    if (player.dead())
+    {
+        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false);
+        this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
+        this->gameManager->changeState(gameOverMenu);
+        return;
+    }
+
+    if (this->isFinished)
+    {
+        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, true);
+        this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
+        this->gameManager->changeState(gameOverMenu);
+        return;
     }
 }
 
@@ -324,13 +353,19 @@ void StatePlayGame::drawMap2D()
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
 }
 
-void StatePlayGame::drawMiniMap()
+void StatePlayGame::drawMiniMap() 
 {
     // Draw background rectangle
+    int w = this->gameManager->getWindowWidth();
+    int h = this->gameManager->getWindowHeight();
+
+    int blockWUnit = w / 32;
+    int blockHUnit = h / 32;
+
     sf::RectangleShape rectBackground = sf::RectangleShape();
     rectBackground.setFillColor(sf::Color::White);
-    rectBackground.setPosition(blockWidth - 2, 2 * blockHeight - 2);
-    rectBackground.setSize(sf::Vector2f(7*blockWidth + 4, 7*blockHeight + 4));
+    rectBackground.setPosition(blockWUnit - 2, 2 * blockHUnit - 2); // problème ici
+    rectBackground.setSize(sf::Vector2f(7* blockWUnit + 4, 7* blockHUnit + 4));
     gameManager->getRenderWindow()->draw(rectBackground);
 
     for (int x = -3; x <= 3; x++) {
@@ -338,29 +373,39 @@ void StatePlayGame::drawMiniMap()
             int positionX = floor(player.position.x) + x;
             int positionY = floor(player.position.y) + y;
             
-                sf::RectangleShape cell = sf::RectangleShape();
-                cell.setPosition(sf::Vector2f((3 - x) * blockWidth + blockWidth, (4 - y) * blockHeight + blockHeight));
-                cell.setSize(sf::Vector2f(blockWidth, blockHeight));
-                if (positionX >= 0 && positionX < mapSize && positionY >= 0 && positionY < mapSize) {
-                    if (map[positionY][positionX] == '1') {
-                        cell.setFillColor(sf::Color::Red);
-                    }
-                    else {
-                        cell.setFillColor(sf::Color::White);
-                    }
-                }else{
-                    cell.setFillColor(sf::Color::Black);
-                }
-                gameManager->getRenderWindow()->draw(cell);
+            sf::RectangleShape cell = sf::RectangleShape();
+            cell.setPosition(sf::Vector2f((3 - x) * blockWUnit + blockWUnit, (4 - y) * blockHUnit + blockHUnit));
+            cell.setSize(sf::Vector2f(blockWUnit, blockHUnit));
             
+            if (positionX >= 0 && positionX < mapSize && positionY >= 0 && positionY < mapSize) {
+                char charCell = map[positionY][positionX];
+                if (charCell == '1') {
+                    cell.setFillColor(sf::Color::Red);
+                }
+                else if(charCell == 'D' ||
+                        charCell == 'V' ||
+                        charCell == 'W' ||
+                        charCell == 'X' ||
+                        charCell == 'Y' ||
+                        charCell == 'Z') 
+                {
+                    cell.setFillColor(sf::Color(125, 125, 125, 255));
+                }
+                else {
+                    cell.setFillColor(sf::Color::White);
+                }
+            }else{
+                cell.setFillColor(sf::Color::Black);
+            }
+            gameManager->getRenderWindow()->draw(cell);   
         }
     }
 
     // Draw player
     sf::CircleShape circle = sf::CircleShape();
     circle.setFillColor(sf::Color::Green);
-    circle.setPosition(3 * blockWidth + blockWidth, 4 * blockHeight + blockHeight);
-    circle.setRadius(blockWidth / 2);
+    circle.setPosition(3 * blockWUnit + blockWUnit, 4 * blockHUnit + blockHUnit);
+    circle.setRadius(blockWUnit / 2);
     gameManager->getRenderWindow()->draw(circle);
 
     // Draw player direction vector
@@ -384,7 +429,7 @@ void StatePlayGame::renderingWalls(double dt)
     yOffset = 0; // Used to create the illusion of a taller player
     // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
-    sf::VertexArray lines(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
+    sf::VertexArray* lines = new sf::VertexArray(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
     
     for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
         int wallTextureNum = 3; // Need to be set depending on wall type (char)
@@ -392,7 +437,7 @@ void StatePlayGame::renderingWalls(double dt)
         sf::Vector2i playerMapPos = sf::Vector2i(int(player.position.x), int(player.position.y));
 
         // Vector representing the direction of the actual ray
-        double cameraX = double(2.f * x) / double(w) - 1;
+        double cameraX = double(2.f * double(x)) / double(w) - 1.0;
 
         sf::Vector2f rayDir = player.direction + sf::Vector2f(player.planeVec.x * cameraX, player.planeVec.y * cameraX);
         double rayDirLen = std::sqrt(pow(rayDir.x, 2) + pow(rayDir.y, 2));
@@ -478,9 +523,9 @@ void StatePlayGame::renderingWalls(double dt)
             // Floor
             double wallHeight = int(gameManager->getWindowHeight() / perpWallDist);
             // Add floor
-            lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
+            lines->append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
             groundPixel = int(wallHeight * 0.495 + double(gameManager->getWindowHeight()) * 0.5f);
-            lines.append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
+            lines->append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
             
             if (floorColor == color1) floorColor = color2;
             else floorColor = color1;
@@ -517,27 +562,28 @@ void StatePlayGame::renderingWalls(double dt)
 
         // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
         // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
-        lines[x * 2].position = sf::Vector2f((float)x, (float)drawStart + yOffset);
-        lines[x * 2].color = wallColor;
-        lines[x * 2].texCoords = sf::Vector2f((float)texture_coords.x, (float)texture_coords.y + 1);
+        (*lines)[x * 2].position = sf::Vector2f((float)x, (float)drawStart + yOffset);
+        (*lines)[x * 2].color = wallColor;
+        (*lines)[x * 2].texCoords = sf::Vector2f((float)texture_coords.x, (float)texture_coords.y + 1);
         // x * 2 + 1 are all the seconds points of the lines (bottom ones)
-        lines[x * 2 + 1].position = sf::Vector2f((float)x, (float)drawEnd + yOffset);
-        lines[x * 2 + 1].color = wallColor;
-        lines[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
+        (*lines)[x * 2 + 1].position = sf::Vector2f((float)x, (float)drawEnd + yOffset);
+        (*lines)[x * 2 + 1].color = wallColor;
+        (*lines)[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
 
         ZBuffer[x] = perpWallDist; // Needed for entities rendering
     }
 
     // Draw walls with textures
-    gameManager->getRenderWindow()->draw(lines, &wallTextures);
-    lines.clear();
-    lines.resize(2 * w);
+    gameManager->getRenderWindow()->draw(*lines, &wallTextures);
+    delete lines; lines = nullptr;
 
 #pragma endregion
 }
 
 void StatePlayGame::renderingEntities(double dt) {
+
 #pragma region Entity Interaction Management
+
     if (InteractedEntity != nullptr) {
         if (typeid(*InteractedEntity).name() == typeid(Chest).name()) { // Chest interaction
             Chest* chest = static_cast<Chest*>(InteractedEntity);
@@ -583,10 +629,42 @@ void StatePlayGame::renderingEntities(double dt) {
             delete key; key = nullptr;
             InteractedEntity = nullptr;
         }
-        else if (typeid(*InteractedEntity).name() == typeid(Portal).name()) {
-            // StateMainMenu* stateMainMenu = new StateMainMenu(this->gameManager);
-            // this->gameManager->changeState(stateMainMenu);
-            // return;
+        else if (typeid(*InteractedEntity).name() == typeid(Portal).name())
+        {
+            // from a level to another 
+            if (this->actualLevel != this->levels.end())
+            {
+                this->mapFilePath = "Map/" + this->actualLevel->first;
+                this->mapSize = this->actualLevel->second;
+                this->actualLevel++;
+
+                delete[] *(this->map);
+                delete[] this->map;
+                map = nullptr;
+
+                cleanAllEntitys();
+
+                this->blockWidth = gameManager->getWindowWidth() / mapSize;
+                this->blockHeight = gameManager->getWindowHeight() / mapSize;
+
+                map = new char* [mapSize];
+                for (int i = 0; i < mapSize; i++)
+                {
+                    map[i] = new char[mapSize];
+                    for (int j = 0; j < mapSize; j++)
+                    {
+                        map[i][j] = '0';
+                    }
+                }
+
+                parseMap2D();
+                InteractedEntity = nullptr;
+                return;
+            }
+            else
+            {
+                this->isFinished = true;
+            }
         }
         else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(Uzi).name()) {
             Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
@@ -630,10 +708,8 @@ void StatePlayGame::renderingEntities(double dt) {
                 // bullet->isTravelling = false;
                 // bullet->isExplosing = true;
                 bullet->setToRemove(true);
-
-                // If player is dead, lauch gameOver menu
             }
-            else if (map[nextY][nextX] == 'E' && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
+            else if ((map[nextY][nextX] == 'E' || map[nextY][nextX] == 'G') && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
                 if (bullet->isExplosing == false) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entityMap[nextX][nextY]);
                     if (ennemy != nullptr) {
@@ -655,7 +731,7 @@ void StatePlayGame::renderingEntities(double dt) {
         for (int y = 0; y < 32; y++) {
             Entity* entity = entityMap[x][y];
             if (entity != nullptr) {
-                if (typeid(*entity).name() == typeid(Ennemy).name()) {
+                if (typeid(*entity).name() == typeid(Guard).name() || typeid(*entity).name() == typeid(General).name()) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entity);
                     if (ennemy->getToRemove()) {
                         Entity* droppedEntity = ennemy->getDroppedEntity();
@@ -695,7 +771,7 @@ void StatePlayGame::renderingEntities(double dt) {
 
     // Draw and update all entities
     for (Entity* entity : entities) {
-        if (typeid(*entity).name() == typeid(Ennemy).name()) {
+        if (typeid(*entity).name() == typeid(Guard).name() || typeid(*entity).name() == typeid(General).name()) {
             Ennemy* ennemy = static_cast<Ennemy*>(entity);
             // Calculate the direction of the bullet (aiming the player)
             sf::Vector2f bulletDir = sf::Vector2f(player.position.x - 0.5, player.position.y - 0.5) - ennemy->mapPos;
@@ -703,8 +779,12 @@ void StatePlayGame::renderingEntities(double dt) {
             double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
             // Get the unit vector
             sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / norm, bulletDir.y / norm);
-            Bullet* bullet = ennemy->shoot(bulletDirUnit, this->player.position, this->map);
-            if (bullet != nullptr) entities.push_back(bullet);
+            std::stack<Bullet*> bullets = ennemy->shoot(bulletDirUnit, this->player.position, this->map);
+            while (!bullets.empty()) {
+                Bullet* bullet = bullets.top();
+                if (bullet != nullptr) entities.push_back(bullet);
+                bullets.pop();
+            }
         }
         entity->draw(*gameManager->getRenderWindow(), player.position, player.direction, player.planeVec, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight());
         entity->update(dt); // Update the animation
@@ -723,8 +803,8 @@ void StatePlayGame::parseMap2D()
 {
     std::string tempText;
     std::ifstream mapFile;
-    std::string mapLocation = mapFileFolder + mapFileName;
-    mapFile.open(mapLocation);
+
+    mapFile.open(this->mapFilePath);
 
     srand(time(NULL)); // Randomize seed
     int rnd = 0;
@@ -740,14 +820,20 @@ void StatePlayGame::parseMap2D()
                 player.position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
             else if (map[indexX][indexY] == 'E') { // Ennemy
-                rnd = (rand() % 2); // Between 0 and 1
-                Ennemy* ennemy = new Ennemy(2, sf::Vector2f((float)indexY, (float)indexX), rnd);
-                entities.push_back(ennemy);
-                entityMap[indexY][indexX] = ennemy;
+                rnd = (rand() % 4); // Between 0 and 3
+                Ennemy* guard = new Guard(sf::Vector2f((float)indexY, (float)indexX), rnd);
+                entities.push_back(guard);
+                entityMap[indexY][indexX] = guard;
+            }
+            else if (map[indexX][indexY] == 'G') {
+                rnd = (rand() % 4); // Between 0 and 3
+                Ennemy* general = new General(sf::Vector2f((float)indexY, (float)indexX), rnd);
+                entities.push_back(general);
+                entityMap[indexY][indexX] = general;
             }
             else if (map[indexX][indexY] == 'C') { // Chest
                 rnd = (rand() % 2); // Between 0 and 1
-                Chest* chest = new Chest(1, sf::Vector2f((float)indexY, (float)indexX), rnd);
+                Chest* chest = new Chest(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(chest);
                 entityMap[indexY][indexX] = chest;
             }
@@ -755,37 +841,37 @@ void StatePlayGame::parseMap2D()
                 entityMap[indexY][indexX] = nullptr;
             }
             else if (map[indexX][indexY] == 'd') {
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'v') {
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 1, 1), 'V');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 1, 1), 'V');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'w'){
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 2, 1), 'W');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 2, 1), 'W');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'x') {
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 3, 1), 'X');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 3, 1), 'X');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'y') {
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 4, 1), 'Y');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 4, 1), 'Y');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'z'){
-                Key* key = new Key(1, sf::Vector2f((float)indexY, (float)indexX), AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'S') {
-                Portal* portal = new Portal(1, sf::Vector2f((float)indexY, (float)indexX));
+                Portal* portal = new Portal(sf::Vector2f((float)indexY, (float)indexX));
                 entityMap[indexY][indexX] = portal;
                 entities.push_back(portal);
             }
@@ -795,12 +881,12 @@ void StatePlayGame::parseMap2D()
                 switch (rnd)
                 {
                 case 0:
-                    entity = new Ammo(1, sf::Vector2f((float)indexY, (float)indexX));
+                    entity = new Ammo(sf::Vector2f((float)indexY, (float)indexX));
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
                     break;
                 case 1:
-                    entity = new Medikit(1, sf::Vector2f((float)indexY, (float)indexX));
+                    entity = new Medikit(sf::Vector2f((float)indexY, (float)indexX));
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
                     break;
@@ -948,15 +1034,6 @@ void StatePlayGame::hud()
     gameManager->getRenderWindow()->draw(currentAmmunition);
     gameManager->getRenderWindow()->draw(score);
     gameManager->getRenderWindow()->draw(currentScore);
-
-    if (player.dead())
-    {
-        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false);
-        this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
-        this->gameManager->changeState(gameOverMenu);
-        return;
-    }
-
 }
 
 void StatePlayGame::showCursor()
@@ -974,6 +1051,26 @@ void StatePlayGame::showCursor()
     aimCursor.setPosition(centerWindowPos.x - (cursorWidth / 4.5), centerWindowPos.y - (cursorHeigth / 4));
 
     this->gameManager->getRenderWindow()->draw(aimCursor);
+}
+
+void StatePlayGame::cleanAllEntitys()
+{
+    for (int i = 0; i < this->mapSize; i++)
+    {
+        for (int j = 0; j < this->mapSize; j++)
+        {
+            Entity* entity = entityMap[i][j];
+            if (entity != nullptr)
+            {
+                this->entities.remove(entity);
+                delete entity;
+                entity = nullptr;
+                entityMap[i][j] = nullptr;
+            }
+        }
+    }
+
+    this->entities.clear();
 }
 
 /// <summary>

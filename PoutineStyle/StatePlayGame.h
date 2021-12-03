@@ -18,6 +18,8 @@
 #include "Portal.h"
 #include "StateMainMenu.h"
 #include "Shotgun.h"
+#include "Guard.h"
+#include "General.h"
 #include "Uzi.h"
 
 class StatePlayGame : public GameState
@@ -38,8 +40,9 @@ private:
 
 	bool isMapDisplayed = false;
 	bool isGamePaused = false;
+	bool isFinished = false;
 
-	int mapSize = 32;
+	int mapSize;
 	int movingSpeed = 3;
 	int movingSpeedSPrint = 150;
 	int blockWidth;
@@ -54,8 +57,9 @@ private:
 	Entity* entityMap[32][32]; // A map with entity Objects
 	std::list<Entity*> entities; // Contains every entities
 
-	std::string mapFileFolder = "Map/"; // Needs to be changed and optimized. (ressource or relative path)
-	std::string mapFileName = "Map_Example3.txt";
+	std::string mapFilePath;
+	std::map<std::string, int> levels;
+	std::map<std::string, int>::iterator actualLevel;
 
 	sf::Texture wallTextures, imgAimCursor;
 	sf::Sprite weaponSprite;
@@ -74,12 +78,15 @@ private:
 	void updatePlayerPosition(sf::Vector2f newPos);
 	void hud();
 	void pause();
+	void endGameManagment();
 	void reset();
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
 	Entity* getInteractedEntity();
 
+	void cleanAllEntitys();
+
 public:
-	StatePlayGame(GameManager * game);
+	StatePlayGame(GameManager * game, std::string mapFilePath = "Map_Example3.txt", int mapSize = 32);
 	~StatePlayGame();
 
 	void update(float deltaTime) override;

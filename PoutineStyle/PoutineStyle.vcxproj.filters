@@ -84,7 +84,18 @@
     <ClCompile Include="Shotgun.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Uzi.cpp">
+=======
+<<<<<<< HEAD
+    <ClCompile Include="Uzi.cpp">
+=======
+    <ClCompile Include="Guard.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="General.cpp">
+>>>>>>> e50dfd0d9fd234e7296e415a95f2324d7b332aef
+>>>>>>> master
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,7 +166,18 @@
     <ClInclude Include="Shotgun.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="Uzi.h">
+=======
+<<<<<<< HEAD
+    <ClInclude Include="Uzi.h">
+=======
+    <ClInclude Include="Guard.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="General.h">
+>>>>>>> e50dfd0d9fd234e7296e415a95f2324d7b332aef
+>>>>>>> master
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

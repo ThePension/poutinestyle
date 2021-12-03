@@ -16,7 +16,7 @@ void Player::update(float dt) {
 
 std::stack<Bullet*> Player::shoot(sf::Vector2f direction){
 	std::stack<Bullet*> bullets;
-	if (Player::currentAmmunition > 0)
+	if (Player::currentAmmunition > 0 || typeid(*this->currentWeapon).name() == typeid(Knife).name())
 	{
 		bullets = currentWeapon->shoot(direction, this->position);
 		currentAmmunition -= bullets.size();

@@ -19,6 +19,7 @@ void StateGameOverMenu::handleInput(double deltatime) {
 		if (replayButton.isClicked())
 		{
 			StatePlayGame* statePlayGame = new StatePlayGame(this->gameManager); // Create new PlayGame state
+			//StatePlayGame* statePlayGame = new StatePlayGame(this->gameManager, "Lvl1.txt", 16);
 			gameManager->changeState(statePlayGame); // Change current state for new PlayGame state
 			return;
 		}

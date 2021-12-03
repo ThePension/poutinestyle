@@ -17,6 +17,7 @@ void StateMainMenu::handleInput(double deltatime) {
 	while (gameManager->getRenderWindow()->pollEvent(event))
 	{
 		if (playButton.isClicked()) {
+			//StatePlayGame* statePlayGame = new StatePlayGame(this->gameManager, "Tutoriel.txt", 10);
 			StatePlayGame* statePlayGame = new StatePlayGame(this->gameManager);
 			this->gameManager->changeState(statePlayGame);
 			return;

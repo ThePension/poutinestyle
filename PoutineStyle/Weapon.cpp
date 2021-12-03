@@ -6,3 +6,7 @@ Weapon::Weapon(int damage, Animation shootAnim) : Entity(1, sf::Vector2f(0.f, 0.
 	this->shootAnimation = shootAnim;
 	shootAnimation.ApplyToSprite(weaponSprite);
 }
+
+Weapon::~Weapon() {
+
+}

@@ -10,6 +10,7 @@ protected:
 	bool toDraw = false;
 public:
 	Entity(int HP, sf::Vector2f mapPos);
+	virtual ~Entity() = 0;
 	virtual void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) = 0;
 	virtual void update(float dt) = 0;
 	sf::Vector2f mapPos;
