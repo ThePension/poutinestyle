@@ -31,6 +31,7 @@ public:
 	bool getIsDying() { return this->isDying; }
 	Entity* getDroppedEntity() { return this->droppedEntity; }
 	int getCurrentRenderedFrame();
+	void resetAnimations() { this->shootAnimVA->resetAnimation(); this->dieAnimVA->resetAnimation(); }
 
 	// AnimatedVertexArray walkAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 64, 0, 8);
 	AnimatedVertexArray* shootAnimVA = nullptr; // = AnimatedVertexArray("../PoutineStyle/pics/shootingEnnemy.png", 64, 64, 0, 5, 0.3);
