@@ -11,7 +11,6 @@ public:
 	bool isAnimationOver = true;
 private:
 	void advance();
-
 	int nbFrames = 4;
 	int currentRenderedFrameNum = 0;
 	sf::Texture texture;

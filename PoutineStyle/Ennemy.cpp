@@ -124,3 +124,8 @@ bool Ennemy::isPlayerVisible(sf::Vector2f playerPos, char** map) {
         else if (entityMapPos.x == floor(playerPos.x) && entityMapPos.y == floor(playerPos.y)) return true; // The player is visible for the ennemy
     }
 }
+
+int Ennemy::getCurrentRenderedFrame()
+{
+    return this->shootAnimVA->getCurrentRenderedFrameNum();
+}

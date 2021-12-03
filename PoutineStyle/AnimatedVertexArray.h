@@ -26,4 +26,5 @@ public:
 		return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
 	}
 	bool getIsAnimationOver() { return this->isAnimationOver; }
+	int getCurrentRenderedFrameNum() { return this->currentRenderedFrameNum; }
 };
