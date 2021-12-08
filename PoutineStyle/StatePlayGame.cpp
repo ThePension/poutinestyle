@@ -567,17 +567,17 @@ void StatePlayGame::renderingEntities(double dt) {
             player->increaseAmmo();
         }
         else if (typeid(*InteractedEntity).name() == typeid(Key).name()) {
-            // Delete Ammo Entity
+            // Delete Key Entity
             entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
             map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
             entities.remove(InteractedEntity);
 
             Key* key = static_cast<Key*>(InteractedEntity);
 
-            // Opened the corresponding door
+            // Open the corresponding door
             for (int x = 0; x < mapSize; x++) {
                 for (int y = 0; y < mapSize; y++) {
-                    if (map[x][y] == key->getKeyCode()) map[x][y] = '0';
+                    if (map[x][y] == key->getKeyCode()) if(entityMap[y][x] != nullptr)static_cast<Wall*>(entityMap[y][x])->setOpening();
                 }
             }
 
@@ -684,7 +684,7 @@ void StatePlayGame::renderingEntities(double dt) {
         }
     }
 
-    // Clear dead ennemies and opened chests
+    // Clear dead ennemies and opened chests and doors
     for (int x = 0; x < 32; x++) {
         for (int y = 0; y < 32; y++) {
             Entity* entity = entityMap[x][y];
@@ -710,6 +710,15 @@ void StatePlayGame::renderingEntities(double dt) {
                         map[(int)chest->mapPos.y][(int)chest->mapPos.x] = 'L';
                         entities.remove(chest);
                         delete chest; chest = nullptr;
+                    }
+                }
+                else if (typeid(*entity).name() == typeid(Wall).name()) {
+                    // Remove open door
+                    if (entity->getToRemove()) {
+                        entityMap[(int)entity->mapPos.x][(int)entity->mapPos.y] = nullptr;
+                        map[(int)entity->mapPos.y][(int)entity->mapPos.x] = '0';
+                        entities.remove(entity);
+                        delete entity; entity = nullptr;
                     }
                 }
             }
