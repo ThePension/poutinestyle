@@ -240,43 +240,13 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
     newPosMapX = newPos.y;
 
     // Check X axis
-    if (   map[newPosMapX][oldPosMapY] != '1'
-        && map[newPosMapX][oldPosMapY] != '2'
-        && map[newPosMapX][oldPosMapY] != '3'
-        && map[newPosMapX][oldPosMapY] != '4'
-        && map[newPosMapX][oldPosMapY] != '5'
-        && map[newPosMapX][oldPosMapY] != '6'
-        && map[newPosMapX][oldPosMapY] != '7'
-        && map[newPosMapX][oldPosMapY] != '8'
-        && map[newPosMapX][oldPosMapY] != '9'
-        && map[newPosMapX][oldPosMapY] != 'D'
-        && map[newPosMapX][oldPosMapY] != 'V'
-        && map[newPosMapX][oldPosMapY] != 'W'
-        && map[newPosMapX][oldPosMapY] != 'X'
-        && map[newPosMapX][oldPosMapY] != 'Y'
-        && map[newPosMapX][oldPosMapY] != 'Z'
-        )
+    if (!Entity::isWall(map[newPosMapX][oldPosMapY]))
     {
         // Update player position on the Y axis
         player->position.y = newPos.y;
     }
     // Check Y axis
-    if (   map[oldPosMapX][newPosMapY] != '1'
-        && map[newPosMapX][oldPosMapY] != '2'
-        && map[newPosMapX][oldPosMapY] != '3'
-        && map[newPosMapX][oldPosMapY] != '4'
-        && map[newPosMapX][oldPosMapY] != '5'
-        && map[newPosMapX][oldPosMapY] != '6'
-        && map[newPosMapX][oldPosMapY] != '7'
-        && map[newPosMapX][oldPosMapY] != '8'
-        && map[newPosMapX][oldPosMapY] != '9'
-        && map[oldPosMapX][newPosMapY] != 'D'
-        && map[oldPosMapX][newPosMapY] != 'V'
-        && map[oldPosMapX][newPosMapY] != 'W'
-        && map[oldPosMapX][newPosMapY] != 'X'
-        && map[oldPosMapX][newPosMapY] != 'Y'
-        && map[oldPosMapX][newPosMapY] != 'Z'
-        )
+    if (!Entity::isWall(map[oldPosMapX][newPosMapY]))
     {
         // Update the player position on the X axis
         player->position.x = newPos.x;
@@ -496,21 +466,7 @@ void StatePlayGame::renderingWalls(double dt)
                 isWallHitHorizontal = false;
             }
 
-            if (map[playerMapPos.y][playerMapPos.x] == '1' ||
-                map[playerMapPos.y][playerMapPos.x] == '2' ||
-                map[playerMapPos.y][playerMapPos.x] == '3' ||
-                map[playerMapPos.y][playerMapPos.x] == '4' ||
-                map[playerMapPos.y][playerMapPos.x] == '5' ||
-                map[playerMapPos.y][playerMapPos.x] == '6' ||
-                map[playerMapPos.y][playerMapPos.x] == '7' ||
-                map[playerMapPos.y][playerMapPos.x] == '8' ||
-                map[playerMapPos.y][playerMapPos.x] == '9' ||
-                map[playerMapPos.y][playerMapPos.x] == 'D' ||
-                map[playerMapPos.y][playerMapPos.x] == 'V' ||
-                map[playerMapPos.y][playerMapPos.x] == 'W' ||
-                map[playerMapPos.y][playerMapPos.x] == 'X' ||
-                map[playerMapPos.y][playerMapPos.x] == 'Y' ||
-                map[playerMapPos.y][playerMapPos.x] == 'Z') 
+            if (Entity::isWall(map[playerMapPos.y][playerMapPos.x]))
             {
                 wallHit = true;
                 currentWall = static_cast<Wall*>(entityMap[playerMapPos.x][playerMapPos.y]);
@@ -698,7 +654,8 @@ void StatePlayGame::renderingEntities(double dt) {
                 bullet->isTravelling = false;
                 bullet->isExplosing = true;
             }
-            else if (map[nextY][nextX] == '1') { // Bullet and Wall collision
+            else if(Entity::isWall(map[nextY][nextX])) // Bullet and Wall collision
+            { 
                 bullet->isTravelling = false;
                 bullet->isExplosing = true;
             }

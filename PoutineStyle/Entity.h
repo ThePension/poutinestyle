@@ -25,4 +25,6 @@ public:
 	bool getToRemove() { return this->toRemove; }
 	void setToDraw(bool toDraw) { this->toDraw = toDraw; }
 	bool getToDraw() { return this->toDraw; }
+	static bool isWall(Entity* entity);
+	static bool isWall(char entityChar);
 };
