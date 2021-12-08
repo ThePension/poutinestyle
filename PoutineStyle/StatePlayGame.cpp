@@ -38,7 +38,7 @@ StatePlayGame::StatePlayGame(GameManager* game, std::string mapFilePath, int map
 	parseMap2D();
 
     wallTextures = sf::Texture();    
-    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures.png");
+    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures2.png");
 
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
@@ -795,24 +795,10 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(chest);
                 entityMap[indexY][indexX] = chest;
             }
-            else if(map[indexX][indexY] == '1' ||
-                    map[indexX][indexY] == '2' ||
-                    map[indexX][indexY] == '3' ||
-                    map[indexX][indexY] == '4' ||
-                    map[indexX][indexY] == '5' ||
-                    map[indexX][indexY] == '6' ||
-                    map[indexX][indexY] == '7' ||
-                    map[indexX][indexY] == '8' ||
-                    map[indexX][indexY] == '9' ||
-                    map[indexX][indexY] == 'D' ||
-                    map[indexX][indexY] == 'V' ||
-                    map[indexX][indexY] == 'W' ||
-                    map[indexX][indexY] == 'X' ||
-                    map[indexX][indexY] == 'Y' ||
-                    map[indexX][indexY] == 'Z')
+            else if(Entity::isWall(map[indexX][indexY]))
             {
                 int y = 0;
-                /*switch (map[indexX][indexY])
+                switch (map[indexX][indexY])
                 {
                 case '1':
                     y = 0;
@@ -823,7 +809,40 @@ void StatePlayGame::parseMap2D()
                 case '3':
                     y = 2;
                     break;
-                }*/
+                case '4':
+                    y = 3;
+                    break;
+                case '5':
+                    y = 4;
+                    break;
+                case '6':
+                    y = 5;
+                    break;
+                case '7':
+                    y = 6;
+                    break;
+                case '8':
+                    y = 7;
+                    break;
+                case '9':
+                    y = 8;
+                    break;
+                case 'V':
+                    y = 9;
+                    break;
+                case 'W':
+                    y = 10;
+                    break;
+                case 'X':
+                    y = 11;
+                    break;
+                case 'Y':
+                    y = 12;
+                    break;
+                case 'Z':
+                    y = 13;
+                    break;
+                }
                 Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), 1, y, false, 0.1);
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
