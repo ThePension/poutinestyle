@@ -466,6 +466,7 @@ void StatePlayGame::renderingWalls(double dt)
         sf::Color color1 = sf::Color(100, 100, 100), color2 = sf::Color(150, 150, 150);
         sf::Color floorColor = ((playerMapPos.x % 2 == 0 && playerMapPos.y % 2 == 0) || (playerMapPos.x % 2 == 1 && playerMapPos.y % 2 == 1)) ? color1 : color2;
         double perpWallDist;
+        Wall* currentWall = nullptr;
         // DDA algorithm
         while (wallHit == false) {
             if (sideDistX < sideDistY) {
@@ -479,31 +480,26 @@ void StatePlayGame::renderingWalls(double dt)
                 isWallHitHorizontal = false;
             }
 
-            if (map[playerMapPos.y][playerMapPos.x] == '1') wallHit = true;
-            else if (map[playerMapPos.y][playerMapPos.x] == 'D') {
+            if (map[playerMapPos.y][playerMapPos.x] == '1' ||
+                map[playerMapPos.y][playerMapPos.x] == '2' ||
+                map[playerMapPos.y][playerMapPos.x] == '3' ||
+                map[playerMapPos.y][playerMapPos.x] == '4' ||
+                map[playerMapPos.y][playerMapPos.x] == '5' ||
+                map[playerMapPos.y][playerMapPos.x] == '6' ||
+                map[playerMapPos.y][playerMapPos.x] == '7' ||
+                map[playerMapPos.y][playerMapPos.x] == '8' ||
+                map[playerMapPos.y][playerMapPos.x] == '9' ||
+                map[playerMapPos.y][playerMapPos.x] == 'D' ||
+                map[playerMapPos.y][playerMapPos.x] == 'V' ||
+                map[playerMapPos.y][playerMapPos.x] == 'W' ||
+                map[playerMapPos.y][playerMapPos.x] == 'X' ||
+                map[playerMapPos.y][playerMapPos.x] == 'Y' ||
+                map[playerMapPos.y][playerMapPos.x] == 'Z') 
+            {
                 wallHit = true;
-                wallTextureNum = 8;
+                currentWall = static_cast<Wall*>(entityMap[playerMapPos.x][playerMapPos.y]);
             }
-            else if (map[playerMapPos.y][playerMapPos.x] == 'V') {
-                wallHit = true;
-                wallTextureNum = 9;
-            }
-            else if (map[playerMapPos.y][playerMapPos.x] == 'W') {
-                wallHit = true;
-                wallTextureNum = 10;
-            }
-            else if (map[playerMapPos.y][playerMapPos.x] == 'X') {
-                wallHit = true;
-                wallTextureNum = 11;
-            }
-            else if (map[playerMapPos.y][playerMapPos.x] == 'Y') {
-                wallHit = true;
-                wallTextureNum = 12;
-            }
-            else if (map[playerMapPos.y][playerMapPos.x] == 'Z') {
-                wallHit = true;
-                wallTextureNum = 13;
-            }
+
             else { //if (map[playerMapPos.y][playerMapPos.x] == 'E' || map[playerMapPos.y][playerMapPos.x] == 'C' || map[playerMapPos.y][playerMapPos.x] == 'L') {
                 if (entityMap[playerMapPos.x][playerMapPos.y] != nullptr) {
                     entityMap[playerMapPos.x][playerMapPos.y]->setToDraw(true);
@@ -533,10 +529,7 @@ void StatePlayGame::renderingWalls(double dt)
         int drawEnd = lineHeight / 2 + gameManager->getWindowHeight() / 2;
 
         // Texture stuff
-        sf::Vector2i texture_coords(
-            wallTextureNum * textureSize,
-            0 // For the moment, all textures are on the same line (y coord) in textures.png file
-        );
+        sf::Vector2i texture_coords = currentWall->getCurrentTextureCoordinates() * textureSize;
 
         // Calculate where the wall was hit
         float wallX;
@@ -829,8 +822,17 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(chest);
                 entityMap[indexY][indexX] = chest;
             }
-            else if (map[indexX][indexY] == '1' || map[indexX][indexY] == '0') {
-                entityMap[indexY][indexX] = nullptr;
+            else if(map[indexX][indexY] == '1' ||
+                    map[indexX][indexY] == 'D' ||
+                    map[indexX][indexY] == 'V' ||
+                    map[indexX][indexY] == 'W' ||
+                    map[indexX][indexY] == 'X' ||
+                    map[indexX][indexY] == 'Y' ||
+                    map[indexX][indexY] == 'Z')
+            {
+                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), 1, 0, false, 0.1);
+                entityMap[indexY][indexX] = wall;
+                entities.push_back(wall);
             }
             else if (map[indexX][indexY] == 'd') {
                 Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
