@@ -356,20 +356,20 @@ void StatePlayGame::drawMiniMap()
             
             if (positionX >= 0 && positionX < mapSize && positionY >= 0 && positionY < mapSize) {
                 char charCell = map[positionY][positionX];
-                if (charCell == '1') {
+                if (Entity::isWall(charCell)) {
                     cell.setFillColor(sf::Color::Red);
-                }
-                else if(charCell == 'D' ||
-                        charCell == 'V' ||
-                        charCell == 'W' ||
-                        charCell == 'X' ||
-                        charCell == 'Y' ||
-                        charCell == 'Z') 
-                {
-                    cell.setFillColor(sf::Color(125, 125, 125, 255));
                 }
                 else {
                     cell.setFillColor(sf::Color::White);
+                }
+                if (charCell == 'D' ||
+                    charCell == 'V' ||
+                    charCell == 'W' ||
+                    charCell == 'X' ||
+                    charCell == 'Y' ||
+                    charCell == 'Z') 
+                {
+                    cell.setFillColor(sf::Color(125, 125, 125, 255));
                 }
             }else{
                 cell.setFillColor(sf::Color::Black);
@@ -798,6 +798,7 @@ void StatePlayGame::parseMap2D()
             else if(Entity::isWall(map[indexX][indexY]))
             {
                 int y = 0;
+                int nbFrames = 1;
                 switch (map[indexX][indexY])
                 {
                 case '1':
@@ -824,11 +825,13 @@ void StatePlayGame::parseMap2D()
                 case '8':
                     y = 7;
                     break;
-                case '9':
+                case 'D':
                     y = 8;
+                    nbFrames = 3;
                     break;
                 case 'V':
                     y = 9;
+                    nbFrames = 3;
                     break;
                 case 'W':
                     y = 10;
@@ -843,7 +846,7 @@ void StatePlayGame::parseMap2D()
                     y = 13;
                     break;
                 }
-                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), 1, y, false, 0.1);
+                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, false, 0.2);
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
             }
