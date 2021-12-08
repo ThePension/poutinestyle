@@ -94,3 +94,4 @@ bool Player::dead()
 {
 	return this->isDead;
 }
+

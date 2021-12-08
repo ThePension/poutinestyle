@@ -50,6 +50,7 @@ private:
 	int textureSize = 64;
 	int yOffset = 50;
 	float speedFactor = 5;
+	bool isBursting = false; 
 
 	int oldMouseX = 0, oldMouseY = 0;
 

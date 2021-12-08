@@ -47,8 +47,11 @@ std::stack<Bullet*> Uzi::shoot(sf::Vector2f direction, sf::Vector2f position)
 
 std::stack<Bullet*> Uzi::burstShooting(sf::Vector2f direction, sf::Vector2f position)
 {
+	
 	std::stack<Bullet*> bullets;
-	if (shootAnimation.isAnimationOver){
+	int currentRenderedFrameNum = this->getCurrentRenderedFrame();
+	std::cout << currentRenderedFrameNum << std::endl;
+	if ((currentRenderedFrameNum % 2 == 0 || currentRenderedFrameNum == 0) && oldFrameNum != currentRenderedFrameNum){
 		isShooting = true;
 		// Add noise to the bullet direction
 		double xNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
@@ -66,10 +69,8 @@ std::stack<Bullet*> Uzi::burstShooting(sf::Vector2f direction, sf::Vector2f posi
 		double shotgunDirY = AnimatedVertexArray::map(direction.y, -1, 1, 1.015, 1.02);
 
 		// Create two bullets
-		Bullet* bullet1 = new Bullet(1, bulletPos1, directionWithNoise, true);
-		Bullet* bullet2 = new Bullet(1, bulletPos2, directionWithNoise, true);
-		bullets.push(bullet1);
-		bullets.push(bullet2);
+		Bullet* bullet = new Bullet(1, bulletPos2, directionWithNoise, true);
+		bullets.push(bullet);
 	}
 	return bullets;
 }

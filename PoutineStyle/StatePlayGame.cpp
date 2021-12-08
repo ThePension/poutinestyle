@@ -129,6 +129,7 @@ void StatePlayGame::handleInput(double deltatime)
             if (event.key.code == sf::Keyboard::S) sPressed = false;
             if (event.key.code == sf::Keyboard::LShift) movingSpeed = 3;
         }
+        if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) { isBursting = false; }
 
         if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
         {
@@ -151,14 +152,7 @@ void StatePlayGame::handleInput(double deltatime)
                 }
             }
             else if (typeid(*player.getCurrentWeapon()).name() == typeid(Uzi).name() && qPressed == true) {
-                std::stack<Bullet*> bullets = player.burstShooting(player.direction);
-                while (!bullets.empty()) {
-                    Bullet* bullet = bullets.top();
-                    if (bullet != nullptr) {
-                        entities.push_back(bullet);
-                    }
-                    bullets.pop();
-                }
+                isBursting = true;
             }
             else 
             {
@@ -234,6 +228,18 @@ void StatePlayGame::update(float deltaTime)
     {
         newPlayerPos = sf::Vector2f(player.position.x - player.direction.x * movingSpeed * deltaTime, player.position.y - player.direction.y * movingSpeed * deltaTime);
         updatePlayerPosition(newPlayerPos);
+    }
+
+    if (isBursting)
+    {
+        std::stack<Bullet*> bullets = player.burstShooting(player.direction);
+        while (!bullets.empty()) {
+            Bullet* bullet = bullets.top();
+            if (bullet != nullptr) {
+                entities.push_back(bullet);
+            }
+            bullets.pop();
+        }
     }
 
     draw(deltaTime);
