@@ -38,7 +38,7 @@ StatePlayGame::StatePlayGame(GameManager* game, std::string mapFilePath, int map
 	parseMap2D();
 
     wallTextures = sf::Texture();    
-    wallTextures.loadFromFile("../PoutineStyle/pics/textures.png");
+    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures.png");
 
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
@@ -241,6 +241,14 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
 
     // Check X axis
     if (   map[newPosMapX][oldPosMapY] != '1'
+        && map[newPosMapX][oldPosMapY] != '2'
+        && map[newPosMapX][oldPosMapY] != '3'
+        && map[newPosMapX][oldPosMapY] != '4'
+        && map[newPosMapX][oldPosMapY] != '5'
+        && map[newPosMapX][oldPosMapY] != '6'
+        && map[newPosMapX][oldPosMapY] != '7'
+        && map[newPosMapX][oldPosMapY] != '8'
+        && map[newPosMapX][oldPosMapY] != '9'
         && map[newPosMapX][oldPosMapY] != 'D'
         && map[newPosMapX][oldPosMapY] != 'V'
         && map[newPosMapX][oldPosMapY] != 'W'
@@ -254,6 +262,14 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
     }
     // Check Y axis
     if (   map[oldPosMapX][newPosMapY] != '1'
+        && map[newPosMapX][oldPosMapY] != '2'
+        && map[newPosMapX][oldPosMapY] != '3'
+        && map[newPosMapX][oldPosMapY] != '4'
+        && map[newPosMapX][oldPosMapY] != '5'
+        && map[newPosMapX][oldPosMapY] != '6'
+        && map[newPosMapX][oldPosMapY] != '7'
+        && map[newPosMapX][oldPosMapY] != '8'
+        && map[newPosMapX][oldPosMapY] != '9'
         && map[oldPosMapX][newPosMapY] != 'D'
         && map[oldPosMapX][newPosMapY] != 'V'
         && map[oldPosMapX][newPosMapY] != 'W'
@@ -823,6 +839,14 @@ void StatePlayGame::parseMap2D()
                 entityMap[indexY][indexX] = chest;
             }
             else if(map[indexX][indexY] == '1' ||
+                    map[indexX][indexY] == '2' ||
+                    map[indexX][indexY] == '3' ||
+                    map[indexX][indexY] == '4' ||
+                    map[indexX][indexY] == '5' ||
+                    map[indexX][indexY] == '6' ||
+                    map[indexX][indexY] == '7' ||
+                    map[indexX][indexY] == '8' ||
+                    map[indexX][indexY] == '9' ||
                     map[indexX][indexY] == 'D' ||
                     map[indexX][indexY] == 'V' ||
                     map[indexX][indexY] == 'W' ||
@@ -830,7 +854,20 @@ void StatePlayGame::parseMap2D()
                     map[indexX][indexY] == 'Y' ||
                     map[indexX][indexY] == 'Z')
             {
-                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), 1, 0, false, 0.1);
+                int y = 0;
+                /*switch (map[indexX][indexY])
+                {
+                case '1':
+                    y = 0;
+                    break;
+                case '2':
+                    y = 1;
+                    break;
+                case '3':
+                    y = 2;
+                    break;
+                }*/
+                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), 1, y, false, 0.1);
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
             }
