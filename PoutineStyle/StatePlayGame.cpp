@@ -404,75 +404,102 @@ void StatePlayGame::renderingWalls(double dt)
 {
 #pragma region Rendering Walls
     yOffset = 0; // Used to create the illusion of a taller player
-    // Number of rays (vertical lines drawn on the screen) --> Must be a multiple of 66
     int w = gameManager->getWindowWidth();
     sf::VertexArray* lines = new sf::VertexArray(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
     
-    for (int x = 0; x < w; x++) { // FOV of 66 degrees --> 66 rays
-        int wallTextureNum = 3; // Need to be set depending on wall type (char)
-        // Cell where the player is standing
-        sf::Vector2i playerMapPos = sf::Vector2i(int(player->position.x), int(player->position.y));
+    for (int x = 0; x < w; x++) {
+        castRay(x, w, lines, 0);
+    }
 
-        // Vector representing the direction of the actual ray
-        double cameraX = double(2.f * double(x)) / double(w) - 1.0;
+    // Draw walls with textures
+    gameManager->getRenderWindow()->draw(*lines, &wallTextures);
+    delete lines; lines = nullptr;
 
-        sf::Vector2f rayDir = player->direction + sf::Vector2f(player->planeVec.x * cameraX, player->planeVec.y * cameraX);
-        double rayDirLen = std::sqrt(pow(rayDir.x, 2) + pow(rayDir.y, 2));
+#pragma endregion
+}
 
-        // Fisheye effect
-        // double deltaDistX = (rayDir.x == 0) ? 1e30 : abs(rayDirLen / rayDir.x);
-        // double deltaDistY = (rayDir.y == 0) ? 1e30 : abs(rayDirLen / rayDir.y);
+void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
+{
+    int countTransparentWalls = 0;
 
-        double deltaDistX = (rayDir.x == 0) ? 0 : abs(1 / rayDir.x); // RayDir is a unit vector, length = 1
-        double deltaDistY = (rayDir.y == 0) ? 0 : abs(1 / rayDir.y);
+    // Cell where the player is standing
+    sf::Vector2i playerMapPos = sf::Vector2i(int(player->position.x), int(player->position.y));
 
-        double sideDistX, sideDistY;
+    // Vector representing the direction of the actual ray
+    double cameraX = double(2.f * double(x)) / double(w) - 1.0;
 
-        int stepX, stepY;
-        bool wallHit = false, isWallHitHorizontal = false;
+    sf::Vector2f rayDir = player->direction + sf::Vector2f(player->planeVec.x * cameraX, player->planeVec.y * cameraX);
+    double rayDirLen = std::sqrt(pow(rayDir.x, 2) + pow(rayDir.y, 2));
 
-        if (rayDir.x < 0) {
-            stepX = -1;
-            sideDistX = ((player->position.x) - double(playerMapPos.x)) * deltaDistX;
+    // Fisheye effect
+    // double deltaDistX = (rayDir.x == 0) ? 1e30 : abs(rayDirLen / rayDir.x);
+    // double deltaDistY = (rayDir.y == 0) ? 1e30 : abs(rayDirLen / rayDir.y);
+
+    double deltaDistX = (rayDir.x == 0) ? 0 : abs(1 / rayDir.x); // RayDir is a unit vector, length = 1
+    double deltaDistY = (rayDir.y == 0) ? 0 : abs(1 / rayDir.y);
+
+    double sideDistX, sideDistY;
+
+    int stepX, stepY;
+    bool wallHit = false, isWallHitHorizontal = false;
+
+    if (rayDir.x < 0) {
+        stepX = -1;
+        sideDistX = ((player->position.x) - double(playerMapPos.x)) * deltaDistX;
+    }
+    else {
+        stepX = 1;
+        sideDistX = (double(playerMapPos.x) + 1.f - (player->position.x)) * deltaDistX;
+    }
+    if (rayDir.y < 0) {
+        stepY = -1;
+        sideDistY = ((player->position.y) - double(playerMapPos.y)) * deltaDistY;
+    }
+    else {
+        stepY = 1;
+        sideDistY = (double(playerMapPos.y) + 1.f - (player->position.y)) * deltaDistY;
+    }
+    int ceilingPixel = 0; // position of ceiling pixel on the screen
+    int groundPixel = gameManager->getWindowHeight(); // position of ground pixel on the screen
+    sf::Color color1 = sf::Color(100, 100, 100), color2 = sf::Color(150, 150, 150);
+    sf::Color floorColor = ((playerMapPos.x % 2 == 0 && playerMapPos.y % 2 == 0) || (playerMapPos.x % 2 == 1 && playerMapPos.y % 2 == 1)) ? color1 : color2;
+    double perpWallDist;
+    Wall* currentWall = nullptr;
+    // DDA algorithm
+    while (wallHit == false) {
+        if (sideDistX < sideDistY) {
+            sideDistX += deltaDistX; // Always the same
+            playerMapPos.x += stepX;
+            isWallHitHorizontal = true;
         }
         else {
-            stepX = 1;
-            sideDistX = (double(playerMapPos.x) + 1.f - (player->position.x)) * deltaDistX;
+            sideDistY += deltaDistY;
+            playerMapPos.y += stepY;
+            isWallHitHorizontal = false;
         }
-        if (rayDir.y < 0) {
-            stepY = -1;
-            sideDistY = ((player->position.y) - double(playerMapPos.y)) * deltaDistY;
-        }
-        else {
-            stepY = 1;
-            sideDistY = (double(playerMapPos.y) + 1.f - (player->position.y)) * deltaDistY;
-        }
-        int ceilingPixel = 0; // position of ceiling pixel on the screen
-        int groundPixel = gameManager->getWindowHeight(); // position of ground pixel on the screen
-        sf::Color color1 = sf::Color(100, 100, 100), color2 = sf::Color(150, 150, 150);
-        sf::Color floorColor = ((playerMapPos.x % 2 == 0 && playerMapPos.y % 2 == 0) || (playerMapPos.x % 2 == 1 && playerMapPos.y % 2 == 1)) ? color1 : color2;
-        double perpWallDist;
-        Wall* currentWall = nullptr;
-        // DDA algorithm
-        while (wallHit == false) {
-            if (sideDistX < sideDistY) {
-                sideDistX += deltaDistX; // Always the same
-                playerMapPos.x += stepX;
-                isWallHitHorizontal = true;
-            }
-            else {
-                sideDistY += deltaDistY;
-                playerMapPos.y += stepY;
-                isWallHitHorizontal = false;
-            }
-
+        if (playerMapPos.y >= 0 && playerMapPos.y < mapSize && playerMapPos.x >= 0 && playerMapPos.x < mapSize) {
             if (Entity::isWall(map[playerMapPos.y][playerMapPos.x]))
             {
-                wallHit = true;
-                currentWall = static_cast<Wall*>(entityMap[playerMapPos.x][playerMapPos.y]);
+                Wall* wall = static_cast<Wall*>(entityMap[playerMapPos.x][playerMapPos.y]);
+                if (wall->getIsTransparent()) {
+                    if (countTransparentWalls == depth || depth > 3) {
+                        // std::cout << countTransparentWalls << std::endl;
+                        // std::cout << "X : " << x << " ; Recursion n° : " << depth << std::endl;
+                        castRay(x, w, lines, depth+1);
+                        wallHit = true;
+                        currentWall = wall;
+                    }
+                    
+                    // std::cout << "Not far enough" << std::endl;
+                    countTransparentWalls++;
+                }
+                else {
+                    wallHit = true;
+                    currentWall = wall;
+                }
             }
-
-            else { //if (map[playerMapPos.y][playerMapPos.x] == 'E' || map[playerMapPos.y][playerMapPos.x] == 'C' || map[playerMapPos.y][playerMapPos.x] == 'L') {
+            else 
+            { 
                 if (entityMap[playerMapPos.x][playerMapPos.y] != nullptr) {
                     entityMap[playerMapPos.x][playerMapPos.y]->setToDraw(true);
                 }
@@ -482,14 +509,18 @@ void StatePlayGame::renderingWalls(double dt)
             // Floor
             double wallHeight = int(gameManager->getWindowHeight() / perpWallDist);
             // Add floor
-            lines->append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
+            /*lines->append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
             groundPixel = int(wallHeight * 0.495 + double(gameManager->getWindowHeight()) * 0.5f);
-            lines->append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
+            lines->append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));*/
             
             if (floorColor == color1) floorColor = color2;
             else floorColor = color1;
         }
-
+        else {
+            wallHit = true;
+        }
+    }
+    if (playerMapPos.y >= 0 && playerMapPos.y < mapSize && playerMapPos.x >= 0 && playerMapPos.x < mapSize) {
         sf::Color wallColor;
 
         if (isWallHitHorizontal) wallColor = sf::Color::White;
@@ -516,24 +547,40 @@ void StatePlayGame::renderingWalls(double dt)
 
         texture_coords.x += texX;
 
-        // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
-        // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
-        (*lines)[x * 2].position = sf::Vector2f((float)x, (float)drawStart + yOffset);
-        (*lines)[x * 2].color = wallColor;
-        (*lines)[x * 2].texCoords = sf::Vector2f((float)texture_coords.x, (float)texture_coords.y + 1);
-        // x * 2 + 1 are all the seconds points of the lines (bottom ones)
-        (*lines)[x * 2 + 1].position = sf::Vector2f((float)x, (float)drawEnd + yOffset);
-        (*lines)[x * 2 + 1].color = wallColor;
-        (*lines)[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
+        if (depth > 0) {
+            // sf::VertexArray lines2(sf::Lines, 2 * w);
+            sf::Vertex lineUp, lineBottom;
 
-        ZBuffer[x] = perpWallDist; // Needed for entities rendering
+            // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
+            // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
+            lineUp.position = sf::Vector2f((float)x, (float)drawStart + yOffset);
+            lineUp.color = wallColor;
+            lineUp.texCoords = sf::Vector2f((float)texture_coords.x, (float)texture_coords.y + 1);
+            // x * 2 + 1 are all the seconds points of the lines (bottom ones)
+            lineBottom.position = sf::Vector2f((float)x, (float)drawEnd + yOffset);
+            lineBottom.color = wallColor;
+            lineBottom.texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
+
+            sf::VertexArray * linesOverride = new sf::VertexArray(sf::Lines, 2);
+            (*linesOverride)[0] = lineUp;
+            (*linesOverride)[1] = lineBottom;
+
+            gameManager->getRenderWindow()->draw(*linesOverride, &wallTextures);
+            delete linesOverride; linesOverride = nullptr;
+        }
+        else {
+            // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
+            // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
+            (*lines)[x * 2].position = sf::Vector2f((float)x, (float)drawStart + yOffset);
+            (*lines)[x * 2].color = wallColor;
+            (*lines)[x * 2].texCoords = sf::Vector2f((float)texture_coords.x, (float)texture_coords.y + 1);
+            // x * 2 + 1 are all the seconds points of the lines (bottom ones)
+            (*lines)[x * 2 + 1].position = sf::Vector2f((float)x, (float)drawEnd + yOffset);
+            (*lines)[x * 2 + 1].color = wallColor;
+            (*lines)[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
+            ZBuffer[x] = perpWallDist; // Needed for entities rendering
+        }
     }
-
-    // Draw walls with textures
-    gameManager->getRenderWindow()->draw(*lines, &wallTextures);
-    delete lines; lines = nullptr;
-
-#pragma endregion
 }
 
 void StatePlayGame::renderingEntities(double dt) {
@@ -855,7 +902,7 @@ void StatePlayGame::parseMap2D()
                     y = 13;
                     break;
                 }
-                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, false, 0.2);
+                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 1, false);
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
             }

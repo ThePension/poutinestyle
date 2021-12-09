@@ -75,6 +75,7 @@ private:
 	void drawMap2D();
 	void drawMiniMap();
 	void renderingWalls(double dt);
+	void castRay(int x, int w, sf::VertexArray* lines, int depth);
 	void renderingEntities(double dt);
 	void showCursor();
 	void updatePlayerPosition(sf::Vector2f newPos);

@@ -10,10 +10,15 @@ Entity::~Entity() {
 
 }
 
-bool Entity::isWall(Entity* entity)
+
+bool Entity::isDoor(char entityChar)
 {
-	std::string entityType = typeid(*entity).name();
-	return false;
+    return  entityChar == 'D' ||
+            entityChar == 'V' ||
+            entityChar == 'W' ||
+            entityChar == 'X' ||
+            entityChar == 'Y' ||
+            entityChar == 'Z';
 }
 
 bool Entity::isWall(char entityChar)
