@@ -483,14 +483,11 @@ void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
                 Wall* wall = static_cast<Wall*>(entityMap[playerMapPos.x][playerMapPos.y]);
                 if (wall->getIsTransparent()) {
                     if (countTransparentWalls == depth || depth > 3) {
-                        // std::cout << countTransparentWalls << std::endl;
-                        // std::cout << "X : " << x << " ; Recursion n° : " << depth << std::endl;
                         castRay(x, w, lines, depth+1);
                         wallHit = true;
                         currentWall = wall;
                     }
                     
-                    // std::cout << "Not far enough" << std::endl;
                     countTransparentWalls++;
                 }
                 else {
@@ -506,13 +503,18 @@ void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
             }
             if (isWallHitHorizontal) perpWallDist = sideDistX - deltaDistX;
             else perpWallDist = sideDistY - deltaDistY;
-            // Floor
+
+            // Set the floor
             double wallHeight = int(gameManager->getWindowHeight() / perpWallDist);
-            // Add floor
-            /*lines->append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));
+            sf::VertexArray* linesFloor = new sf::VertexArray(sf::Lines, 2);
+            (*linesFloor)[0] = sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor);
             groundPixel = int(wallHeight * 0.495 + double(gameManager->getWindowHeight()) * 0.5f);
-            lines->append(sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor));*/
+            (*linesFloor)[1] = sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor);
             
+            // Draw floor
+            gameManager->getRenderWindow()->draw(*linesFloor, &wallTextures);
+            delete linesFloor; linesFloor = nullptr;
+
             if (floorColor == color1) floorColor = color2;
             else floorColor = color1;
         }
@@ -547,28 +549,30 @@ void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
 
         texture_coords.x += texX;
 
-        if (depth > 0) {
-            // sf::VertexArray lines2(sf::Lines, 2 * w);
+        if (depth > 0) { // If the ray went through a transparent wall
+            // Create a line that will be displayed behind the transparent wall
+            sf::VertexArray* linesOverride = new sf::VertexArray(sf::Lines, 2);
             sf::Vertex lineUp, lineBottom;
-
-            // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
-            // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
+            
             lineUp.position = sf::Vector2f((float)x, (float)drawStart + yOffset);
             lineUp.color = wallColor;
             lineUp.texCoords = sf::Vector2f((float)texture_coords.x, (float)texture_coords.y + 1);
-            // x * 2 + 1 are all the seconds points of the lines (bottom ones)
+
             lineBottom.position = sf::Vector2f((float)x, (float)drawEnd + yOffset);
             lineBottom.color = wallColor;
             lineBottom.texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
 
-            sf::VertexArray * linesOverride = new sf::VertexArray(sf::Lines, 2);
             (*linesOverride)[0] = lineUp;
             (*linesOverride)[1] = lineBottom;
 
             gameManager->getRenderWindow()->draw(*linesOverride, &wallTextures);
             delete linesOverride; linesOverride = nullptr;
+
+            // Don't update the ZBuffer, it contains the shortest wall
+            // ZBuffer[x] = perpWallDist; // Needed for entities rendering
         }
-        else {
+        else 
+        {
             // Adding vertical lines in ArrayVertex, and set the coordinates of the texture to use
             // x * 2 are all the first points of the lines (top ones) (more info there : https://www.sfml-dev.org/tutorials/2.5/graphics-vertex-array.php)
             (*lines)[x * 2].position = sf::Vector2f((float)x, (float)drawStart + yOffset);
@@ -578,6 +582,7 @@ void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
             (*lines)[x * 2 + 1].position = sf::Vector2f((float)x, (float)drawEnd + yOffset);
             (*lines)[x * 2 + 1].color = wallColor;
             (*lines)[x * 2 + 1].texCoords = sf::Vector2f((float)texture_coords.x, (float)(texture_coords.y + textureSize - 1));
+            //if(!currentWall->getIsTransparent()) ZBuffer[x] = perpWallDist; // Needed for entities rendering
             ZBuffer[x] = perpWallDist; // Needed for entities rendering
         }
     }
@@ -855,6 +860,7 @@ void StatePlayGame::parseMap2D()
             {
                 int y = 0;
                 int nbFrames = 1;
+                bool isTransparent = false;
                 switch (map[indexX][indexY])
                 {
                 case '1':
@@ -884,6 +890,7 @@ void StatePlayGame::parseMap2D()
                 case 'D':
                     y = 8;
                     nbFrames = 3;
+                    isTransparent = true;
                     break;
                 case 'V':
                     y = 9;
@@ -902,7 +909,7 @@ void StatePlayGame::parseMap2D()
                     y = 13;
                     break;
                 }
-                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 1, false);
+                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, false, isTransparent);
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
             }
