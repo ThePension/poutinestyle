@@ -55,6 +55,10 @@ private:
 	Entity* entityMap[32][32]; // A map with entity Objects
 	std::list<Entity*> entities; // Contains every entities
 
+	sf::VertexArray* linesFloor = nullptr;
+	sf::VertexArray* lines = nullptr;
+	sf::VertexArray* linesOverride = nullptr;
+
 	std::string mapFilePath;
 	std::map<std::string, int> levels;
 	std::map<std::string, int>::iterator actualLevel;
@@ -75,7 +79,7 @@ private:
 	void drawMap2D();
 	void drawMiniMap();
 	void renderingWalls(double dt);
-	void castRay(int x, int w, sf::VertexArray* lines, int depth);
+	void castRay(int x, int w, int depth);
 	void renderingEntities(double dt);
 	void showCursor();
 	void updatePlayerPosition(sf::Vector2f newPos);

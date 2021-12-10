@@ -22,6 +22,10 @@ StatePlayGame::StatePlayGame(GameManager* game, std::string mapFilePath, int map
     oldMouseX = sf::Mouse::getPosition().x;
     sf::Mouse::setPosition(sf::Vector2i(gameManager->getWindowWidth() / 2, gameManager->getWindowHeight() / 2));
 
+    linesFloor = new sf::VertexArray(sf::Lines, 2);
+    lines = new sf::VertexArray(sf::Lines, 2 * gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
+    linesOverride = new sf::VertexArray(sf::Lines, 2);
+
     blockWidth = gameManager->getWindowWidth() / mapSize;
     blockHeight = gameManager->getWindowHeight() / mapSize;
 
@@ -67,6 +71,9 @@ StatePlayGame::~StatePlayGame()
     delete player; player = nullptr;
     delete[] *(this->map);
     delete[] this->map;
+    delete linesFloor; linesFloor = nullptr;
+    delete lines; lines = nullptr;
+    delete linesOverride; linesOverride = nullptr;
 }
 
 void StatePlayGame::handleInput(double deltatime)
@@ -405,23 +412,22 @@ void StatePlayGame::renderingWalls(double dt)
 #pragma region Rendering Walls
     yOffset = 0; // Used to create the illusion of a taller player
     int w = gameManager->getWindowWidth();
-    sf::VertexArray* lines = new sf::VertexArray(sf::Lines, 2 * w); // Must be bigger if we want to draw floors and ceilings
     
     for (int x = 0; x < w; x++) {
-        castRay(x, w, lines, 0);
+        castRay(x, w, 0);
     }
 
     // Draw walls with textures
     gameManager->getRenderWindow()->draw(*lines, &wallTextures);
-    delete lines; lines = nullptr;
-
+    lines->clear();
+    lines->resize(2 * w);
 #pragma endregion
 }
 
-void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
+void StatePlayGame::castRay(int x, int w, int depth)
 {
     int countTransparentWalls = 0;
-
+    
     // Cell where the player is standing
     sf::Vector2i playerMapPos = sf::Vector2i(int(player->position.x), int(player->position.y));
 
@@ -463,7 +469,7 @@ void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
     int groundPixel = gameManager->getWindowHeight(); // position of ground pixel on the screen
     sf::Color color1 = sf::Color(100, 100, 100), color2 = sf::Color(150, 150, 150);
     sf::Color floorColor = ((playerMapPos.x % 2 == 0 && playerMapPos.y % 2 == 0) || (playerMapPos.x % 2 == 1 && playerMapPos.y % 2 == 1)) ? color1 : color2;
-    double perpWallDist;
+    double perpWallDist = 1.0;
     Wall* currentWall = nullptr;
     // DDA algorithm
     while (wallHit == false) {
@@ -482,8 +488,8 @@ void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
             {
                 Wall* wall = static_cast<Wall*>(entityMap[playerMapPos.x][playerMapPos.y]);
                 if (wall->getIsTransparent()) {
-                    if (countTransparentWalls == depth || depth > 3) {
-                        castRay(x, w, lines, depth+1);
+                    if (countTransparentWalls == depth && depth < 3) {
+                        castRay(x, w, depth+1);
                         wallHit = true;
                         currentWall = wall;
                     }
@@ -506,14 +512,13 @@ void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
 
             // Set the floor
             double wallHeight = int(gameManager->getWindowHeight() / perpWallDist);
-            sf::VertexArray* linesFloor = new sf::VertexArray(sf::Lines, 2);
+            
             (*linesFloor)[0] = sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor);
             groundPixel = int(wallHeight * 0.495 + double(gameManager->getWindowHeight()) * 0.5f);
             (*linesFloor)[1] = sf::Vertex(sf::Vector2f((float)x, (float)groundPixel + yOffset), floorColor);
             
             // Draw floor
-            gameManager->getRenderWindow()->draw(*linesFloor, &wallTextures);
-            delete linesFloor; linesFloor = nullptr;
+            if(floorColor == color1) gameManager->getRenderWindow()->draw(*linesFloor);
 
             if (floorColor == color1) floorColor = color2;
             else floorColor = color1;
@@ -522,6 +527,7 @@ void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
             wallHit = true;
         }
     }
+ 
     if (playerMapPos.y >= 0 && playerMapPos.y < mapSize && playerMapPos.x >= 0 && playerMapPos.x < mapSize) {
         sf::Color wallColor;
 
@@ -551,7 +557,7 @@ void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
 
         if (depth > 0) { // If the ray went through a transparent wall
             // Create a line that will be displayed behind the transparent wall
-            sf::VertexArray* linesOverride = new sf::VertexArray(sf::Lines, 2);
+            
             sf::Vertex lineUp, lineBottom;
             
             lineUp.position = sf::Vector2f((float)x, (float)drawStart + yOffset);
@@ -566,10 +572,6 @@ void StatePlayGame::castRay(int x, int w, sf::VertexArray* lines, int depth)
             (*linesOverride)[1] = lineBottom;
 
             gameManager->getRenderWindow()->draw(*linesOverride, &wallTextures);
-            delete linesOverride; linesOverride = nullptr;
-
-            // Don't update the ZBuffer, it contains the shortest wall
-            // ZBuffer[x] = perpWallDist; // Needed for entities rendering
         }
         else 
         {
