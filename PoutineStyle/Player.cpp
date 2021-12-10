@@ -6,8 +6,39 @@ Player::Player() {
 	this->secondaryWeapon = nullptr;
 }
 
+Player::~Player()
+{
+	delete knife; knife = nullptr;
+	// Keys and other Weapons are deleted in StatePlayGame
+}
+
+Weapon* Player::setWeapon(Weapon* w) {
+	Weapon* oldWeapon = this->secondaryWeapon;
+	this->secondaryWeapon = w;
+	this->currentWeapon = w;
+	return oldWeapon;
+}
+
 void Player::draw(sf::RenderTarget& target) const {
+	// Draw weapon
 	currentWeapon->draw(target);
+
+	// Draw possessed keys
+	int count = 0;
+	for (Key* key : playerKeys) {
+		sf::Sprite keySprite = key->getFirstSprite();
+		// Scale the sprite
+		double wantedSpriteSize = target.getSize().x / 25.0;
+		double ratio = wantedSpriteSize / keySprite.getTextureRect().width;
+		keySprite.scale(sf::Vector2f(ratio, ratio));
+
+		// Set position
+		keySprite.setPosition(target.getSize().x / 2 - wantedSpriteSize - 10, count * wantedSpriteSize + 30);
+
+		target.draw(keySprite);
+
+		count++;
+	}
 }
 
 void Player::update(float dt) {
@@ -39,9 +70,7 @@ void Player::switchWeapon()
 void Player::reload()
 {
 	if (ammunition > 0)
-	{
-		// Reload animation
-		if (ammunition >= 7)
+	{		if (ammunition >= 7)
 		{
 			currentAmmunition = 7;
 			ammunition -= 7;
@@ -77,9 +106,4 @@ void Player::increaseLife()
 void Player::increaseAmmo()
 {
 	this->ammunition += 7;
-}
-
-bool Player::dead()
-{
-	return this->isDead;
 }

@@ -275,7 +275,7 @@ void StatePlayGame::draw(double dt)
 
 void StatePlayGame::endGameManagment()
 {
-    if (player->dead())
+    if (player->getIsDead())
     {
         StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false);
         this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
@@ -627,16 +627,26 @@ void StatePlayGame::renderingEntities(double dt) {
             entities.remove(InteractedEntity);
 
             Key* key = static_cast<Key*>(InteractedEntity);
+            player->addKey(key);
 
-            // Open the corresponding door
-            for (int x = 0; x < mapSize; x++) {
-                for (int y = 0; y < mapSize; y++) {
-                    if (map[x][y] == key->getKeyCode()) if(entityMap[y][x] != nullptr)static_cast<Wall*>(entityMap[y][x])->setOpening();
-                }
+            InteractedEntity = nullptr;
+        }
+        else if (typeid(*InteractedEntity).name() == typeid(Key).name()) {
+            // Delete Key Entity
+            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
+            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
+            entities.remove(InteractedEntity);
+
+            Key* key = static_cast<Key*>(InteractedEntity);
+            player->addKey(key);
+
+            InteractedEntity = nullptr;
+        }
+        else if (typeid(*InteractedEntity).name() == typeid(Wall).name()) {
+            Wall* wall = static_cast<Wall*>(InteractedEntity);
+            for (Key* key : player->getPlayerKeys()) {
+                if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode()) wall->setOpening();
             }
-
-            // Delete the key object
-            delete key; key = nullptr;
             InteractedEntity = nullptr;
         }
         else if (typeid(*InteractedEntity).name() == typeid(Portal).name())
