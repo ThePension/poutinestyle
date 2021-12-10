@@ -484,7 +484,7 @@ void StatePlayGame::castRay(int x, int w, int depth)
             isWallHitHorizontal = false;
         }
         if (playerMapPos.y >= 0 && playerMapPos.y < mapSize && playerMapPos.x >= 0 && playerMapPos.x < mapSize) {
-            if (Entity::isWall(map[playerMapPos.y][playerMapPos.x]))
+            if (Entity::isWall(map[playerMapPos.y][playerMapPos.x]) || map[playerMapPos.y][playerMapPos.x] == 'B')
             {
                 Wall* wall = static_cast<Wall*>(entityMap[playerMapPos.x][playerMapPos.y]);
                 if (wall->getIsTransparent()) {
@@ -870,7 +870,7 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(chest);
                 entityMap[indexY][indexX] = chest;
             }
-            else if(Entity::isWall(map[indexX][indexY]))
+            else if(Entity::isWall(map[indexX][indexY]) || map[indexX][indexY] == 'B')
             {
                 int y = 0;
                 int nbFrames = 1;
@@ -878,6 +878,7 @@ void StatePlayGame::parseMap2D()
                 switch (map[indexX][indexY])
                 {
                 case '1':
+                case 'B': // Secret passage
                     y = 0;
                     break;
                 case '2':
