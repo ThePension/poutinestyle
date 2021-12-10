@@ -67,6 +67,11 @@ void Player::switchWeapon()
 	}
 }
 
+void Player::clearKeys()
+{
+	this->playerKeys.clear();
+}
+
 void Player::reload()
 {
 	if (ammunition > 0)

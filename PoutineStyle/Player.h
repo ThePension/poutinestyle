@@ -38,6 +38,7 @@ public:
 	void increaseLife();
 	void increaseAmmo();
 	void switchWeapon();
+	void clearKeys();
 
 	// Setters
 	Weapon* setWeapon(Weapon* w);

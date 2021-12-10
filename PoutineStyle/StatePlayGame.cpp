@@ -662,6 +662,8 @@ void StatePlayGame::renderingEntities(double dt) {
                 delete[] this->map;
                 map = nullptr;
 
+                player->clearKeys();
+
                 cleanAllEntitys();
 
                 this->blockWidth = gameManager->getWindowWidth() / mapSize;
