@@ -45,7 +45,7 @@ private:
 	int movingSpeedSPrint = 150;
 	int blockWidth;
 	int blockHeight;
-	int textureSize = 64;
+	int textureSize = 256;
 	int yOffset = 50;
 	float speedFactor = 5;
 

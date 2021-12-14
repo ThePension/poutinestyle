@@ -42,7 +42,7 @@ StatePlayGame::StatePlayGame(GameManager* game, std::string mapFilePath, int map
 	parseMap2D();
 
     wallTextures = sf::Texture();    
-    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures2.png");
+    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures3.png");
 
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
@@ -644,8 +644,13 @@ void StatePlayGame::renderingEntities(double dt) {
         }
         else if (typeid(*InteractedEntity).name() == typeid(Wall).name()) {
             Wall* wall = static_cast<Wall*>(InteractedEntity);
-            for (Key* key : player->getPlayerKeys()) {
-                if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode()) wall->setOpening();
+            if (wall->getIsSecretPassage()) {
+                wall->setOpening();
+            }
+            else {
+                for (Key* key : player->getPlayerKeys()) {
+                    if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode()) wall->setOpening();
+                }
             }
             InteractedEntity = nullptr;
         }
@@ -875,10 +880,10 @@ void StatePlayGame::parseMap2D()
                 int y = 0;
                 int nbFrames = 1;
                 bool isTransparent = false;
+                bool isSecretPassage = false;
                 switch (map[indexX][indexY])
                 {
                 case '1':
-                case 'B': // Secret passage
                     y = 0;
                     break;
                 case '2':
@@ -896,7 +901,10 @@ void StatePlayGame::parseMap2D()
                 case '6':
                     y = 5;
                     break;
+                case 'B':
                 case '7':
+                    nbFrames = 4;
+                    isSecretPassage = true;
                     y = 6;
                     break;
                 case '8':
@@ -904,12 +912,9 @@ void StatePlayGame::parseMap2D()
                     break;
                 case 'D':
                     y = 8;
-                    nbFrames = 3;
-                    isTransparent = true;
                     break;
                 case 'V':
                     y = 9;
-                    nbFrames = 3;
                     break;
                 case 'W':
                     y = 10;
@@ -924,7 +929,7 @@ void StatePlayGame::parseMap2D()
                     y = 13;
                     break;
                 }
-                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, false, isTransparent);
+                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, false, isTransparent, isSecretPassage);
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
             }
