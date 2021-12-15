@@ -17,15 +17,15 @@ StateMainMenu::StateMainMenu(GameManager * game) {
 	this->btnLevel4 = Button(sf::Vector2i(w / 2 - 160 + 90 + 3*60, 1 * (h / 7) - 25), 40, 50, sf::Color::Red, L"4", gameManager->getRenderWindow());
 	this->btnLevel5 = Button(sf::Vector2i(w / 2 - 160 + 90 + 4*60, 1 * (h / 7) - 25), 40, 50, sf::Color::Red, L"5", gameManager->getRenderWindow());
 
-	this->btnMetaDataON = Button(sf::Vector2i(w / 2 - 40, 2 * (h / 7) - 25), 60, 50, sf::Color::Red, L"ON", gameManager->getRenderWindow());
-	this->btnMetaDataOFF = Button(sf::Vector2i(w / 2 - 40 + 80, 2 * (h / 7) - 25), 60, 50, sf::Color::Red, L"OFF", gameManager->getRenderWindow());
+	this->btnMetaDataON = Button(sf::Vector2i(w / 2 - 25, 2 * (h / 7) - 25), 60, 50, sf::Color::Red, L"ON", gameManager->getRenderWindow());
+	this->btnMetaDataOFF = Button(sf::Vector2i(w / 2 - 25 + 80, 2 * (h / 7) - 25), 60, 50, sf::Color::Red, L"OFF", gameManager->getRenderWindow());
 
-	this->btnSensibilitySlow = Button(sf::Vector2i(w / 2 - 100, 3 * (h / 7) - 25), 70, 50, sf::Color::Red, L"Lent", gameManager->getRenderWindow());
-	this->btnSensibilityNormal = Button(sf::Vector2i(w / 2 - 100 + 90, 3 * (h / 7) - 25), 80, 50, sf::Color::Red, L"Normal", gameManager->getRenderWindow());
-	this->btnSensibility4k = Button(sf::Vector2i(w / 2 - 100 + 90 + 100, 3 * (h / 7) - 25), 100, 50, sf::Color::Red, L"Special 4k", gameManager->getRenderWindow());
+	this->btnSensibilitySlow = Button(sf::Vector2i(w / 2 - 120, 3 * (h / 7) - 25), 80, 50, sf::Color::Red, L"Lent", gameManager->getRenderWindow());
+	this->btnSensibilityNormal = Button(sf::Vector2i(w / 2 - 120 + 100, 3 * (h / 7) - 25), 90, 50, sf::Color::Red, L"Normal", gameManager->getRenderWindow());
+	this->btnSensibility4k = Button(sf::Vector2i(w / 2 - 120 + 100 + 110, 3 * (h / 7) - 25), 120, 50, sf::Color::Red, L"Special 4k", gameManager->getRenderWindow());
 
-	this->btnDifficultyNoob = Button(sf::Vector2i(w / 2 - 100, 4 * (h / 7) - 25), 150, 50, sf::Color::Red, L"Sans talent", gameManager->getRenderWindow());
-	this->btnDifficultyPro = Button(sf::Vector2i(w / 2 - 100 + 170, 4 * (h / 7) - 25), 150, 50, sf::Color::Red, L"Fais moi mal", gameManager->getRenderWindow());
+	this->btnDifficultyNoob = Button(sf::Vector2i(w / 2 - 120, 4 * (h / 7) - 25), 155, 50, sf::Color::Red, L"Sans talent", gameManager->getRenderWindow());
+	this->btnDifficultyPro = Button(sf::Vector2i(w / 2 - 120 + 175, 4 * (h / 7) - 25), 155, 50, sf::Color::Red, L"Fais moi mal", gameManager->getRenderWindow());
 
 	this->btnVolume0 = Button(sf::Vector2i(w / 2 - 120, 5 * (h / 7) - 25), 50, 50, sf::Color::Red, L"0", gameManager->getRenderWindow());
 	this->btnVolume25 = Button(sf::Vector2i(w / 2 - 120 + 70, 5 * (h / 7) - 25), 50, 50, sf::Color::Red, L"25", gameManager->getRenderWindow());
@@ -90,7 +90,7 @@ void StateMainMenu::handleInput(double deltatime) {
 			}
 			else if (btnSensibility4k.isClicked())
 			{
-				settings.setSensibility(10); // Voir avec Nico
+				settings.setSensibility(50); // Voir avec Nico
 			}
 			else if (btnDifficultyNoob.isClicked())
 			{
@@ -126,7 +126,7 @@ void StateMainMenu::handleInput(double deltatime) {
 		else
 		{
 			if (playButton.isClicked()) {
-				StatePlayGame* statePlayGame = new StatePlayGame(this->gameManager);
+				StatePlayGame* statePlayGame = new StatePlayGame(this->gameManager, settings);
 				this->gameManager->changeState(statePlayGame);
 				return;
 			}
@@ -273,7 +273,7 @@ void StateMainMenu::updateSelection()
 	case 5:
 		btnSensibilityNormal.selected(true);
 		break;
-	case 10:
+	case 50:
 		btnSensibility4k.selected(true);
 		break;
 	}

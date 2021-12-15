@@ -1,18 +1,55 @@
 #include "StatePlayGame.h"
 
-StatePlayGame::StatePlayGame(GameManager* game, std::string mapFilePath, int mapSize)
+StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string mapFilePath, int mapSize)
 {
+    // Settings
+    this->settings = settings;
+
+    this->speedFactor = this->settings.getSensibility();
+
+    /************************************************************ to something with those settings
+    this->settings.getDifficulty();
+    this->settings.getShowMetaData();
+    */
+    // this->settings.getVolume(); // pas encore utile
+
+    switch (this->settings.getLevel())
+    {
+    case 0:
+        mapFilePath = "Lvl1.txt";
+        mapSize = 16;
+        this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
+        this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
+        this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
+        this->levels.insert(std::pair<std::string, int>("Lvl5.txt", 64));
+        break;
+    case 1:
+        mapFilePath = "Lvl1.txt";
+        mapSize = 16;
+        break;
+    case 2:
+        mapFilePath = "Lvl2.txt";
+        mapSize = 16;
+        break;
+    case 3:
+        mapFilePath = "Lvl3.txt";
+        mapSize = 32;
+        break;
+    case 4:
+        mapFilePath = "Lvl4.txt";
+        mapSize = 32;
+        break;
+    case 5:
+        mapFilePath = "Lvl5.txt";
+        mapSize = 64;
+        break;
+    }
+
     player = new Player();
 
     this->gameManager = game;
     this->mapFilePath = "Map/" + mapFilePath;
     this->mapSize = mapSize;
-
-    this->levels.insert(std::pair<std::string, int>("Lvl1.txt", 16));
-    this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
-    this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
-    this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
-    this->levels.insert(std::pair<std::string, int>("Lvl5.txt", 64));
 
     this->actualLevel = this->levels.begin();
     
@@ -82,7 +119,6 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
-            float speedFactor = 5;
             int mouseX = event.mouseMove.x;
 
             if (mouseX == 0)
@@ -625,15 +661,16 @@ void StatePlayGame::renderingEntities(double dt) {
             // from a level to another 
             if (this->actualLevel != this->levels.end())
             {
-                this->mapFilePath = "Map/" + this->actualLevel->first;
-                this->mapSize = this->actualLevel->second;
-                this->actualLevel++;
-
                 delete[] *(this->map);
                 delete[] this->map;
                 map = nullptr;
 
                 cleanAllEntitys();
+
+                this->mapFilePath = "Map/" + this->actualLevel->first;
+                this->mapSize = this->actualLevel->second;
+
+                this->actualLevel++;
 
                 this->blockWidth = gameManager->getWindowWidth() / mapSize;
                 this->blockHeight = gameManager->getWindowHeight() / mapSize;
@@ -647,8 +684,8 @@ void StatePlayGame::renderingEntities(double dt) {
                         map[i][j] = '0';
                     }
                 }
-
                 parseMap2D();
+
                 InteractedEntity = nullptr;
                 return;
             }
@@ -793,6 +830,8 @@ void StatePlayGame::renderingEntities(double dt) {
 
 void StatePlayGame::parseMap2D()
 {
+    entities.clear();
+
     std::string tempText;
     std::ifstream mapFile;
 
@@ -896,12 +935,15 @@ void StatePlayGame::parseMap2D()
                     break;
                 }
             }
+            else
+            {
+                entityMap[indexY][indexX] = nullptr;
+            }
             indexY++;
         }
         indexX++;
         indexY = 0;
     }
-
     mapFile.close();
 }
 
