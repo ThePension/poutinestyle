@@ -642,14 +642,14 @@ void StatePlayGame::renderingEntities(double dt) {
 
             InteractedEntity = nullptr;
         }
-        else if (typeid(*InteractedEntity).name() == typeid(Wall).name()) {
-            Wall* wall = static_cast<Wall*>(InteractedEntity);
-            if (wall->getIsSecretPassage()) {
-                wall->setOpening();
+        else if (typeid(*InteractedEntity).name() == typeid(Door).name()) {
+            Door* door = static_cast<Door*>(InteractedEntity);
+            if (door->getIsSecretPassage()) {
+                door->setOpening();
             }
             else {
                 for (Key* key : player->getPlayerKeys()) {
-                    if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode()) wall->setOpening();
+                    if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode()) door->setOpening();
                 }
             }
             InteractedEntity = nullptr;
@@ -783,7 +783,7 @@ void StatePlayGame::renderingEntities(double dt) {
                         delete chest; chest = nullptr;
                     }
                 }
-                else if (typeid(*entity).name() == typeid(Wall).name()) {
+                else if (typeid(*entity).name() == typeid(Door).name()) {
                     // Remove open door
                     if (entity->getToRemove()) {
                         entityMap[(int)entity->mapPos.x][(int)entity->mapPos.y] = nullptr;
@@ -879,7 +879,7 @@ void StatePlayGame::parseMap2D()
             {
                 int y = 0;
                 int nbFrames = 1;
-                bool isTransparent = false;
+                bool isDoor = false;
                 bool isSecretPassage = false;
                 switch (map[indexX][indexY])
                 {
@@ -905,6 +905,7 @@ void StatePlayGame::parseMap2D()
                 case '7':
                     nbFrames = 4;
                     isSecretPassage = true;
+                    isDoor = true;
                     y = 6;
                     break;
                 case '8':
@@ -912,24 +913,32 @@ void StatePlayGame::parseMap2D()
                     break;
                 case 'D':
                     y = 8;
+                    isDoor = true;
                     break;
                 case 'V':
                     y = 9;
+                    isDoor = true;
                     break;
                 case 'W':
                     y = 10;
+                    isDoor = true;
                     break;
                 case 'X':
                     y = 11;
+                    isDoor = true;
                     break;
                 case 'Y':
                     y = 12;
+                    isDoor = true;
                     break;
                 case 'Z':
                     y = 13;
+                    isDoor = true;
                     break;
                 }
-                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, false, isTransparent, isSecretPassage);
+                Wall* wall;
+                if (isDoor) wall = new Door(sf::Vector2f((float)indexY, (float)indexX), 4, y, 0.1, false, isSecretPassage);
+                else wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, false);
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
             }
