@@ -743,6 +743,7 @@ void StatePlayGame::renderingEntities(double dt) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entityMap[nextX][nextY]);
                     if (ennemy != nullptr) {
                         ennemy->decreaseHP(bullet->getDamage());
+                        std::cout << bullet->getDamage() << std::endl;
                         // Remove the ennemy if his HP are under 1
                         if (ennemy->getHP() <= 0) {
                             ennemy->setIsDying();
