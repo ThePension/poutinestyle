@@ -753,7 +753,27 @@ void StatePlayGame::renderingEntities(double dt) {
                 bullet->isExplosing = true;
             }
             else if(Entity::isWall(map[nextY][nextX])) // Bullet and Wall collision
-            { 
+            {
+                if (bullet->getIsGrenade() && !bullet->isExplosing) // Zone explosion
+                {
+                    for (int x = -1; x <= 1; x++) {
+                        for (int y = -1; y <= 1; y++) {
+                            int newX = nextX + x;
+                            int newY = nextY + y;
+                            if (newX > 0 && newX < mapSize - 1 && newY > 0 && newY < mapSize - 1) {
+                                if (map[newY][newX] != '0' && map[newY][newX] != 'S') {
+                                    if (entityMap[newX][newY] != nullptr) {
+                                        Entity* entity = entityMap[newX][newY];
+                                        entityMap[newX][newY] = nullptr;
+                                        entities.remove(entity);
+                                        delete entity; entity = nullptr;
+                                        map[newY][newX] = '0';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 bullet->isTravelling = false;
                 bullet->isExplosing = true;
             }
@@ -764,11 +784,30 @@ void StatePlayGame::renderingEntities(double dt) {
                 bullet->setToRemove(true);
             }
             else if ((map[nextY][nextX] == 'E' || map[nextY][nextX] == 'G') && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
-                if (bullet->isExplosing == false) {
+                if (bullet->getIsGrenade() && !bullet->isExplosing) // Zone explosion
+                {
+                    for (int x = -1; x <= 1; x++) {
+                        for (int y = -1; y <= 1; y++) {
+                            int newX = nextX + x;
+                            int newY = nextY + y;
+                            if (newX > 0 && newX < mapSize - 1 && newY > 0 && newY < mapSize - 1) {
+                                if (map[newY][newX] != '0' && map[newY][newX] != 'S') {
+                                    if (entityMap[newX][newY] != nullptr) {
+                                        Entity* entity = entityMap[newX][newY];
+                                        entityMap[newX][newY] = nullptr;
+                                        entities.remove(entity);
+                                        delete entity; entity = nullptr;
+                                        map[newY][newX] = '0';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (!bullet->isExplosing) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entityMap[nextX][nextY]);
                     if (ennemy != nullptr) {
                         ennemy->decreaseHP(bullet->getDamage());
-                        std::cout << bullet->getDamage() << std::endl;
                         // Remove the ennemy if his HP are under 1
                         if (ennemy->getHP() <= 0) {
                             ennemy->setIsDying();
