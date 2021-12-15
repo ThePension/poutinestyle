@@ -90,10 +90,14 @@
     <ClCompile Include="General.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Wall.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Door.cpp">
+=======
+    <ClCompile Include="Settings.cpp">
+>>>>>>> ImplementSettings
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="GrenadeLauncher.cpp">
@@ -173,10 +177,14 @@
     <ClInclude Include="General.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="Wall.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Door.h">
+=======
+    <ClInclude Include="Settings.h">
+>>>>>>> ImplementSettings
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="GrenadeLauncher.h">

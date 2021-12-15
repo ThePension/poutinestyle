@@ -17,5 +17,6 @@ public:
 	Button(sf::Vector2i pos, int width, int height, sf::Color color, std::wstring text, sf::RenderWindow *);
 	void draw();
 	bool isClicked();
+	void selected(bool state);
 };
 
