@@ -16,8 +16,9 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
     switch (this->settings.getLevel())
     {
     case 0:
-        mapFilePath = "Lvl1.txt";
-        mapSize = 16;
+        mapFilePath = "Map_Example3.txt";
+        mapSize = 32;
+        // this->levels.insert(std::pair<std::string, int>("Map_Example3.txt", 32));
         this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
         this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
         this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
