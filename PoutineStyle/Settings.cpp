@@ -3,10 +3,10 @@
 Settings::Settings()
 {
 	this->level = 0;
-	this->showMetaData = false;
+	this->showMetaData = true;
 	this->sensibility = 5;
 	this->difficulty = 1;
-	this->volume = 5;
+	this->volume = 0;
 }
 
 Settings::~Settings(){}
