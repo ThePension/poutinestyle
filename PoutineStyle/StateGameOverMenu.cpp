@@ -6,8 +6,8 @@ StateGameOverMenu::StateGameOverMenu(GameManager* game, bool win) {
 	w = gameManager->getWindowWidth();
 	h = gameManager->getWindowHeight();
 
-	replayButton = Button(sf::Vector2i(w / 2 - 75, 2 * (h / 4) - 25), 150, 50, sf::Color::Cyan, L"Rejouer", gameManager->getRenderWindow());
-	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) - 25), 150, 50, sf::Color::Cyan, L"Quitter", gameManager->getRenderWindow());
+	replayButton = Button(sf::Vector2i(w / 2 - 75, 2 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Rejouer", gameManager->getRenderWindow());
+	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
 }
 StateGameOverMenu::~StateGameOverMenu() {
 
@@ -18,9 +18,13 @@ void StateGameOverMenu::handleInput(double deltatime) {
 	{
 		if (replayButton.isClicked())
 		{
+			/*
 			StatePlayGame* statePlayGame = new StatePlayGame(this->gameManager); // Create new PlayGame state
 			//StatePlayGame* statePlayGame = new StatePlayGame(this->gameManager, "Lvl1.txt", 16);
 			gameManager->changeState(statePlayGame); // Change current state for new PlayGame state
+			*/
+			StateMainMenu* stateMainMenu = new StateMainMenu(this->gameManager);
+			gameManager->changeState(stateMainMenu);
 			return;
 		}
 		else if (quitButton.isClicked())
