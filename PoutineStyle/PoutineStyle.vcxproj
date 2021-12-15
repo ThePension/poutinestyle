@@ -171,6 +171,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="Door.cpp" />
+    <ClCompile Include="GrenadeLauncher.cpp" />
     <ClCompile Include="Shotgun.cpp" />
     <ClCompile Include="StateGameOverMenu.cpp" />
     <ClCompile Include="StateMainMenu.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="Door.h" />
+    <ClInclude Include="GrenadeLauncher.h" />
     <ClInclude Include="Shotgun.h" />
     <ClInclude Include="StateGameOverMenu.h" />
     <ClInclude Include="StateMainMenu.h" />

@@ -22,6 +22,7 @@
 #include "Wall.h"
 #include "General.h"
 #include "Door.h"
+#include "GrenadeLauncher.h"
 
 class StatePlayGame : public GameState
 {

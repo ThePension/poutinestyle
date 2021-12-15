@@ -631,17 +631,6 @@ void StatePlayGame::renderingEntities(double dt) {
 
             InteractedEntity = nullptr;
         }
-        else if (typeid(*InteractedEntity).name() == typeid(Key).name()) {
-            // Delete Key Entity
-            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
-            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
-            entities.remove(InteractedEntity);
-
-            Key* key = static_cast<Key*>(InteractedEntity);
-            player->addKey(key);
-
-            InteractedEntity = nullptr;
-        }
         else if (typeid(*InteractedEntity).name() == typeid(Door).name()) {
             Door* door = static_cast<Door*>(InteractedEntity);
             if (door->getIsSecretPassage()) {
@@ -693,7 +682,7 @@ void StatePlayGame::renderingEntities(double dt) {
                 this->isFinished = true;
             }
         }
-        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name()) {
+        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name()) {
             Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
             Weapon* oldWeapon = player->setWeapon(weapon);
         
@@ -734,8 +723,6 @@ void StatePlayGame::renderingEntities(double dt) {
             {
                 if (bullet->isExplosing == false) player->loseLife();
 
-                // bullet->isTravelling = false;
-                // bullet->isExplosing = true;
                 bullet->setToRemove(true);
             }
             else if ((map[nextY][nextX] == 'E' || map[nextY][nextX] == 'G') && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
@@ -979,7 +966,7 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(portal);
             }
             else if (map[indexX][indexY] == 'L') {
-                rnd = (rand() % 4); // Between 0 and 2
+                rnd = (rand() % 5); // Between 0 and 2
                 Entity* entity;
                 switch (rnd)
                 {
@@ -1001,6 +988,13 @@ void StatePlayGame::parseMap2D()
                     break;
                 case 3:
                     entity = new Shotgun();
+                    entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
+                    entityMap[indexY][indexX] = entity;
+                    entities.push_back(entity);
+                    break;
+                case 4:
+                    std::cout << "GrenadeLauncher" << std::endl;
+                    entity = new GrenadeLauncher();
                     entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
