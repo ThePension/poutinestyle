@@ -28,4 +28,11 @@ public:
 	void resetAnimation() { this->currentRenderedFrameNum = 0; time = 0; }
 	bool getIsAnimationOver() { return this->isAnimationOver; }
 	int getCurrentRenderedFrameNum() { return this->currentRenderedFrameNum; }
+	sf::Texture getTexture() { return this->textures; }
+	sf::Sprite getFirstSprite() { 
+		sf::Sprite sprite;
+		sprite.setTexture(this->textures);
+		sprite.setTextureRect(sf::IntRect(0, y * spriteHeight, spriteWidth, spriteHeight));
+		return sprite;
+	}
 };

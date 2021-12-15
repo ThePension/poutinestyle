@@ -19,6 +19,7 @@
 #include "StateMainMenu.h"
 #include "Shotgun.h"
 #include "Guard.h"
+#include "Wall.h"
 #include "General.h"
 
 class StatePlayGame : public GameState
@@ -44,7 +45,7 @@ private:
 	int movingSpeedSPrint = 150;
 	int blockWidth;
 	int blockHeight;
-	int textureSize = 64;
+	int textureSize = 256;
 	int yOffset = 50;
 	float speedFactor = 5;
 
@@ -53,6 +54,10 @@ private:
 	char** map;
 	Entity* entityMap[32][32]; // A map with entity Objects
 	std::list<Entity*> entities; // Contains every entities
+
+	sf::VertexArray* linesFloor = nullptr;
+	sf::VertexArray* lines = nullptr;
+	sf::VertexArray* linesOverride = nullptr;
 
 	std::string mapFilePath;
 	std::map<std::string, int> levels;
@@ -74,6 +79,7 @@ private:
 	void drawMap2D();
 	void drawMiniMap();
 	void renderingWalls(double dt);
+	void castRay(int x, int w, int depth);
 	void renderingEntities(double dt);
 	void showCursor();
 	void updatePlayerPosition(sf::Vector2f newPos);
