@@ -756,23 +756,7 @@ void StatePlayGame::renderingEntities(double dt) {
             {
                 if (bullet->getIsGrenade() && !bullet->isExplosing) // Zone explosion
                 {
-                    for (int x = -1; x <= 1; x++) {
-                        for (int y = -1; y <= 1; y++) {
-                            int newX = nextX + x;
-                            int newY = nextY + y;
-                            if (newX > 0 && newX < mapSize - 1 && newY > 0 && newY < mapSize - 1) {
-                                if (map[newY][newX] != '0' && map[newY][newX] != 'S') {
-                                    if (entityMap[newX][newY] != nullptr) {
-                                        Entity* entity = entityMap[newX][newY];
-                                        entityMap[newX][newY] = nullptr;
-                                        entities.remove(entity);
-                                        delete entity; entity = nullptr;
-                                        map[newY][newX] = '0';
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    this->bulletExplosion(nextX, nextY, bullet->getDamage());
                 }
                 bullet->isTravelling = false;
                 bullet->isExplosing = true;
@@ -786,23 +770,7 @@ void StatePlayGame::renderingEntities(double dt) {
             else if ((map[nextY][nextX] == 'E' || map[nextY][nextX] == 'G') && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
                 if (bullet->getIsGrenade() && !bullet->isExplosing) // Zone explosion
                 {
-                    for (int x = -1; x <= 1; x++) {
-                        for (int y = -1; y <= 1; y++) {
-                            int newX = nextX + x;
-                            int newY = nextY + y;
-                            if (newX > 0 && newX < mapSize - 1 && newY > 0 && newY < mapSize - 1) {
-                                if (map[newY][newX] != '0' && map[newY][newX] != 'S') {
-                                    if (entityMap[newX][newY] != nullptr) {
-                                        Entity* entity = entityMap[newX][newY];
-                                        entityMap[newX][newY] = nullptr;
-                                        entities.remove(entity);
-                                        delete entity; entity = nullptr;
-                                        map[newY][newX] = '0';
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    this->bulletExplosion(nextX, nextY, bullet->getDamage());
                 }
                 else if (!bullet->isExplosing) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entityMap[nextX][nextY]);
@@ -1072,7 +1040,6 @@ void StatePlayGame::parseMap2D()
                     entities.push_back(entity);
                     break;
                 case 4:
-                    std::cout << "GrenadeLauncher" << std::endl;
                     entity = new GrenadeLauncher();
                     entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
                     entityMap[indexY][indexX] = entity;
@@ -1267,14 +1234,44 @@ Entity* StatePlayGame::getInteractedEntity() {
     if (playerDirectionPosX > 0 && playerDirectionPosX < mapSize && playerDirectionPosY > 0 && playerDirectionPosY < mapSize) {
         if (this->entityMap[playerDirectionPosX][playerDirectionPosY] != nullptr) return entityMap[playerDirectionPosX][playerDirectionPosY];
     }
-    /*for (int x = -1; x <= 1; x++) {
+    return nullptr;
+}
+
+void StatePlayGame::bulletExplosion(int nextX, int nextY, int damage) {
+    // To Do :
+    // - Mettre le bool isDestructible dans la classe Entity
+    // - Ou mieux encore : Faire une méthode "explode" virtuelle pure dans la classe Entity
+    // - Cette méthode agit en fonction dans l'entité
+    for (int x = -1; x <= 1; x++) {
         for (int y = -1; y <= 1; y++) {
-            int entityPosX = playerDirectionPosX + x;
-            int entityPosY = playerDirectionPosY + y;
-            if (entityPosX > 0 && entityPosX < mapSize && entityPosY > 0 && entityPosY < mapSize) {
-                if (this->entityMap[entityPosX][entityPosY] != nullptr) return entityMap[entityPosX][entityPosY];
+            int newX = nextX + x;
+            int newY = nextY + y;
+            if (newX > 0 && newX < mapSize - 1 && newY > 0 && newY < mapSize - 1) {
+                Entity* entity = entityMap[newX][newY];
+                if (entity != nullptr) {
+                    if (typeid(*entity).name() == typeid(Wall).name() ||
+                        typeid(*entity).name() == typeid(Door).name()) { // Wall 
+                        Wall* wall = static_cast<Wall*>(entity);
+                        if (wall->getIsDestructible()) { 
+                            // Remove the wall
+                            entityMap[newX][newY] = nullptr;
+                            entities.remove(entity);
+                            delete entity; entity = nullptr;
+                            map[newY][newX] = '0';
+                        }
+                        wall = nullptr;
+                    }
+                    else if (typeid(*entity).name() == typeid(Guard).name() ||
+                             typeid(*entity).name() == typeid(General).name()) { // Ennemy
+                        Ennemy* ennemy = static_cast<Ennemy*>(entity);
+                        ennemy->decreaseHP(damage);
+                        // Check if the ennemy is dead
+                        if (ennemy->getHP() <= 0) {
+                            ennemy->setIsDying();
+                        }
+                    }
+                }
             }
         }
-    }*/
-    return nullptr;
+    }
 }

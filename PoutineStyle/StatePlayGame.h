@@ -97,6 +97,7 @@ private:
 	Entity* getInteractedEntity();
 
 	void cleanAllEntitys();
+	void bulletExplosion(int nextX, int nextY, int damage);
 
 public:
 	StatePlayGame(GameManager * game, Settings settings, std::string mapFilePath = "Map_Example3.txt", int mapSize = 32);
