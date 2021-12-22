@@ -79,7 +79,7 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
 	parseMap2D();
 
     wallTextures = sf::Texture();    
-    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures3.png");
+    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures4.png");
 
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
@@ -160,6 +160,7 @@ void StatePlayGame::handleInput(double deltatime)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) aPressed = true;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) sPressed = true;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) qPressed = !qPressed; //Change Weapon mode (burstshot-oneshot)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) movingSpeed = 5;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) InteractedEntity = getInteractedEntity();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) pause();
@@ -174,6 +175,7 @@ void StatePlayGame::handleInput(double deltatime)
             if (event.key.code == sf::Keyboard::S) sPressed = false;
             if (event.key.code == sf::Keyboard::LShift) movingSpeed = 3;
         }
+        if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) { isBursting = false; }
 
         if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
         {
@@ -195,9 +197,14 @@ void StatePlayGame::handleInput(double deltatime)
                     }
                 }
             }
-            else{
+
+            else if (typeid(* player->getCurrentWeapon()).name() == typeid(Uzi).name() && qPressed == true) {
+                isBursting = true;
+            }
+            else 
+            {
                 std::stack<Bullet*> bullets = player->shoot(player->direction);
-                while(!bullets.empty()) {
+                while (!bullets.empty()) {
                     Bullet* bullet = bullets.top();
                     if (bullet != nullptr) {
                         entities.push_back(bullet);
@@ -268,6 +275,18 @@ void StatePlayGame::update(float deltaTime)
     {
         newPlayerPos = sf::Vector2f(player->position.x - player->direction.x * movingSpeed * deltaTime, player->position.y - player->direction.y * movingSpeed * deltaTime);
         updatePlayerPosition(newPlayerPos);
+    }
+
+    if (isBursting)
+    {
+        std::stack<Bullet*> bullets = player->burstShooting(player->direction);
+        while (!bullets.empty()) {
+            Bullet* bullet = bullets.top();
+            if (bullet != nullptr) {
+                entities.push_back(bullet);
+            }
+            bullets.pop();
+        }
     }
 
     draw(deltaTime);
@@ -719,6 +738,7 @@ void StatePlayGame::renderingEntities(double dt) {
                 this->isFinished = true;
             }
         }
+
         else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name()) {
             Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
             Weapon* oldWeapon = player->setWeapon(weapon);
@@ -930,6 +950,7 @@ void StatePlayGame::parseMap2D()
                     break;
                 case '2':
                     y = 1;
+                    nbFrames = 7;
                     break;
                 case '3':
                     y = 2;
@@ -937,45 +958,95 @@ void StatePlayGame::parseMap2D()
                 case '4':
                     y = 3;
                     break;
-                case '5':
+                case 'V':
+                    isDoor = true;
                     y = 4;
                     break;
-                case '6':
+                case '5':
                     y = 5;
                     break;
-                case 'B':
-                case '7':
-                    nbFrames = 4;
-                    isSecretPassage = true;
-                    isDoor = true;
+                case '6':
                     y = 6;
                     break;
-                case '8':
+                case '7':
                     y = 7;
                     break;
-                case 'D':
+                case '8':
                     y = 8;
-                    isDoor = true;
                     break;
-                case 'V':
+                case '9':
                     y = 9;
-                    isDoor = true;
                     break;
-                case 'W':
+                case 'a':
                     y = 10;
                     isDoor = true;
                     break;
-                case 'X':
+                case 'A':
                     y = 11;
-                    isDoor = true;
                     break;
-                case 'Y':
+                case 'b':
                     y = 12;
+                    nbFrames = 6;
+                    isSecretPassage = true;
                     isDoor = true;
                     break;
-                case 'Z':
+                case 'B':
                     y = 13;
+                    break;
+                case 'c':
+                    y = 15;
+                    break;
+                case 'C':
+                    y = 16;
+                    break;
+                case 'd':
+                    y = 17;
+                    break;
+                case 'D':
+                    y = 18;
+                    break;
+                case 'e':
+                    y = 19;
+                    break;
+                case 'E':
+                    y = 20;
+                    break;
+                case 'f':
+                    y = 21;
+                    break;
+                case 'F':
+                    y = 22;
+                    break;
+                case 'g':
+                    y = 23;
+                    break;
+                case 'G':
+                    y = 24;
                     isDoor = true;
+                    break;
+                case 'h':
+                    y = 25;
+                    isDoor = true;
+                    break;
+                case 'H':
+                    y = 26;
+                    isDoor = true;
+                    break;
+                case 'i':
+                    y = 27;
+                    isDoor = true;
+                    break;
+                case 'I':
+                    y = 28;
+                    break;
+                case 'j':
+                    y = 29;
+                    break;
+                case 'J':
+                    y = 30;
+                    break;
+                case 'k':
+                    y = 31;
                     break;
                 }
                 Wall* wall;
@@ -1020,7 +1091,9 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(portal);
             }
             else if (map[indexX][indexY] == 'L') {
-                rnd = (rand() % 5); // Between 0 and 2
+
+                rnd = (rand() % 6); // between 0-5
+
                 Entity* entity;
                 switch (rnd)
                 {
@@ -1047,6 +1120,12 @@ void StatePlayGame::parseMap2D()
                     entities.push_back(entity);
                     break;
                 case 4:
+                    entity = new Uzi();
+                    entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
+                    entityMap[indexY][indexX] = entity;
+                    entities.push_back(entity);
+                    break;
+                case 5:
                     std::cout << "GrenadeLauncher" << std::endl;
                     entity = new GrenadeLauncher();
                     entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
@@ -1136,16 +1215,16 @@ void StatePlayGame::displayHud()
     sf::Font font = gameManager->getFont();
     sf::Color fontCol = sf::Color::Red;
 
-    sf::Text liveText("Live : ", font, 15);
+    sf::Text liveText("Live", font, 15);
     sf::Text live("", font, 15);
     live.setString(std::to_string(player->getLive()));
-    sf::Text health("Health :", font, 15);
+    sf::Text health("Health", font, 15);
     sf::RectangleShape visualHealth;
     sf::Text arme("Weapon", font, 15);
-    sf::Text ammunition("Ammo :", font, 15);
+    sf::Text ammunition("Ammo", font, 15);
     sf::Text currentAmmunition("", font, 15);
     currentAmmunition.setString(std::to_string(player->getCurrentAmmunition()) + " / " + std::to_string(player->getAmmunition()));
-    sf::Text score("Score :", font, 15);
+    sf::Text score("Score", font, 15);
     sf::Text currentScore("", font, 15);
     currentScore.setString(std::to_string(player->getScore()));
 

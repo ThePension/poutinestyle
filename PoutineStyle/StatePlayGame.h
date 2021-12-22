@@ -21,6 +21,7 @@
 #include "Guard.h"
 #include "Wall.h"
 #include "General.h"
+#include "Uzi.h"
 #include "Door.h"
 #include "GrenadeLauncher.h"
 #include "Settings.h"
@@ -32,6 +33,8 @@ private:
 
 	bool isPlayerMoving = false;
 	sf::Keyboard::Key keysPressed;
+
+	bool qPressed = false;//burst firing
 
 	bool aPressed = false;
 	bool dPressed = false;
@@ -51,6 +54,7 @@ private:
 	int textureSize = 256;
 	int yOffset = 50;
 	float speedFactor = 5;
+	bool isBursting = false; 
 
 	Settings settings;
 

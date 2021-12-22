@@ -1,11 +1,7 @@
 #include "Shotgun.h"
 #include "Bullet.h"
-<<<<<<< HEAD
 
-Shotgun::Shotgun() : Weapon(1, Animation(0, 0, 64, 64, 11, "../PoutineStyle/pics/shotgun.png", 0.05)) {
-=======
 Shotgun::Shotgun() : Weapon(3, Animation(0, 0, 64, 64, 11, "../PoutineStyle/pics/shotgun.png", 0.05)) {
->>>>>>> 23e0e400fa2d533adc2cd2eba466e6efce4d7880
 	weaponSprite.scale(2, 2);
 	weaponSprite.setPosition(300, 320);
 }

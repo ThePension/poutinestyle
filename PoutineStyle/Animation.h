@@ -9,6 +9,7 @@ public:
 	int ApplyToSprite(sf::Sprite& sprite);
 	void update(float dt);
 	bool isAnimationOver = true;
+	int getCurrentRenderedFramNum() { return this->currentRenderedFrameNum; }
 private:
 	void advance();
 	int nbFrames = 4;
