@@ -964,89 +964,74 @@ void StatePlayGame::parseMap2D()
                     break;
                 case 'a':
                     y = 10;
+                    isDoor = true;
                     break;
                 case 'A':
                     y = 11;
                     break;
                 case 'b':
                     y = 12;
-                    break;
-                case 'B':
                     nbFrames = 6;
                     isSecretPassage = true;
                     isDoor = true;
+                    break;
+                case 'B':
                     y = 13;
                     break;
                 case 'c':
-                    y = 14;
-                    break;
-                case 'C':
                     y = 15;
                     break;
-                case 'd':
+                case 'C':
                     y = 16;
                     break;
-                case 'D':
+                case 'd':
                     y = 17;
                     break;
-                case 'f':
+                case 'D':
                     y = 18;
                     break;
-                case 'F':
+                case 'e':
                     y = 19;
                     break;
-                case 'g':
+                case 'E':
                     y = 20;
                     break;
-                case 'h':
+                case 'f':
                     y = 21;
                     break;
-                case 'H':
+                case 'F':
                     y = 22;
                     break;
-                case 'i':
+                case 'g':
                     y = 23;
                     break;
-                case 'I':
+                case 'G':
                     y = 24;
+                    isDoor = true;
                     break;
-                case 'j':
+                case 'h':
                     y = 25;
+                    isDoor = true;
                     break;
-                case 'J':
+                case 'H':
                     y = 26;
+                    isDoor = true;
                     break;
-                case 'k':
+                case 'i':
                     y = 27;
+                    isDoor = true;
                     break;
-                case 'K':
+                case 'I':
                     y = 28;
                     break;
-                case 'l':
+                case 'j':
                     y = 29;
                     break;
-                case 'L':
+                case 'J':
                     y = 30;
                     break;
-                case 'Vv':
-                    y = 9;
-                    isDoor = true;
-                    break;
-                case 'W':
-                    y = 10;
-                    isDoor = true;
-                    break;
-                case 'X':
-                    y = 11;
-                    isDoor = true;
-                    break;
-                case 'Y':
-                    y = 12;
-                    isDoor = true;
-                    break;
-                case 'Z':
-                    y = 13;
-                    isDoor = true;
+                case 'k':
+                    y = 31;
                     break;
                 }
                 Wall* wall;
