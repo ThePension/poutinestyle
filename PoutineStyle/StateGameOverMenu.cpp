@@ -56,7 +56,7 @@ void StateGameOverMenu::draw(double deltatime)
 	}
 	
 	text.setFillColor(sf::Color::White);
-	text.setPosition(sf::Vector2f(w / 2 - 57, 1 * (h / 4) - 25));
+	text.setPosition(sf::Vector2f(w / 2 - 57.f, 1 * (h / 4) - 25.f));
 	gameManager->getRenderWindow()->draw(text);
 
 	replayButton.draw();

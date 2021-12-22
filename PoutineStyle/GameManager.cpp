@@ -11,7 +11,7 @@ GameManager::GameManager()
 {
     window = new sf::RenderWindow(sf::VideoMode(1000, 1000), "RayCasting with SFML", sf::Style::None | sf::Style::Titlebar | sf::Style::Close);
     // window->setFramerateLimit(144);
-    sf::View view(sf::FloatRect(0, 0, this->windowWidth, this->windowWidth));
+    sf::View view(sf::FloatRect(0, 0, float(this->windowWidth), float(this->windowWidth)));
     window->setView(view);
     StateMainMenu* stateMainMenu = new StateMainMenu(this);
     states.push(stateMainMenu);
@@ -35,7 +35,7 @@ void GameManager::gameLoop()
 
         // Update FPS, smoothed over time
         if (dt_counter >= 0.1) {
-            int fps = frame_counter / dt_counter;
+            int fps = int(frame_counter / dt_counter);
             frame_time_micro /= frame_counter;
             fpsText.setString(std::to_string(fps) +" fps");
             dt_counter = 0.0f;

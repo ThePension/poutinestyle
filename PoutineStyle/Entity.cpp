@@ -12,7 +12,6 @@ Entity::~Entity() {
 
 }
 
-
 bool Entity::isDoor(char entityChar)
 {
     return  entityChar == 'D' ||
