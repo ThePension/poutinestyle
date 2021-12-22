@@ -3,7 +3,7 @@
 General::General(sf::Vector2f pos, int dropNumber)
     : Ennemy(3, pos, new AnimatedVertexArray("../PoutineStyle/pics/generalTextures.png", 64, 64, 1, 4, 0.2),
                      new AnimatedVertexArray("../PoutineStyle/pics/generalTextures.png", 64, 64, 2, 4, 0.3), dropNumber) {
-
+	this->HP = 10;
 }
 
 std::stack<Bullet*> General::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map)
@@ -28,5 +28,6 @@ std::stack<Bullet*> General::shoot(sf::Vector2f direction, sf::Vector2f playerPo
 		bullets.push(bullet1);
 		return bullets;
 	}
+	if (!bIsPlayerVisible) this->resetAnimations();
 	return bullets;
 }

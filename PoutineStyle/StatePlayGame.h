@@ -19,13 +19,17 @@
 #include "StateMainMenu.h"
 #include "Shotgun.h"
 #include "Guard.h"
+#include "Wall.h"
 #include "General.h"
 #include "Uzi.h"
+#include "Door.h"
+#include "GrenadeLauncher.h"
+#include "Settings.h"
 
 class StatePlayGame : public GameState
 {
 private:
-	Player player;
+	Player * player;
 
 	bool isPlayerMoving = false;
 	sf::Keyboard::Key keysPressed;
@@ -47,16 +51,22 @@ private:
 	int movingSpeedSPrint = 150;
 	int blockWidth;
 	int blockHeight;
-	int textureSize = 64;
+	int textureSize = 256;
 	int yOffset = 50;
 	float speedFactor = 5;
 	bool isBursting = false; 
 
+	Settings settings;
+
 	int oldMouseX = 0, oldMouseY = 0;
 
 	char** map;
-	Entity* entityMap[32][32]; // A map with entity Objects
+	Entity* entityMap[64][64]; // A map with entity Objects
 	std::list<Entity*> entities; // Contains every entities
+
+	sf::VertexArray* linesFloor = nullptr;
+	sf::VertexArray* lines = nullptr;
+	sf::VertexArray* linesOverride = nullptr;
 
 	std::string mapFilePath;
 	std::map<std::string, int> levels;
@@ -68,16 +78,22 @@ private:
 
 	Entity* InteractedEntity = nullptr;
 
+	// HUD static stuff
+	sf::RectangleShape * hudUp, * hudDownL, * hudDownML, * hudDownM, * hudDownMR, * hudDownR;
+
+
 	void draw(double dt) override;
 	void handleInput(double deltatime) override;
 	void parseMap2D();
 	void drawMap2D();
 	void drawMiniMap();
 	void renderingWalls(double dt);
+	void castRay(int x, int w, int depth);
 	void renderingEntities(double dt);
 	void showCursor();
 	void updatePlayerPosition(sf::Vector2f newPos);
-	void hud();
+	void setHud();
+	void displayHud();
 	void pause();
 	void endGameManagment();
 	void reset();
@@ -87,7 +103,7 @@ private:
 	void cleanAllEntitys();
 
 public:
-	StatePlayGame(GameManager * game, std::string mapFilePath = "Map_Example3.txt", int mapSize = 32);
+	StatePlayGame(GameManager * game, Settings settings, std::string mapFilePath = "Map_Example3.txt", int mapSize = 32);
 	~StatePlayGame();
 
 	void update(float deltaTime) override;

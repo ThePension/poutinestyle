@@ -1,6 +1,6 @@
 #include "Pistol.h"
 #include "Bullet.h"
-Pistol::Pistol() : Weapon(1, Animation(0, 0, 105, 105, 4, "../PoutineStyle/pics/pistolTexture.png")) {
+Pistol::Pistol() : Weapon(4, Animation(0, 0, 105, 105, 4, "../PoutineStyle/pics/pistolTexture.png")) {
 	weaponSprite.scale(1.2, 1.2);
 	weaponSprite.setPosition(300, 320);
 }
@@ -40,7 +40,7 @@ std::stack<Bullet*> Pistol::shoot(sf::Vector2f direction, sf::Vector2f position)
 
 		// Create a bullet
 		sf::Vector2f bulletPos = sf::Vector2f(position.x - 0.5 + 2.0 * direction.x, position.y - 0.5 + 2.0 * direction.y);
-		Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, true);
+		Bullet* bullet = new Bullet(this->bulletDamage, bulletPos, directionWithNoise, true);
 		bullets.push(bullet);
 	}
 	return bullets;

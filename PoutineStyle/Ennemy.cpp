@@ -114,13 +114,7 @@ bool Ennemy::isPlayerVisible(sf::Vector2f playerPos, char** map) {
             entityMapPos.y += stepY;
             isWallHitHorizontal = false;
         }
-        if (map[entityMapPos.y][entityMapPos.x] == '1' ||
-            map[entityMapPos.y][entityMapPos.x] == 'D' ||
-            map[entityMapPos.y][entityMapPos.x] == 'V' ||
-            map[entityMapPos.y][entityMapPos.x] == 'W' ||
-            map[entityMapPos.y][entityMapPos.x] == 'X' ||
-            map[entityMapPos.y][entityMapPos.x] == 'Y' ||
-            map[entityMapPos.y][entityMapPos.x] == 'Z') return false; // The player is not visible for the ennemy
+        if (Entity::isWall(map[entityMapPos.y][entityMapPos.x]) || map[entityMapPos.y][entityMapPos.x] == 'B') return false; // The player is not visible for the ennemy
         else if (entityMapPos.x == floor(playerPos.x) && entityMapPos.y == floor(playerPos.y)) return true; // The player is visible for the ennemy
     }
 }

@@ -84,17 +84,35 @@
     <ClCompile Include="Shotgun.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="Uzi.cpp">
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
     <ClCompile Include="Uzi.cpp">
 =======
+=======
+>>>>>>> master
     <ClCompile Include="Guard.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="General.cpp">
+<<<<<<< HEAD
 >>>>>>> e50dfd0d9fd234e7296e415a95f2324d7b332aef
+>>>>>>> master
+=======
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="Wall.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Door.cpp">
+=======
+    <ClCompile Include="Settings.cpp">
+>>>>>>> ImplementSettings
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="GrenadeLauncher.cpp">
 >>>>>>> master
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -166,17 +184,35 @@
     <ClInclude Include="Shotgun.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="Uzi.h">
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
     <ClInclude Include="Uzi.h">
 =======
+=======
+>>>>>>> master
     <ClInclude Include="Guard.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="General.h">
+<<<<<<< HEAD
 >>>>>>> e50dfd0d9fd234e7296e415a95f2324d7b332aef
+>>>>>>> master
+=======
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="Wall.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Door.h">
+=======
+    <ClInclude Include="Settings.h">
+>>>>>>> ImplementSettings
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="GrenadeLauncher.h">
 >>>>>>> master
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>

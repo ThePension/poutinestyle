@@ -8,8 +8,8 @@ StatePauseMenu::StatePauseMenu(GameManager* game)
 	w = gameManager->getWindowWidth();
 	h = gameManager->getWindowHeight();
 
-	playButton = Button(sf::Vector2i(w / 2 - 75, 2 * (h / 4) - 25), 150, 50, sf::Color::Cyan, L"Reprendre", gameManager->getRenderWindow());
-	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) - 25), 150, 50, sf::Color::Cyan, L"Quitter", gameManager->getRenderWindow());
+	playButton = Button(sf::Vector2i(w / 2 - 75, 2 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Reprendre", gameManager->getRenderWindow());
+	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
 }
 
 StatePauseMenu::~StatePauseMenu() {}
@@ -42,8 +42,7 @@ void StatePauseMenu::update(float deltaTime)
 
 void StatePauseMenu::draw(double deltaTime)
 {
-	sf::Font font = sf::Font();
-	font.loadFromFile("CollegiateBlackFLF.ttf");
+	sf::Font font = gameManager->getFont();
 
 	pause = sf::Text("Pause", font, 35);
 	pause.setFillColor(sf::Color::White);
