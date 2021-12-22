@@ -42,6 +42,7 @@ private:
 	bool isMapDisplayed = false;
 	bool isGamePaused = false;
 	bool isFinished = false;
+	bool hard = false;
 
 	int mapSize;
 	int movingSpeed = 3;
@@ -93,11 +94,13 @@ private:
 	void pause();
 	void endGameManagment();
 	void reset();
+	int lootManagment(int *proba, int length);
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
 	Entity* getInteractedEntity();
 
 	void cleanAllEntitys();
 	void bulletExplosion(int nextX, int nextY, int damage);
+
 
 public:
 	StatePlayGame(GameManager * game, Settings settings, std::string mapFilePath = "Map_Example3.txt", int mapSize = 32);

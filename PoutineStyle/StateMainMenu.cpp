@@ -75,10 +75,12 @@ void StateMainMenu::handleInput(double deltatime) {
 			else if (btnMetaDataON.isClicked())
 			{
 				settings.setShowMetaData(true);
+				this->gameManager->setDrawFPS(true);
 			}
 			else if (btnMetaDataOFF.isClicked())
 			{
 				settings.setShowMetaData(false);
+				this->gameManager->setDrawFPS(false);
 			}
 			else if (btnSensibilitySlow.isClicked())
 			{
@@ -90,7 +92,7 @@ void StateMainMenu::handleInput(double deltatime) {
 			}
 			else if (btnSensibility4k.isClicked())
 			{
-				settings.setSensibility(10); // Voir avec Nico
+				settings.setSensibility(10);
 			}
 			else if (btnDifficultyNoob.isClicked())
 			{

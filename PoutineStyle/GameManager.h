@@ -16,6 +16,7 @@ private:
 	sf::Clock clock;
 	float deltaTime;
 	sf::Font font;
+	bool drawFPS = true;
 public:
 	int getWindowWidth() { return this->windowWidth; }
 	int getWindowHeight() { return this->windowHeight; }
@@ -28,5 +29,6 @@ public:
 	void changeState(GameState* state);
 	GameState* peekState(int i=0);
 	sf::Font getFont() { return this->font;  }
+	void setDrawFPS(bool drawFPS) { this->drawFPS = drawFPS; }
 };
 

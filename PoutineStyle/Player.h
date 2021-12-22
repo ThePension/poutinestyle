@@ -25,6 +25,7 @@ private:
 public:
 	// Constructors
 	Player();
+	Player(int live, int ammunition);
 
 	// Destructors
 	~Player();
@@ -43,6 +44,7 @@ public:
 	// Setters
 	Weapon* setWeapon(Weapon* w);
 	void addKey(Key* key) { this->playerKeys.push_back(key); }
+	void removeKey(Key* key) { this->playerKeys.remove(key); }
 
 	// Getters
 	std::list<Key*> getPlayerKeys() { return this->playerKeys; }

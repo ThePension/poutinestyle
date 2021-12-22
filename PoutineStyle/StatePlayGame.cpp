@@ -4,13 +4,13 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
 {
     // Settings
     this->settings = settings;
-
     this->speedFactor = this->settings.getSensibility();
 
-    /************************************************************ to something with those settings
-    this->settings.getDifficulty();
-    this->settings.getShowMetaData();
-    */
+    if (this->settings.getDifficulty() == 2)
+    {
+        hard = true;
+    }
+
     // this->settings.getVolume(); // pas encore utile
 
     switch (this->settings.getLevel())
@@ -46,7 +46,15 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
         break;
     }
 
-    player = new Player();
+    if (hard)
+    {
+        player = new Player(1, 0);
+    }
+    else
+    {
+        player = new Player();
+    }
+    
 
     this->gameManager = game;
     this->mapFilePath = "Map/" + mapFilePath;
@@ -155,7 +163,10 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::KeyPressed)
         {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::M) && !hard) isMapDisplayed = !isMapDisplayed; // Toggle map display
+                
+
+
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) player->reload();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) wPressed = true;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) aPressed = true;
@@ -674,8 +685,19 @@ void StatePlayGame::renderingEntities(double dt) {
                 door->setOpening();
             }
             else {
+                Key* keyToRemove = nullptr;
                 for (Key* key : player->getPlayerKeys()) {
-                    if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode()) door->setOpening();
+                    if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode())
+                    {
+                        door->setOpening();
+                        keyToRemove = key;
+                    }
+                }
+                if (keyToRemove != nullptr)
+                {
+                    player->removeKey(keyToRemove);
+                    delete keyToRemove;
+                    keyToRemove = nullptr;
                 }
             }
             InteractedEntity = nullptr;
@@ -796,10 +818,18 @@ void StatePlayGame::renderingEntities(double dt) {
                 if (typeid(*entity).name() == typeid(Guard).name() || typeid(*entity).name() == typeid(General).name()) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entity);
                     if (ennemy->getToRemove()) {
-                        Entity* droppedEntity = ennemy->getDroppedEntity();
-                        entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = droppedEntity;
-                        entities.push_back(droppedEntity);
-                        map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = 'L';
+                        if (!ennemy->nothing)
+                        {
+                            Entity* droppedEntity = ennemy->getDroppedEntity();
+                            entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = droppedEntity;
+                            entities.push_back(droppedEntity);
+                            map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = 'L';
+                        }
+                        else
+                        {
+                            entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = nullptr;
+                            map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = '0';
+                        }
                         entities.remove(ennemy);
                         delete ennemy; ennemy = nullptr;
                     }
@@ -893,18 +923,22 @@ void StatePlayGame::parseMap2D()
                 player->position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
             else if (map[indexX][indexY] == 'E') { // Ennemy
-                rnd = (rand() % 4); // Between 0 and 3
+                int proba[] = {25, 25, 50};
+                rnd = lootManagment(proba, 3);
                 Ennemy* guard = new Guard(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(guard);
                 entityMap[indexY][indexX] = guard;
             }
             else if (map[indexX][indexY] == 'G') {
-                rnd = (rand() % 4); // Between 0 and 3
+                int proba[] = { 25, 25, 50 };
+                rnd = lootManagment(proba, 3);
                 Ennemy* general = new General(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(general);
                 entityMap[indexY][indexX] = general;
             }
             else if (map[indexX][indexY] == 'C') { // Chest
+                int proba[] = { 25, 15, 2, 35, 20, 3 };
+                rnd = lootManagment(proba, 6);
                 rnd = (rand() % 2); // Between 0 and 1
                 Chest* chest = new Chest(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(chest);
@@ -1222,6 +1256,24 @@ void StatePlayGame::cleanAllEntitys()
     }
 
     this->entities.clear();
+}
+
+int StatePlayGame::lootManagment(int* proba, int length)
+{
+    int n = 0;
+    n = (rand() % 100);
+    int count = 0, index = 0;
+
+    while (index < length)
+    {
+        if (n >= count && n < proba[index] + count)
+        {
+            return index + 1;
+        }
+        count += proba[index++];
+    }
+
+    return -1; // should throw an Exception
 }
 
 /// <summary>

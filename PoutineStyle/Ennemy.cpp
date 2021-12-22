@@ -8,23 +8,17 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray* shootAnimVA, Anima
     // Create random entity for drop
     switch (dropNumber)
     {
-        case 0: // Ammo pack
+        case 1: // 25%
             droppedEntity = new Ammo(this->mapPos);
             break;
-        case 1: // Medikit
-            droppedEntity = new Medikit(this->mapPos);
-            break;
-        case 2:
+        case 2: // 25%
             droppedEntity = new Pistol();
+            droppedEntity->mapPos = this->mapPos;
             break;
-        case 3:
-            droppedEntity = new Shotgun();
-            break;
-        default:
-            droppedEntity = new Ammo(this->mapPos);
+        case 3: // 50 %
+            nothing = true;
             break;
     }
-    droppedEntity->mapPos = this->mapPos;
 }
 
 Ennemy::~Ennemy()
