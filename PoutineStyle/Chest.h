@@ -2,6 +2,8 @@
 #include "Entity.h"
 #include "AnimatedVertexArray.h"
 #include "Medikit.h"
+#include "Pistol.h"
+#include "Shotgun.h"
 #include "Ammo.h"
 
 class Chest : public Entity

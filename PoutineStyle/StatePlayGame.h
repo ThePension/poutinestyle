@@ -93,10 +93,12 @@ private:
 	void pause();
 	void endGameManagment();
 	void reset();
+	int lootManagment(int *proba, int *entitys, int length);
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
 	Entity* getInteractedEntity();
 
 	void cleanAllEntitys();
+
 
 public:
 	StatePlayGame(GameManager * game, Settings settings, std::string mapFilePath = "Map_Example3.txt", int mapSize = 32);
