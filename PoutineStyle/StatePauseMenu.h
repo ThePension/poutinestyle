@@ -13,6 +13,7 @@ class StatePauseMenu : public GameState
 		int w, h;
 
 		Button playButton;
+		Button backToMainMenu;
 		Button quitButton;
 		sf::Text pause;
 

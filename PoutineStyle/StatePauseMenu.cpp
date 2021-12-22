@@ -8,8 +8,9 @@ StatePauseMenu::StatePauseMenu(GameManager* game)
 	w = gameManager->getWindowWidth();
 	h = gameManager->getWindowHeight();
 
-	playButton = Button(sf::Vector2i(w / 2 - 75, 2 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Reprendre", gameManager->getRenderWindow());
-	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
+	playButton = Button(sf::Vector2i(w / 2 - 75, 1.5 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Reprendre", gameManager->getRenderWindow());
+	backToMainMenu = Button(sf::Vector2i(w / 2 - 75, 2.5 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Menu principal", gameManager->getRenderWindow());
+	quitButton = Button(sf::Vector2i(w / 2 - 75, 3.5 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
 }
 
 StatePauseMenu::~StatePauseMenu() {}
@@ -24,6 +25,11 @@ void StatePauseMenu::handleInput(double deltatime)
 			StatePlayGame* playGame = dynamic_cast<StatePlayGame*>(this->gameManager->peekState(1));
 			playGame->resume();
 			this->gameManager->popState();
+			return;
+		}
+		else if (backToMainMenu.isClicked()) {
+			StateMainMenu* stateMainMenu = new StateMainMenu(this->gameManager);
+			this->gameManager->changeState(stateMainMenu);
 			return;
 		}
 		else if (quitButton.isClicked())
@@ -51,4 +57,5 @@ void StatePauseMenu::draw(double deltaTime)
 
 	playButton.draw();
 	quitButton.draw();
+	backToMainMenu.draw();
 }
