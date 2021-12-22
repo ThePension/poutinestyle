@@ -25,6 +25,7 @@ private:
 public:
 	// Constructors
 	Player();
+	Player(int live, int ammunition);
 
 	// Destructors
 	~Player();

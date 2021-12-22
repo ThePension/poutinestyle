@@ -4,13 +4,13 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
 {
     // Settings
     this->settings = settings;
-
     this->speedFactor = this->settings.getSensibility();
 
-    /************************************************************ to something with those settings
-    this->settings.getDifficulty();
-    this->settings.getShowMetaData();
-    */
+    if (this->settings.getDifficulty() == 2)
+    {
+        hard = true;
+    }
+
     // this->settings.getVolume(); // pas encore utile
 
     switch (this->settings.getLevel())
@@ -45,7 +45,15 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
         break;
     }
 
-    player = new Player();
+    if (hard)
+    {
+        player = new Player(1, 0);
+    }
+    else
+    {
+        player = new Player();
+    }
+    
 
     this->gameManager = game;
     this->mapFilePath = "Map/" + mapFilePath;
@@ -154,7 +162,10 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::KeyPressed)
         {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) isMapDisplayed = !isMapDisplayed; // Toggle map display
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::M) && !hard) isMapDisplayed = !isMapDisplayed; // Toggle map display
+                
+
+
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) player->reload();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) wPressed = true;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) aPressed = true;
@@ -894,24 +905,21 @@ void StatePlayGame::parseMap2D()
             }
             else if (map[indexX][indexY] == 'E') { // Ennemy
                 int proba[] = {25, 25, 50};
-                int entity[] = { 1, 2, 3 };
-                rnd = lootManagment(proba, entity, 3);
+                rnd = lootManagment(proba, 3);
                 Ennemy* guard = new Guard(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(guard);
                 entityMap[indexY][indexX] = guard;
             }
             else if (map[indexX][indexY] == 'G') {
                 int proba[] = { 25, 25, 50 };
-                int entity[] = { 1, 2, 3 };
-                rnd = lootManagment(proba, entity, 3);
+                rnd = lootManagment(proba, 3);
                 Ennemy* general = new General(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(general);
                 entityMap[indexY][indexX] = general;
             }
             else if (map[indexX][indexY] == 'C') { // Chest
                 int proba[] = { 25, 15, 2, 35, 20, 3 };
-                int entity[] = { 1, 2, 3, 4, 5, 6 };
-                rnd = lootManagment(proba, entity, 6);
+                rnd = lootManagment(proba, 6);
                 rnd = (rand() % 2); // Between 0 and 1
                 Chest* chest = new Chest(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(chest);
@@ -1232,7 +1240,7 @@ void StatePlayGame::cleanAllEntitys()
     this->entities.clear();
 }
 
-int StatePlayGame::lootManagment(int* proba, int* entitys, int length)
+int StatePlayGame::lootManagment(int* proba, int length)
 {
     int n = 0;
     n = (rand() % 100);
@@ -1242,7 +1250,7 @@ int StatePlayGame::lootManagment(int* proba, int* entitys, int length)
     {
         if (n >= count && n < proba[index] + count)
         {
-            return entitys[index];
+            return index + 1;
         }
         count += proba[index++];
     }

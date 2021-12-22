@@ -48,10 +48,16 @@ void GameManager::gameLoop()
         // Clear the window
         window->clear();
 
-        if (peekState() != nullptr) peekState()->update(deltaTime);
+        if (peekState() != nullptr)
+        {
+            peekState()->update(deltaTime);
+        }
 
         // Draw fps counter
-        window->draw(fpsText);
+        if (drawFPS)
+        {
+            window->draw(fpsText);
+        }
 
         // Add elapsed time
         frame_time_micro += clock.getElapsedTime().asMicroseconds();
