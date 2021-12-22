@@ -937,7 +937,7 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(chest);
                 entityMap[indexY][indexX] = chest;
             }
-            else if(Entity::isWall(map[indexX][indexY]) || map[indexX][indexY] == 'B')
+            else if(Entity::isWall(map[indexX][indexY]) || map[indexX][indexY] == 'b')
             {
                 int y = 0;
                 int nbFrames = 1;
@@ -945,108 +945,115 @@ void StatePlayGame::parseMap2D()
                 bool isSecretPassage = false;
                 switch (map[indexX][indexY])
                 {
-                case '1':
+                //Basement
+                case '1': // Basic
                     y = 0;
                     break;
-                case '2':
+                case '2': // Lightening Torch
                     y = 1;
                     nbFrames = 7;
                     break;
-                case '3':
+                case '3': // Torch
                     y = 2;
                     break;
-                case '4':
+                case '4': // Poster
                     y = 3;
                     break;
-                case 'V':
+                case 'V': // Door
                     isDoor = true;
                     y = 4;
                     break;
-                case '5':
+                case '5': // Elevator
                     y = 5;
                     break;
-                case '6':
+                //Regular
+                case '6': // Basic
                     y = 6;
                     break;
-                case '7':
+                case '7': // URRS 1
                     y = 7;
                     break;
-                case '8':
+                case '8': // URSS 2
                     y = 8;
                     break;
-                case '9':
+                case '9': // URSS 3
                     y = 9;
                     break;
-                case 'a':
+                case 'a': // URSS 4
                     y = 10;
-                    isDoor = true;
                     break;
-                case 'A':
+                case 'A': // Tableau
                     y = 11;
                     break;
-                case 'b':
+                case 'b': // passage secret
                     y = 12;
                     nbFrames = 6;
                     isSecretPassage = true;
                     isDoor = true;
                     break;
-                case 'B':
+                case 'B': // Tableau 1
                     y = 13;
                     break;
-                case 'c':
+                case 'f': // Tableau 2
                     y = 15;
                     break;
-                case 'C':
+                case 'F': // Tableau 3
                     y = 16;
                     break;
-                case 'd':
+                case 'h': // Affiche 1
                     y = 17;
                     break;
-                case 'D':
+                case 'H': // Affiche 2
                     y = 18;
                     break;
-                case 'e':
+                case 'i': // Affiche 3
                     y = 19;
                     break;
-                case 'E':
-                    y = 20;
+                case 'I': // Affiche 4
+                    y = 20; 
                     break;
-                case 'f':
+                case 'j': // Affiche 5
                     y = 21;
                     break;
-                case 'F':
+                case 'J': // Affiche 6
                     y = 22;
                     break;
-                case 'g':
-                    y = 23;
+                case 'k': // Useless
+                    y = 23; 
                     break;
-                case 'G':
+                case 'K': // Door 1
                     y = 24;
                     isDoor = true;
                     break;
-                case 'h':
+                case 'X': // Door 2
                     y = 25;
                     isDoor = true;
                     break;
-                case 'H':
+                case 'Y': // Door 3
                     y = 26;
                     isDoor = true;
                     break;
-                case 'i':
+                case 'Z': // Door 4
                     y = 27;
                     isDoor = true;
                     break;
-                case 'I':
+                case 'm': // Elevator 
                     y = 28;
                     break;
-                case 'j':
+                case 'M': // Bookshell 1
                     y = 29;
                     break;
-                case 'J':
+                case 'n': // Bookshell 2
                     y = 30;
                     break;
-                case 'k':
+                case 'N': // Wood Basic
                     y = 31;
+                    break;
+                case 'o': // Wood with poster 1
+                    y = 32;
+                    break;
+                case '0': // Wood with poster 2
+                    y = 33;
                     break;
                 }
                 Wall* wall;

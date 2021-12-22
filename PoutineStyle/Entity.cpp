@@ -35,16 +35,10 @@ bool Entity::isWall(char entityChar)
             entityChar == 'a' ||
             entityChar == 'A' ||
             entityChar == 'b' ||
-            entityChar == 'c' ||
-            entityChar == 'C' ||
             entityChar == 'd' ||
             entityChar == 'D' ||
-            entityChar == 'e' ||
-            entityChar == 'E' ||
             entityChar == 'f' ||
             entityChar == 'F' ||
-            entityChar == 'g' ||
-            entityChar == 'G' ||
             entityChar == 'h' ||
             entityChar == 'H' ||
             entityChar == 'i' ||
@@ -53,7 +47,10 @@ bool Entity::isWall(char entityChar)
             entityChar == 'J' ||
             entityChar == 'k' ||
             entityChar == 'K' ||
-            entityChar == 'l' ||
+            entityChar == 'm' ||
+            entityChar == 'M' ||
+            entityChar == 'n' ||
+            entityChar == 'N' ||
             entityChar == 'V' ||
             entityChar == 'W' ||
             entityChar == 'X' ||
