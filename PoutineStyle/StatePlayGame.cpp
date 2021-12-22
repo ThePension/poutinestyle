@@ -684,8 +684,19 @@ void StatePlayGame::renderingEntities(double dt) {
                 door->setOpening();
             }
             else {
+                Key* keyToRemove = nullptr;
                 for (Key* key : player->getPlayerKeys()) {
-                    if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode()) door->setOpening();
+                    if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode())
+                    {
+                        door->setOpening();
+                        keyToRemove = key;
+                    }
+                }
+                if (keyToRemove != nullptr)
+                {
+                    player->removeKey(keyToRemove);
+                    delete keyToRemove;
+                    keyToRemove = nullptr;
                 }
             }
             InteractedEntity = nullptr;
