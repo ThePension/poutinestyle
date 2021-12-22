@@ -939,7 +939,6 @@ void StatePlayGame::parseMap2D()
             else if (map[indexX][indexY] == 'C') { // Chest
                 int proba[] = { 25, 15, 2, 35, 20, 3 };
                 rnd = lootManagment(proba, 6);
-                rnd = (rand() % 2); // Between 0 and 1
                 Chest* chest = new Chest(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(chest);
                 entityMap[indexY][indexX] = chest;
@@ -1304,6 +1303,16 @@ void StatePlayGame::bulletExplosion(int nextX, int nextY, int damage) {
                         if (ennemy->getHP() <= 0) {
                             ennemy->setIsDying();
                         }
+                    }
+                    else if (typeid(*entity).name() == typeid(Chest).name()) { // Chest
+                        // Replace exploded chests by their dropped entity
+                        Chest* chest = static_cast<Chest*>(entity);
+                        Entity* droppedEntity = chest->getDroppedEntity();
+                        entityMap[newX][newY] = droppedEntity;
+                        entities.push_back(droppedEntity);
+                        map[newY][newX] = 'L';
+                        entities.remove(chest);
+                        delete chest; chest = nullptr;
                     }
                     else if (entity->getIsDestructible()) {
                         // Remove the entity
