@@ -1,11 +1,10 @@
 #include "Wall.h"
 
-Wall::Wall(sf::Vector2f pos, int frameCount, int y, double frameDuration, bool isDestructible) : Entity(1, pos)
+Wall::Wall(sf::Vector2f pos, int frameCount, int y, double frameDuration, bool isDestructible) : Entity(1, pos, isDestructible)
 {
 	this->frameCount = frameCount;
 	this->frameDuration = frameDuration;
 	this->currentTextureCoordinates.y = y;
-	this->isDestructible = isDestructible;
 	this->isTransparent = false;
 }
 

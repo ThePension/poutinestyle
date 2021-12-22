@@ -1,5 +1,5 @@
 #include "Chest.h"
-Chest::Chest(sf::Vector2f pos, int dropNumber) : Entity(1, pos) {
+Chest::Chest(sf::Vector2f pos, int dropNumber) : Entity(1, pos, true) {
 	// Create random entity for drop
 	switch (dropNumber)
 	{

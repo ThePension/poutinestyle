@@ -1,5 +1,6 @@
 #pragma once
 #include "SFML/Graphics.hpp"
+#include <iostream>
 
 class Entity
 {
@@ -8,8 +9,9 @@ protected:
 	float distUntilPlay = 0;
 	bool toRemove = false;
 	bool toDraw = false;
+	bool isDestructible = false;
 public:
-	Entity(int HP, sf::Vector2f mapPos);
+	Entity(int HP, sf::Vector2f mapPos, bool isDestrutible = false);
 	virtual ~Entity() = 0;
 	virtual void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) = 0;
 	virtual void update(float dt) = 0;
@@ -25,6 +27,7 @@ public:
 	bool getToRemove() { return this->toRemove; }
 	void setToDraw(bool toDraw) { this->toDraw = toDraw; }
 	bool getToDraw() { return this->toDraw; }
+	bool getIsDestructible() { return this->isDestructible; }
 	static bool isDoor(char entitChar);
 	static bool isWall(char entityChar);
 };

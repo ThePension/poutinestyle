@@ -10,7 +10,6 @@ public:
 	virtual void update(float dt);
 	sf::Vector2i getCurrentTextureCoordinates() { return this->currentTextureCoordinates; }
 	bool getIsTransparent() { return this->isTransparent; }
-	bool getIsDestructible() { return this->isDestructible; }
 
 protected:
 	sf::Vector2i currentTextureCoordinates = sf::Vector2i(0, 0);
@@ -18,7 +17,6 @@ protected:
 	double frameDuration;
 	bool isAnimationOver = false;
 	int frameCount = 0;
-	bool isDestructible = false;
 	bool isTransparent = false;
 };
 

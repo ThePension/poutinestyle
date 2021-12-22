@@ -1,9 +1,11 @@
 #include "Entity.h"
 
-Entity::Entity(int HP, sf::Vector2f mapPos)
+Entity::Entity(int HP, sf::Vector2f mapPos, bool isDestructible)
 {
+    
 	this->HP = HP;
 	this->mapPos = mapPos;
+    this->isDestructible = isDestructible;
 }
 
 Entity::~Entity() {

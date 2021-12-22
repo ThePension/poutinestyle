@@ -973,7 +973,7 @@ void StatePlayGame::parseMap2D()
                 }
                 Wall* wall;
                 if (isDoor) wall = new Door(sf::Vector2f((float)indexY, (float)indexX), 4, y, 0.1, false, isSecretPassage);
-                else wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, false);
+                else wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, true);
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
             }
@@ -1238,10 +1238,6 @@ Entity* StatePlayGame::getInteractedEntity() {
 }
 
 void StatePlayGame::bulletExplosion(int nextX, int nextY, int damage) {
-    // To Do :
-    // - Mettre le bool isDestructible dans la classe Entity
-    // - Ou mieux encore : Faire une méthode "explode" virtuelle pure dans la classe Entity
-    // - Cette méthode agit en fonction dans l'entité
     for (int x = -1; x <= 1; x++) {
         for (int y = -1; y <= 1; y++) {
             int newX = nextX + x;
@@ -1249,26 +1245,20 @@ void StatePlayGame::bulletExplosion(int nextX, int nextY, int damage) {
             if (newX > 0 && newX < mapSize - 1 && newY > 0 && newY < mapSize - 1) {
                 Entity* entity = entityMap[newX][newY];
                 if (entity != nullptr) {
-                    if (typeid(*entity).name() == typeid(Wall).name() ||
-                        typeid(*entity).name() == typeid(Door).name()) { // Wall 
-                        Wall* wall = static_cast<Wall*>(entity);
-                        if (wall->getIsDestructible()) { 
-                            // Remove the wall
-                            entityMap[newX][newY] = nullptr;
-                            entities.remove(entity);
-                            delete entity; entity = nullptr;
-                            map[newY][newX] = '0';
-                        }
-                        wall = nullptr;
-                    }
-                    else if (typeid(*entity).name() == typeid(Guard).name() ||
-                             typeid(*entity).name() == typeid(General).name()) { // Ennemy
+                    if (typeid(*entity).name() == typeid(Guard).name() || typeid(*entity).name() == typeid(General).name()) { // Ennemy
                         Ennemy* ennemy = static_cast<Ennemy*>(entity);
                         ennemy->decreaseHP(damage);
                         // Check if the ennemy is dead
                         if (ennemy->getHP() <= 0) {
                             ennemy->setIsDying();
                         }
+                    }
+                    else if (entity->getIsDestructible()) {
+                        // Remove the entity
+                        entityMap[newX][newY] = nullptr;
+                        entities.remove(entity);
+                        delete entity; entity = nullptr;
+                        map[newY][newX] = '0';
                     }
                 }
             }
