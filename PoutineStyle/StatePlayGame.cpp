@@ -788,10 +788,18 @@ void StatePlayGame::renderingEntities(double dt) {
                 if (typeid(*entity).name() == typeid(Guard).name() || typeid(*entity).name() == typeid(General).name()) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entity);
                     if (ennemy->getToRemove()) {
-                        Entity* droppedEntity = ennemy->getDroppedEntity();
-                        entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = droppedEntity;
-                        entities.push_back(droppedEntity);
-                        map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = 'L';
+                        if (!ennemy->nothing)
+                        {
+                            Entity* droppedEntity = ennemy->getDroppedEntity();
+                            entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = droppedEntity;
+                            entities.push_back(droppedEntity);
+                            map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = 'L';
+                        }
+                        else
+                        {
+                            entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = nullptr;
+                            map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = '0';
+                        }
                         entities.remove(ennemy);
                         delete ennemy; ennemy = nullptr;
                     }
@@ -885,18 +893,25 @@ void StatePlayGame::parseMap2D()
                 player->position = sf::Vector2f(indexY + 0.5, indexX + 0.5);
             }
             else if (map[indexX][indexY] == 'E') { // Ennemy
-                rnd = (rand() % 4); // Between 0 and 3
+                int proba[] = {25, 25, 50};
+                int entity[] = { 1, 2, 3 };
+                rnd = lootManagment(proba, entity, 3);
                 Ennemy* guard = new Guard(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(guard);
                 entityMap[indexY][indexX] = guard;
             }
             else if (map[indexX][indexY] == 'G') {
-                rnd = (rand() % 4); // Between 0 and 3
+                int proba[] = { 25, 25, 50 };
+                int entity[] = { 1, 2, 3 };
+                rnd = lootManagment(proba, entity, 3);
                 Ennemy* general = new General(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(general);
                 entityMap[indexY][indexX] = general;
             }
             else if (map[indexX][indexY] == 'C') { // Chest
+                int proba[] = { 25, 15, 2, 35, 20, 3 };
+                int entity[] = { 1, 2, 3, 4, 5, 6 };
+                rnd = lootManagment(proba, entity, 6);
                 rnd = (rand() % 2); // Between 0 and 1
                 Chest* chest = new Chest(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(chest);
@@ -1215,6 +1230,24 @@ void StatePlayGame::cleanAllEntitys()
     }
 
     this->entities.clear();
+}
+
+int StatePlayGame::lootManagment(int* proba, int* entitys, int length)
+{
+    int n = 0;
+    n = (rand() % 100);
+    int count = 0, index = 0;
+
+    while (index < length)
+    {
+        if (n >= count && n < proba[index] + count)
+        {
+            return entitys[index];
+        }
+        count += proba[index++];
+    }
+
+    return -1; // should throw an Exception
 }
 
 /// <summary>
