@@ -4,7 +4,7 @@ Button::Button() {
 	this->position = sf::Vector2i(0, 0);
 	this->width = 200;
 	this->height = 100;
-	this->color = sf::Color::Blue;
+	this->color = sf::Color::Red;
 	this->text = L"Default button";
 	this->window = NULL;
 }
@@ -86,4 +86,22 @@ bool Button::isHovering() {
 		else return false;
 	}
 	else return false;
+}
+
+void Button::selected(bool state)
+{
+	if (state)
+	{
+		bottomBorder.setFillColor(sf::Color::Yellow);
+		leftBorder.setFillColor(sf::Color::Yellow);
+		rightBorder.setFillColor(sf::Color::Yellow);
+		topBorder.setFillColor(sf::Color::Yellow);
+	}
+	else
+	{
+		bottomBorder.setFillColor(color);
+		leftBorder.setFillColor(color);
+		rightBorder.setFillColor(color);
+		topBorder.setFillColor(color);
+	}
 }

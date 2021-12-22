@@ -1,7 +1,11 @@
 #include "Shotgun.h"
 #include "Bullet.h"
+<<<<<<< HEAD
 
 Shotgun::Shotgun() : Weapon(1, Animation(0, 0, 64, 64, 11, "../PoutineStyle/pics/shotgun.png", 0.05)) {
+=======
+Shotgun::Shotgun() : Weapon(3, Animation(0, 0, 64, 64, 11, "../PoutineStyle/pics/shotgun.png", 0.05)) {
+>>>>>>> 23e0e400fa2d533adc2cd2eba466e6efce4d7880
 	weaponSprite.scale(2, 2);
 	weaponSprite.setPosition(300, 320);
 }
@@ -45,8 +49,8 @@ std::stack<Bullet*> Shotgun::shoot(sf::Vector2f direction, sf::Vector2f position
 		// Create two bullets
 		sf::Vector2f bulletPos1 = sf::Vector2f((position.x - 0.5) * (shotgunDirX) + 2.0 * direction.x, (position.y - 0.5) * (shotgunDirY) + 2.0 * direction.y);
 		sf::Vector2f bulletPos2 = sf::Vector2f((position.x - 0.5) * (2.0 - shotgunDirX) + 2.0 * direction.x, (position.y - 0.5) * (2.0 - shotgunDirY) + 2.0 * direction.y);
-		Bullet* bullet1 = new Bullet(1, bulletPos1, directionWithNoise, true);
-		Bullet* bullet2 = new Bullet(1, bulletPos2, directionWithNoise, true);
+		Bullet* bullet1 = new Bullet(this->bulletDamage, bulletPos1, directionWithNoise, true);
+		Bullet* bullet2 = new Bullet(this->bulletDamage, bulletPos2, directionWithNoise, true);
 		bullets.push(bullet1);
 		bullets.push(bullet2);
 	}

@@ -1,23 +1,23 @@
-#include "Pistol.h"
+#include "GrenadeLauncher.h"
 #include "Bullet.h"
-Pistol::Pistol() : Weapon(4, Animation(0, 0, 105, 105, 4, "../PoutineStyle/pics/pistolTexture.png")) {
-	weaponSprite.scale(1.2, 1.2);
+GrenadeLauncher::GrenadeLauncher() : Weapon(4, Animation(0, 0, 209, 128, 4, "../PoutineStyle/pics/GrenadeLauncher.png")) {
+	weaponSprite.scale(1, 1);
 	weaponSprite.setPosition(300, 320);
 }
 
-Pistol::~Pistol()
+GrenadeLauncher::~GrenadeLauncher()
 {
-	delete this->pistolAnim; this->pistolAnim = nullptr;
+	delete this->grenadeLauncherAnim; this->grenadeLauncherAnim = nullptr;
 }
 
-void Pistol::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
-	pistolAnim->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+void GrenadeLauncher::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
+	grenadeLauncherAnim->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
 }
-void Pistol::draw(sf::RenderTarget& target)
+void GrenadeLauncher::draw(sf::RenderTarget& target)
 {
 	target.draw(weaponSprite);
 }
-void Pistol::update(float dt) {
+void GrenadeLauncher::update(float dt) {
 	if (isShooting) {
 		shootAnimation.update(dt);
 		if (shootAnimation.isAnimationOver) isShooting = false;
@@ -25,7 +25,7 @@ void Pistol::update(float dt) {
 	shootAnimation.ApplyToSprite(weaponSprite);
 }
 
-std::stack<Bullet*> Pistol::shoot(sf::Vector2f direction, sf::Vector2f position)
+std::stack<Bullet*> GrenadeLauncher::shoot(sf::Vector2f direction, sf::Vector2f position)
 {
 	std::stack<Bullet*> bullets;
 	if (shootAnimation.isAnimationOver) {
@@ -45,4 +45,5 @@ std::stack<Bullet*> Pistol::shoot(sf::Vector2f direction, sf::Vector2f position)
 	}
 	return bullets;
 }
+
 

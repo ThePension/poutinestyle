@@ -1,18 +1,55 @@
 #include "StatePlayGame.h"
 
-StatePlayGame::StatePlayGame(GameManager* game, std::string mapFilePath, int mapSize)
+StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string mapFilePath, int mapSize)
 {
+    // Settings
+    this->settings = settings;
+
+    this->speedFactor = this->settings.getSensibility();
+
+    /************************************************************ to something with those settings
+    this->settings.getDifficulty();
+    this->settings.getShowMetaData();
+    */
+    // this->settings.getVolume(); // pas encore utile
+
+    switch (this->settings.getLevel())
+    {
+    case 0:
+        mapFilePath = "Lvl1.txt";
+        mapSize = 16;
+        this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
+        this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
+        this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
+        this->levels.insert(std::pair<std::string, int>("Lvl5.txt", 64));
+        break;
+    case 1:
+        mapFilePath = "Lvl1.txt";
+        mapSize = 16;
+        break;
+    case 2:
+        mapFilePath = "Lvl2.txt";
+        mapSize = 16;
+        break;
+    case 3:
+        mapFilePath = "Lvl3.txt";
+        mapSize = 32;
+        break;
+    case 4:
+        mapFilePath = "Lvl4.txt";
+        mapSize = 32;
+        break;
+    case 5:
+        mapFilePath = "Lvl5.txt";
+        mapSize = 64;
+        break;
+    }
+
     player = new Player();
 
     this->gameManager = game;
     this->mapFilePath = "Map/" + mapFilePath;
     this->mapSize = mapSize;
-
-    this->levels.insert(std::pair<std::string, int>("Lvl1.txt", 16));
-    this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
-    this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
-    this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
-    this->levels.insert(std::pair<std::string, int>("Lvl5.txt", 64));
 
     this->actualLevel = this->levels.begin();
     
@@ -89,7 +126,6 @@ void StatePlayGame::handleInput(double deltatime)
 
         if (event.type == sf::Event::MouseMoved && gameManager->getRenderWindow()->hasFocus())
         {
-            float speedFactor = 5;
             int mouseX = event.mouseMove.x;
 
             if (mouseX == 0)
@@ -631,25 +667,14 @@ void StatePlayGame::renderingEntities(double dt) {
 
             InteractedEntity = nullptr;
         }
-        else if (typeid(*InteractedEntity).name() == typeid(Key).name()) {
-            // Delete Key Entity
-            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
-            map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
-            entities.remove(InteractedEntity);
-
-            Key* key = static_cast<Key*>(InteractedEntity);
-            player->addKey(key);
-
-            InteractedEntity = nullptr;
-        }
-        else if (typeid(*InteractedEntity).name() == typeid(Wall).name()) {
-            Wall* wall = static_cast<Wall*>(InteractedEntity);
-            if (wall->getIsSecretPassage()) {
-                wall->setOpening();
+        else if (typeid(*InteractedEntity).name() == typeid(Door).name()) {
+            Door* door = static_cast<Door*>(InteractedEntity);
+            if (door->getIsSecretPassage()) {
+                door->setOpening();
             }
             else {
                 for (Key* key : player->getPlayerKeys()) {
-                    if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode()) wall->setOpening();
+                    if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode()) door->setOpening();
                 }
             }
             InteractedEntity = nullptr;
@@ -659,10 +684,6 @@ void StatePlayGame::renderingEntities(double dt) {
             // from a level to another 
             if (this->actualLevel != this->levels.end())
             {
-                this->mapFilePath = "Map/" + this->actualLevel->first;
-                this->mapSize = this->actualLevel->second;
-                this->actualLevel++;
-
                 delete[] *(this->map);
                 delete[] this->map;
                 map = nullptr;
@@ -670,6 +691,11 @@ void StatePlayGame::renderingEntities(double dt) {
                 player->clearKeys();
 
                 cleanAllEntitys();
+
+                this->mapFilePath = "Map/" + this->actualLevel->first;
+                this->mapSize = this->actualLevel->second;
+
+                this->actualLevel++;
 
                 this->blockWidth = gameManager->getWindowWidth() / mapSize;
                 this->blockHeight = gameManager->getWindowHeight() / mapSize;
@@ -683,8 +709,8 @@ void StatePlayGame::renderingEntities(double dt) {
                         map[i][j] = '0';
                     }
                 }
-
                 parseMap2D();
+
                 InteractedEntity = nullptr;
                 return;
             }
@@ -693,7 +719,7 @@ void StatePlayGame::renderingEntities(double dt) {
                 this->isFinished = true;
             }
         }
-        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name()) {
+        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name()) {
             Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
             Weapon* oldWeapon = player->setWeapon(weapon);
         
@@ -734,8 +760,6 @@ void StatePlayGame::renderingEntities(double dt) {
             {
                 if (bullet->isExplosing == false) player->loseLife();
 
-                // bullet->isTravelling = false;
-                // bullet->isExplosing = true;
                 bullet->setToRemove(true);
             }
             else if ((map[nextY][nextX] == 'E' || map[nextY][nextX] == 'G') && bullet->getIsPlayerBullet()) { // Player's bullet and Ennemies collision
@@ -743,6 +767,7 @@ void StatePlayGame::renderingEntities(double dt) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entityMap[nextX][nextY]);
                     if (ennemy != nullptr) {
                         ennemy->decreaseHP(bullet->getDamage());
+                        std::cout << bullet->getDamage() << std::endl;
                         // Remove the ennemy if his HP are under 1
                         if (ennemy->getHP() <= 0) {
                             ennemy->setIsDying();
@@ -783,7 +808,7 @@ void StatePlayGame::renderingEntities(double dt) {
                         delete chest; chest = nullptr;
                     }
                 }
-                else if (typeid(*entity).name() == typeid(Wall).name()) {
+                else if (typeid(*entity).name() == typeid(Door).name()) {
                     // Remove open door
                     if (entity->getToRemove()) {
                         entityMap[(int)entity->mapPos.x][(int)entity->mapPos.y] = nullptr;
@@ -839,6 +864,8 @@ void StatePlayGame::renderingEntities(double dt) {
 
 void StatePlayGame::parseMap2D()
 {
+    entities.clear();
+
     std::string tempText;
     std::ifstream mapFile;
 
@@ -879,7 +906,7 @@ void StatePlayGame::parseMap2D()
             {
                 int y = 0;
                 int nbFrames = 1;
-                bool isTransparent = false;
+                bool isDoor = false;
                 bool isSecretPassage = false;
                 switch (map[indexX][indexY])
                 {
@@ -905,6 +932,7 @@ void StatePlayGame::parseMap2D()
                 case '7':
                     nbFrames = 4;
                     isSecretPassage = true;
+                    isDoor = true;
                     y = 6;
                     break;
                 case '8':
@@ -912,24 +940,32 @@ void StatePlayGame::parseMap2D()
                     break;
                 case 'D':
                     y = 8;
+                    isDoor = true;
                     break;
                 case 'V':
                     y = 9;
+                    isDoor = true;
                     break;
                 case 'W':
                     y = 10;
+                    isDoor = true;
                     break;
                 case 'X':
                     y = 11;
+                    isDoor = true;
                     break;
                 case 'Y':
                     y = 12;
+                    isDoor = true;
                     break;
                 case 'Z':
                     y = 13;
+                    isDoor = true;
                     break;
                 }
-                Wall* wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, false, isTransparent, isSecretPassage);
+                Wall* wall;
+                if (isDoor) wall = new Door(sf::Vector2f((float)indexY, (float)indexX), 4, y, 0.1, false, isSecretPassage);
+                else wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, false);
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
             }
@@ -969,7 +1005,7 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(portal);
             }
             else if (map[indexX][indexY] == 'L') {
-                rnd = (rand() % 4); // Between 0 and 2
+                rnd = (rand() % 5); // Between 0 and 2
                 Entity* entity;
                 switch (rnd)
                 {
@@ -995,14 +1031,24 @@ void StatePlayGame::parseMap2D()
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
                     break;
+                case 4:
+                    std::cout << "GrenadeLauncher" << std::endl;
+                    entity = new GrenadeLauncher();
+                    entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
+                    entityMap[indexY][indexX] = entity;
+                    entities.push_back(entity);
+                    break;
                 }
+            }
+            else
+            {
+                entityMap[indexY][indexX] = nullptr;
             }
             indexY++;
         }
         indexX++;
         indexY = 0;
     }
-
     mapFile.close();
 }
 

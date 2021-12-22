@@ -21,6 +21,9 @@
 #include "Guard.h"
 #include "Wall.h"
 #include "General.h"
+#include "Door.h"
+#include "GrenadeLauncher.h"
+#include "Settings.h"
 
 class StatePlayGame : public GameState
 {
@@ -49,10 +52,12 @@ private:
 	int yOffset = 50;
 	float speedFactor = 5;
 
+	Settings settings;
+
 	int oldMouseX = 0, oldMouseY = 0;
 
 	char** map;
-	Entity* entityMap[32][32]; // A map with entity Objects
+	Entity* entityMap[64][64]; // A map with entity Objects
 	std::list<Entity*> entities; // Contains every entities
 
 	sf::VertexArray* linesFloor = nullptr;
@@ -94,7 +99,7 @@ private:
 	void cleanAllEntitys();
 
 public:
-	StatePlayGame(GameManager * game, std::string mapFilePath = "Map_Example3.txt", int mapSize = 32);
+	StatePlayGame(GameManager * game, Settings settings, std::string mapFilePath = "Map_Example3.txt", int mapSize = 32);
 	~StatePlayGame();
 
 	void update(float deltaTime) override;
