@@ -28,5 +28,6 @@ std::stack<Bullet*> General::shoot(sf::Vector2f direction, sf::Vector2f playerPo
 		bullets.push(bullet1);
 		return bullets;
 	}
+	if (!bIsPlayerVisible) this->resetAnimations();
 	return bullets;
 }

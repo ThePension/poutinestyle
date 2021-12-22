@@ -25,6 +25,14 @@ public:
 	static double map(double value, double start1, double stop1, double start2, double stop2) {
 		return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
 	}
+	void resetAnimation() { this->currentRenderedFrameNum = 0; time = 0; }
 	bool getIsAnimationOver() { return this->isAnimationOver; }
 	int getCurrentRenderedFrameNum() { return this->currentRenderedFrameNum; }
+	sf::Texture getTexture() { return this->textures; }
+	sf::Sprite getFirstSprite() { 
+		sf::Sprite sprite;
+		sprite.setTexture(this->textures);
+		sprite.setTextureRect(sf::IntRect(0, y * spriteHeight, spriteWidth, spriteHeight));
+		return sprite;
+	}
 };

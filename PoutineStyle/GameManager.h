@@ -15,6 +15,7 @@ private:
 	sf::RenderWindow* window;
 	sf::Clock clock;
 	float deltaTime;
+	sf::Font font;
 public:
 	int getWindowWidth() { return this->windowWidth; }
 	int getWindowHeight() { return this->windowHeight; }
@@ -26,5 +27,6 @@ public:
 	void popState();
 	void changeState(GameState* state);
 	GameState* peekState(int i=0);
+	sf::Font getFont() { return this->font;  }
 };
 

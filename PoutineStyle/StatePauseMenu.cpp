@@ -42,8 +42,7 @@ void StatePauseMenu::update(float deltaTime)
 
 void StatePauseMenu::draw(double deltaTime)
 {
-	sf::Font font = sf::Font();
-	font.loadFromFile("CollegiateBlackFLF.ttf");
+	sf::Font font = gameManager->getFont();
 
 	pause = sf::Text("Pause", font, 35);
 	pause.setFillColor(sf::Color::White);
