@@ -169,7 +169,7 @@
     <ClCompile Include="Medikit.cpp" />
     <ClCompile Include="Pistol.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Portal.cpp" />
+    <ClCompile Include="PNJ.cpp" />
     <ClCompile Include="Door.cpp" />
     <ClCompile Include="GrenadeLauncher.cpp" />
     <ClCompile Include="Settings.cpp" />
@@ -199,7 +199,7 @@
     <ClInclude Include="Medikit.h" />
     <ClInclude Include="Pistol.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Portal.h" />
+    <ClInclude Include="PNJ.h" />
     <ClInclude Include="Door.h" />
     <ClInclude Include="GrenadeLauncher.h" />
     <ClInclude Include="Settings.h" />

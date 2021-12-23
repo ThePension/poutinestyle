@@ -18,7 +18,6 @@
     <ClCompile Include="Medikit.cpp" />
     <ClCompile Include="Pistol.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Portal.cpp" />
     <ClCompile Include="Door.cpp" />
     <ClCompile Include="GrenadeLauncher.cpp" />
     <ClCompile Include="Settings.cpp" />
@@ -30,6 +29,7 @@
     <ClCompile Include="AnimatedVertexArray.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="PNJ.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ammo.h" />
@@ -48,7 +48,6 @@
     <ClInclude Include="Medikit.h" />
     <ClInclude Include="Pistol.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Portal.h" />
     <ClInclude Include="Door.h" />
     <ClInclude Include="GrenadeLauncher.h" />
     <ClInclude Include="Settings.h" />
@@ -60,6 +59,7 @@
     <ClInclude Include="AnimatedVertexArray.h" />
     <ClInclude Include="Wall.h" />
     <ClInclude Include="Weapon.h" />
+    <ClInclude Include="PNJ.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
