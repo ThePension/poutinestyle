@@ -17,7 +17,6 @@ protected:
 	double frameDuration;
 	bool isAnimationOver = false;
 	int frameCount = 0;
-	bool isDestructible = false;
 	bool isTransparent = false;
 };
 

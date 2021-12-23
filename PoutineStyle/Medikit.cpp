@@ -1,6 +1,6 @@
 #include "Medikit.h"
 
-Medikit::Medikit(sf::Vector2f pos) : Entity(1, pos) { }
+Medikit::Medikit(sf::Vector2f pos) : Entity(1, pos, true) { }
 
 Medikit::~Medikit()
 {

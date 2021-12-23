@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Bullet.h"
+
 Player::Player() {
 	this->knife = new Knife();
 	this->currentWeapon = this->knife;
@@ -10,6 +11,13 @@ Player::~Player()
 {
 	delete knife; knife = nullptr;
 	// Keys and other Weapons are deleted in StatePlayGame
+}
+
+Player::Player(int live, int ammunition) : Player()
+{
+	this->live = 1;
+	this->ammunition = ammunition;
+	this->currentAmmunition = 0;
 }
 
 Weapon* Player::setWeapon(Weapon* w) {

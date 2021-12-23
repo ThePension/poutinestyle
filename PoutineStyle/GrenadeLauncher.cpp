@@ -1,6 +1,6 @@
 #include "GrenadeLauncher.h"
 #include "Bullet.h"
-GrenadeLauncher::GrenadeLauncher() : Weapon(4, Animation(0, 0, 209, 128, 4, "../PoutineStyle/pics/GrenadeLauncher.png")) {
+GrenadeLauncher::GrenadeLauncher() : Weapon(50, Animation(0, 0, 209, 128, 4, "../PoutineStyle/pics/GrenadeLauncher.png")) {
 	weaponSprite.scale(1, 1);
 	weaponSprite.setPosition(300, 320);
 }
@@ -40,7 +40,7 @@ std::stack<Bullet*> GrenadeLauncher::shoot(sf::Vector2f direction, sf::Vector2f 
 
 		// Create a bullet
 		sf::Vector2f bulletPos = sf::Vector2f(position.x - 0.5 + 2.0 * direction.x, position.y - 0.5 + 2.0 * direction.y);
-		Bullet* bullet = new Bullet(this->bulletDamage, bulletPos, directionWithNoise, true);
+		Bullet* bullet = new Bullet(this->bulletDamage, bulletPos, directionWithNoise, true, true);
 		bullets.push(bullet);
 	}
 	return bullets;

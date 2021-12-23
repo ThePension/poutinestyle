@@ -1,7 +1,7 @@
 #include "Ennemy.h"
 #include <random>
 
-Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray* shootAnimVA, AnimatedVertexArray* dieAnimVA, int dropNumber) : Entity(hp, pos) {
+Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray* shootAnimVA, AnimatedVertexArray* dieAnimVA, int dropNumber) : Entity(hp, pos, true) {
     this->shootAnimVA = shootAnimVA;
     this->dieAnimVA = dieAnimVA;
     

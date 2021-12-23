@@ -1,10 +1,11 @@
 #include "Bullet.h"
 
-Bullet::Bullet(int bulletDamage, sf::Vector2f pos, sf::Vector2f vel, bool isPlayerBullet) : Entity(1, pos) {
+Bullet::Bullet(int bulletDamage, sf::Vector2f pos, sf::Vector2f vel, bool isPlayerBullet, bool isGrenade) : Entity(1, pos) {
 	this->vel = vel;
 	this->isPlayerBullet = isPlayerBullet;
 	this->toDraw = true;
 	this->damage = bulletDamage;
+	this->isGrenade = isGrenade;
 }
 Bullet::~Bullet()
 {

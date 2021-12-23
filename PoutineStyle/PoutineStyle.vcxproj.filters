@@ -1,20 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Fichiers sources">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Fichiers de ressources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="Ammo.cpp" />
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Chest.cpp" />
+    <ClCompile Include="Ennemy.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="General.cpp" />
+    <ClCompile Include="Guard.cpp" />
+    <ClCompile Include="Key.cpp" />
+    <ClCompile Include="Knife.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Medikit.cpp" />
+    <ClCompile Include="Pistol.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Portal.cpp" />
+    <ClCompile Include="Door.cpp" />
+    <ClCompile Include="GrenadeLauncher.cpp" />
+    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Shotgun.cpp" />
+    <ClCompile Include="StateGameOverMenu.cpp" />
+    <ClCompile Include="StateMainMenu.cpp" />
+    <ClCompile Include="StatePauseMenu.cpp" />
+    <ClCompile Include="StatePlayGame.cpp" />
+    <ClCompile Include="AnimatedVertexArray.cpp" />
+    <ClCompile Include="Wall.cpp" />
+    <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClCompile Include="main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -216,6 +234,36 @@
 >>>>>>> master
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+=======
+    <ClInclude Include="Ammo.h" />
+    <ClInclude Include="Animation.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="Chest.h" />
+    <ClInclude Include="Ennemy.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="General.h" />
+    <ClInclude Include="Guard.h" />
+    <ClInclude Include="Key.h" />
+    <ClInclude Include="Knife.h" />
+    <ClInclude Include="Medikit.h" />
+    <ClInclude Include="Pistol.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Portal.h" />
+    <ClInclude Include="Door.h" />
+    <ClInclude Include="GrenadeLauncher.h" />
+    <ClInclude Include="Settings.h" />
+    <ClInclude Include="Shotgun.h" />
+    <ClInclude Include="StateGameOverMenu.h" />
+    <ClInclude Include="StateMainMenu.h" />
+    <ClInclude Include="StatePauseMenu.h" />
+    <ClInclude Include="StatePlayGame.h" />
+    <ClInclude Include="AnimatedVertexArray.h" />
+    <ClInclude Include="Wall.h" />
+    <ClInclude Include="Weapon.h" />
+>>>>>>> 78ff34d870df046210e181616b813e2f67d8d431
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

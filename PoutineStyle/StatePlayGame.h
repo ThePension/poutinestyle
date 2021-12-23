@@ -45,6 +45,7 @@ private:
 	bool isMapDisplayed = false;
 	bool isGamePaused = false;
 	bool isFinished = false;
+	bool hard = false;
 
 	int mapSize;
 	int movingSpeed = 3;
@@ -97,11 +98,12 @@ private:
 	void pause();
 	void endGameManagment();
 	void reset();
-	int lootManagment(int *proba, int *entitys, int length);
+	int lootManagment(int *proba, int length);
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
 	Entity* getInteractedEntity();
 
 	void cleanAllEntitys();
+	void bulletExplosion(int nextX, int nextY, int damage);
 
 
 public:

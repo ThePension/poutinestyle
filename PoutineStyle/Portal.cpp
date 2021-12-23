@@ -1,5 +1,5 @@
 #include "Portal.h"
-Portal::Portal(sf::Vector2f pos) : Entity(1, pos) {
+Portal::Portal(sf::Vector2f pos) : Entity(1, pos, false) {
 
 }
 Portal::~Portal()

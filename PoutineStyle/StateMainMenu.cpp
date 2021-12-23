@@ -75,10 +75,12 @@ void StateMainMenu::handleInput(double deltatime) {
 			else if (btnMetaDataON.isClicked())
 			{
 				settings.setShowMetaData(true);
+				this->gameManager->setDrawFPS(true);
 			}
 			else if (btnMetaDataOFF.isClicked())
 			{
 				settings.setShowMetaData(false);
+				this->gameManager->setDrawFPS(false);
 			}
 			else if (btnSensibilitySlow.isClicked())
 			{
@@ -90,7 +92,7 @@ void StateMainMenu::handleInput(double deltatime) {
 			}
 			else if (btnSensibility4k.isClicked())
 			{
-				settings.setSensibility(10); // Voir avec Nico
+				settings.setSensibility(10);
 			}
 			else if (btnDifficultyNoob.isClicked())
 			{
@@ -188,27 +190,27 @@ void StateMainMenu::showSettingsLabel()
 
 	sf::Text lblLevel = sf::Text("Map :", font, 15);
 	lblLevel.setFillColor(sf::Color::White);
-	lblLevel.setPosition(sf::Vector2f(wAlign, 1 * hAlign - 7));
+	lblLevel.setPosition(sf::Vector2f(wAlign, 1.f * hAlign - 7.f));
 	gameManager->getRenderWindow()->draw(lblLevel);
 
 	sf::Text lblMetaData = sf::Text("Afficher Meta Data : ", font, 15);
 	lblMetaData.setFillColor(sf::Color::White);
-	lblMetaData.setPosition(sf::Vector2f(wAlign, 2 * hAlign - 7));
+	lblMetaData.setPosition(sf::Vector2f(wAlign, 2.f * hAlign - 7.f));
 	gameManager->getRenderWindow()->draw(lblMetaData);
 
 	sf::Text lblSensi = sf::Text("Sensibilite :", font, 15);
 	lblSensi.setFillColor(sf::Color::White);
-	lblSensi.setPosition(sf::Vector2f(wAlign, 3 * hAlign - 7));
+	lblSensi.setPosition(sf::Vector2f(wAlign, 3.f * hAlign - 7.f));
 	gameManager->getRenderWindow()->draw(lblSensi);
 
 	sf::Text lblDiff = sf::Text("Difficulte :", font, 15);
 	lblDiff.setFillColor(sf::Color::White);
-	lblDiff.setPosition(sf::Vector2f(wAlign, 4 * hAlign - 7));
+	lblDiff.setPosition(sf::Vector2f(wAlign, 4.f * hAlign - 7.f));
 	gameManager->getRenderWindow()->draw(lblDiff);
 
 	sf::Text lblVolume = sf::Text("Volume : ", font, 15);
 	lblVolume.setFillColor(sf::Color::White);
-	lblVolume.setPosition(sf::Vector2f(wAlign, 5 * hAlign - 7));
+	lblVolume.setPosition(sf::Vector2f(wAlign, 5.f * hAlign - 7.f));
 	gameManager->getRenderWindow()->draw(lblVolume);
 }
 
