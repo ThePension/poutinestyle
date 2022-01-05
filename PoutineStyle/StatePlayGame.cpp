@@ -721,7 +721,7 @@ void StatePlayGame::renderingEntities(double dt) {
             }
             InteractedEntity = nullptr;
         }
-        else if (typeid(*InteractedEntity).name() == typeid(Portal).name())
+        else if (typeid(*InteractedEntity).name() == typeid(PNJ).name())
         {
             // from a level to another 
             if (this->actualLevel != this->levels.end())
@@ -1119,9 +1119,9 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'S') {
-                Portal* portal = new Portal(sf::Vector2f((float)indexY, (float)indexX));
-                entityMap[indexY][indexX] = portal;
-                entities.push_back(portal);
+                PNJ* pnj = new PNJ(sf::Vector2f((float)indexY, (float)indexX));
+                entityMap[indexY][indexX] = pnj;
+                entities.push_back(pnj);
             }
             else if (map[indexX][indexY] == 'L') {
 

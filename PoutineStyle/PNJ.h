@@ -2,11 +2,11 @@
 #include "Entity.h"
 #include "AnimatedVertexArray.h"
 
-class Portal : public Entity
+class PNJ : public Entity
 {
 public:
-	Portal(sf::Vector2f pos);
-	~Portal() override;
+	PNJ(sf::Vector2f pos);
+	~PNJ() override;
 	void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) override;
 	void update(float dt) override;
 
