@@ -965,9 +965,9 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(general);
                 entityMap[indexY][indexX] = general;
             }
-            else if (map[indexX][indexY] == 'C') { // Chest
-                int proba[] = { 25, 15, 2, 35, 20, 3 }; // 25% drop pistol, 15% drop shotgun, 2% drop uzi, 35% drop ammunition, 20% drop medikit and 3% drop HP
-                rnd = lootManagment(proba, 6);
+            else if (map[indexX][indexY] == 'C') { // Chest (legendary now)
+                int proba[] = { 40, 40, 20 }; // 40% drop shotgun, 40% drop uzi and 20% drop bazooka
+                rnd = lootManagment(proba, 3);
                 Chest* chest = new Chest(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(chest);
                 entityMap[indexY][indexX] = chest;
@@ -1129,42 +1129,44 @@ void StatePlayGame::parseMap2D()
             }
             else if (map[indexX][indexY] == 'L') {
 
-                rnd = (rand() % 6); // between 0-5
+                //rnd = (rand() % 6); // between 0-5
+
+                int proba[] = { 25, 15, 2, 35, 20, 3 }; // 25% drop pistol, 15% drop shotgun, 2% drop uzi, 35% drop ammunition, 20% drop medikit and 3% drop HP
+                rnd = lootManagment(proba, 6); // between 1-6
 
                 Entity* entity;
                 switch (rnd)
                 {
-                case 0:
-                    entity = new Ammo(sf::Vector2f((float)indexY, (float)indexX));
-                    entityMap[indexY][indexX] = entity;
-                    entities.push_back(entity);
-                    break;
                 case 1:
-                    entity = new Medikit(sf::Vector2f((float)indexY, (float)indexX));
-                    entityMap[indexY][indexX] = entity;
-                    entities.push_back(entity);
-                    break;
-                case 2:
                     entity = new Pistol();
                     entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
                     break;
-                case 3:
+                case 2:
                     entity = new Shotgun();
                     entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
                     break;
-                case 4:
+                case 3:
                     entity = new Uzi();
                     entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
                     break;
-                case 5:
-                    entity = new GrenadeLauncher();
-                    entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
+                case 4:
+                    entity = new Ammo(sf::Vector2f((float)indexY, (float)indexX));
+                    entityMap[indexY][indexX] = entity;
+                    entities.push_back(entity);
+                    break;
+                case 5: // Soin
+                    entity = new Medikit(sf::Vector2f((float)indexY, (float)indexX));
+                    entityMap[indexY][indexX] = entity;
+                    entities.push_back(entity);
+                    break;
+                case 6: // HP (but for the moment it's the same...)
+                    entity = new Medikit(sf::Vector2f((float)indexY, (float)indexX));
                     entityMap[indexY][indexX] = entity;
                     entities.push_back(entity);
                     break;

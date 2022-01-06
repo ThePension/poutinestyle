@@ -4,26 +4,17 @@ Chest::Chest(sf::Vector2f pos, int dropNumber) : Entity(1, pos, true) {
 	// Create random entity for drop
 	switch (dropNumber)
 	{
-		case 1: // pistolet 25%
-			droppedEntity = new Pistol();
-			droppedEntity->mapPos = this->mapPos;
-			break;
-		case 2: // fusil à pompe 15%
+		case 1: // shotgun 40%
 			droppedEntity = new Shotgun();
 			droppedEntity->mapPos = this->mapPos;
 			break;
-		case 3: // fusil mitrailleur 2%
-			droppedEntity = new Shotgun();
+		case 2: // uzi 40%
+			droppedEntity = new Uzi();
 			droppedEntity->mapPos = this->mapPos;
 			break;
-		case 4: // munition 35%
-			droppedEntity = new Ammo(this->mapPos);
-			break;
-		case 5: // soin 20%
-			droppedEntity = new Medikit(this->mapPos);
-			break;
-		case 6: // HP 3%
-			droppedEntity = new Medikit(this->mapPos);
+		case 3: // bazooka 20%
+			droppedEntity = new GrenadeLauncher();
+			droppedEntity->mapPos = this->mapPos;
 			break;
 	}
 }

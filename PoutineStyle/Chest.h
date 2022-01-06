@@ -1,10 +1,9 @@
 #pragma once
 #include "Entity.h"
 #include "AnimatedVertexArray.h"
-#include "Medikit.h"
-#include "Pistol.h"
 #include "Shotgun.h"
-#include "Ammo.h"
+#include "Uzi.h"
+#include "GrenadeLauncher.h"
 
 class Chest : public Entity
 {
