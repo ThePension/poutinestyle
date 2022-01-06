@@ -18,7 +18,8 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
     case 0:
         mapFilePath = "Map_Example3.txt";
         mapSize = 32;
-        // this->levels.insert(std::pair<std::string, int>("Map_Example3.txt", 32));
+        //this->levels.insert(std::pair<std::string, int>("Map_Example3.txt", 32));
+        this->levels.insert(std::pair<std::string, int>("Lvl1.txt", 16));
         this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
         this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
         this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
@@ -377,16 +378,24 @@ void StatePlayGame::drawMap2D()
         {
             block.setPosition(float(j * blockWidth), float(i * blockHeight));
 
-            if (map[i][j] == '1') // needs a fastest way to test if there's more cases. [ O(n^2) ]
+            if (map[i][j] == 'E' || map[i][j] == 'G' || map[i][j] == 'C' || map[i][j] == 'L') // needs a fastest way to test if there's more cases. [ O(n^2) ]
             {
-                block.setFillColor(sf::Color::Red);
+                block.setFillColor(sf::Color::Blue);
+            }
+            else if (map[i][j] == 'd' || map[i][j] == 'D' || map[i][j] == 'v' || map[i][j] == 'V' || map[i][j] == 'w' || map[i][j] == 'W' || map[i][j] == 'x' || map[i][j] == 'X' || map[i][j] == 'y' || map[i][j] == 'Y' || map[i][j] == 'z' || map[i][j] == 'Z')
+            {
+                block.setFillColor(sf::Color::Yellow);
             }
             else if (map[i][j] == '0')
             {
                 block.setFillColor(sf::Color::Black);
             }
+            else if (map[i][j] == 'T' || map[i][j] == 'S')
+            {
+                block.setFillColor(sf::Color::White);
+            }
             else {
-                block.setFillColor(sf::Color::Blue);
+                block.setFillColor(sf::Color::Red);
             }
 
             gameManager->getRenderWindow()->draw(block);
@@ -762,7 +771,7 @@ void StatePlayGame::renderingEntities(double dt) {
             }
         }
 
-        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name()) {
+        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(Uzi).name() || typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name()) {
             Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
             Weapon* oldWeapon = player->setWeapon(weapon);
         
@@ -1017,8 +1026,8 @@ void StatePlayGame::parseMap2D()
                     isSecretPassage = true;
                     isDoor = true;
                     break;
-                case 'B': // Tableau 1
-                    y = 13;
+                case 'q': // Tableau 1
+                    y = 14;
                     break;
                 case 'f': // Tableau 2
                     y = 15;
@@ -1047,7 +1056,7 @@ void StatePlayGame::parseMap2D()
                 case 'k': // Useless
                     y = 23; 
                     break;
-                case 'K': // Door 1
+                case 'W': // Door 1
                     y = 24;
                     isDoor = true;
                     break;
@@ -1078,7 +1087,7 @@ void StatePlayGame::parseMap2D()
                 case 'o': // Wood with poster 1
                     y = 32;
                     break;
-                case '0': // Wood with poster 2
+                case 'O': // Wood with poster 2
                     y = 33;
                     break;
                 }
@@ -1088,33 +1097,28 @@ void StatePlayGame::parseMap2D()
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
             }
-            else if (map[indexX][indexY] == 'd') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
-                entityMap[indexY][indexX] = key;
-                entities.push_back(key);
-            }
             else if (map[indexX][indexY] == 'v') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 1, 1), 'V');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 0, 1), 'V');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'w'){
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 2, 1), 'W');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 1, 1), 'W');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'x') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 3, 1), 'X');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 2, 1), 'X');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'y') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 4, 1), 'Y');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 3, 1), 'Y');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'z'){
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 4, 1), 'Z');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
@@ -1159,7 +1163,6 @@ void StatePlayGame::parseMap2D()
                     entities.push_back(entity);
                     break;
                 case 5:
-                    std::cout << "GrenadeLauncher" << std::endl;
                     entity = new GrenadeLauncher();
                     entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
                     entityMap[indexY][indexX] = entity;

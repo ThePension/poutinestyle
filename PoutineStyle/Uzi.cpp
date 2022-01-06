@@ -50,7 +50,6 @@ std::stack<Bullet*> Uzi::burstShooting(sf::Vector2f direction, sf::Vector2f posi
 	
 	std::stack<Bullet*> bullets;
 	int currentRenderedFrameNum = this->getCurrentRenderedFrame();
-	std::cout << currentRenderedFrameNum << std::endl;
 	if ((currentRenderedFrameNum % 2 == 0 || currentRenderedFrameNum == 0) && oldFrameNum != currentRenderedFrameNum){
 		isShooting = true;
 		// Add noise to the bullet direction
