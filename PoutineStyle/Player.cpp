@@ -16,7 +16,7 @@ Player::~Player()
 Player::Player(int live, int ammunition) : Player()
 {
 	this->live = 1;
-	this->nbChargers = 1;
+	this->nbChargers = 0;
 	this->ammunition = ammunition;
 	this->currentAmmunition = 0;
 }
