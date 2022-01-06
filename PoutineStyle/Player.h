@@ -4,6 +4,7 @@
 #include "Knife.h"
 #include "Pistol.h"
 #include "Shotgun.h"
+#include "GrenadeLauncher.h"
 #include "Key.h"
 class Bullet;
 #include <list>
@@ -19,7 +20,8 @@ private:
 	int live = 3;
 	int health = 100;
 	int ammunition = 50;
-	int currentAmmunition=7;
+	int currentAmmunition= 0; // modify
+	int chargerCapacity = 0; // new
 	int score = 0;
 
 public:

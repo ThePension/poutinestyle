@@ -22,6 +22,50 @@ Player::Player(int live, int ammunition) : Player()
 
 Weapon* Player::setWeapon(Weapon* w) {
 	Weapon* oldWeapon = this->secondaryWeapon;
+
+	if (typeid(*w).name() == typeid(Pistol).name())
+	{
+		if (this->chargerCapacity == 1)
+		{
+			this->ammunition *= 12;
+		}
+		else if (this->chargerCapacity == 2)
+		{
+			this->ammunition *= 6;
+		}
+
+		this->currentAmmunition = 12;
+		this->chargerCapacity = 12;
+	}
+	else if (typeid(*w).name() == typeid(Shotgun).name())
+	{
+		if (this->chargerCapacity == 12)
+		{
+			this->ammunition /= 6;
+		}
+		else if (this->chargerCapacity == 1)
+		{
+			this->ammunition *= 2;
+		}
+
+		this->currentAmmunition = 2;
+		this->chargerCapacity = 2;
+	}
+	else if (typeid(*w).name() == typeid(GrenadeLauncher).name())
+	{
+		if (this->chargerCapacity == 12)
+		{
+			this->ammunition /= 12;
+		}
+		else if (this->chargerCapacity == 2)
+		{
+			this->ammunition /= 2;
+		}
+
+		this->currentAmmunition = 1;
+		this->chargerCapacity = 1;
+	}
+
 	this->secondaryWeapon = w;
 	this->currentWeapon = w;
 	return oldWeapon;
@@ -84,10 +128,10 @@ void Player::reload()
 {
 	if (ammunition > 0)
 	{		
-		if (ammunition >= 7)
+		if (ammunition >= this->chargerCapacity)
 		{
-			currentAmmunition = 7;
-			ammunition -= 7;
+			currentAmmunition = this->chargerCapacity;
+			ammunition -= this->chargerCapacity;
 		}
 		else
 		{
@@ -119,5 +163,5 @@ void Player::increaseLife()
 
 void Player::increaseAmmo()
 {
-	this->ammunition += 7;
+	this->ammunition += this->chargerCapacity;
 }
