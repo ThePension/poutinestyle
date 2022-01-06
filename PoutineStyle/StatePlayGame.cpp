@@ -923,21 +923,21 @@ void StatePlayGame::parseMap2D()
                 player->position = sf::Vector2f(indexY + 0.5f, indexX + 0.5f);
             }
             else if (map[indexX][indexY] == 'E') { // Ennemy
-                int proba[] = {25, 25, 50};
+                int proba[] = {25, 25, 50}; // 25% to drop ammunition, 25% to drop his weapon and 50% to drop nothing
                 rnd = lootManagment(proba, 3);
                 Ennemy* guard = new Guard(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(guard);
                 entityMap[indexY][indexX] = guard;
             }
             else if (map[indexX][indexY] == 'G') {
-                int proba[] = { 25, 25, 50 };
+                int proba[] = { 25, 25, 50 }; // 25% to drop ammunition, 25% to drop his weapon and 50% to drop nothing
                 rnd = lootManagment(proba, 3);
                 Ennemy* general = new General(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(general);
                 entityMap[indexY][indexX] = general;
             }
             else if (map[indexX][indexY] == 'C') { // Chest
-                int proba[] = { 25, 15, 2, 35, 20, 3 };
+                int proba[] = { 25, 15, 2, 35, 20, 3 }; // 25% drop pistol, 15% drop shotgun, 2% drop uzi, 35% drop ammunition, 20% drop medikit and 3% drop HP
                 rnd = lootManagment(proba, 6);
                 Chest* chest = new Chest(sf::Vector2f((float)indexY, (float)indexX), rnd);
                 entities.push_back(chest);

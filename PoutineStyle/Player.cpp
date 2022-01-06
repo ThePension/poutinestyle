@@ -83,7 +83,8 @@ void Player::clearKeys()
 void Player::reload()
 {
 	if (ammunition > 0)
-	{		if (ammunition >= 7)
+	{		
+		if (ammunition >= 7)
 		{
 			currentAmmunition = 7;
 			ammunition -= 7;
