@@ -1,5 +1,6 @@
 #pragma once
 #include "Animation.h"
+#include "AnimatedVertexArray.h"
 #include "Entity.h"
 #include <stack>
 class Bullet;
@@ -12,6 +13,7 @@ protected:
 	int bulletDamage = 1;
 	bool isShooting = false;
 	bool isEntity = false;
+	int oldFrameNum = -1;
 
 public:
 	Weapon(int bulletDamage, Animation shootAnim = Animation(0, 0, 105, 105, 4, "../PoutineStyle/pics/gunTexture.png"));
@@ -24,4 +26,6 @@ public:
 	int getDamage() { return this->bulletDamage; }
 	bool getIsEntity() { return this->isEntity; }
 	void setIsEntity(bool b) { this->isEntity = b; }
+	int getCurrentRenderedFrame();
+
 };

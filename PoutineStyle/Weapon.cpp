@@ -10,3 +10,9 @@ Weapon::Weapon(int bulletDamage, Animation shootAnim) : Entity(1, sf::Vector2f(0
 Weapon::~Weapon() {
 
 }
+
+int Weapon::getCurrentRenderedFrame()
+{
+	return shootAnimation.getCurrentRenderedFramNum();
+}
+

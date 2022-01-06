@@ -25,18 +25,40 @@ bool Entity::isDoor(char entityChar)
 bool Entity::isWall(char entityChar)
 {
     return  entityChar == '1' ||
-            entityChar == '2' ||
-            entityChar == '3' ||
-            entityChar == '4' ||
-            entityChar == '5' ||
-            entityChar == '6' ||
-            entityChar == '7' ||
-            entityChar == '8' ||
-            entityChar == '9' ||
-            entityChar == 'D' ||
-            entityChar == 'V' ||
-            entityChar == 'W' ||
-            entityChar == 'X' ||
-            entityChar == 'Y' ||
-            entityChar == 'Z';
+        entityChar == '2' ||
+        entityChar == '3' ||
+        entityChar == '4' ||
+        entityChar == '5' ||
+        entityChar == '6' ||
+        entityChar == '7' ||
+        entityChar == '8' ||
+        entityChar == '9' ||
+        entityChar == 'a' ||
+        entityChar == 'A' ||
+        entityChar == 'b' ||
+        entityChar == 'd' ||
+        entityChar == 'D' ||
+        entityChar == 'f' ||
+        entityChar == 'F' ||
+        entityChar == 'h' ||
+        entityChar == 'H' ||
+        entityChar == 'i' ||
+        entityChar == 'I' ||
+        entityChar == 'j' ||
+        entityChar == 'J' ||
+        entityChar == 'k' ||
+        entityChar == 'K' ||
+        entityChar == 'm' ||
+        entityChar == 'M' ||
+        entityChar == 'n' ||
+        entityChar == 'N' ||
+        entityChar == 'o' ||
+        entityChar == 'O' ||
+        entityChar == 'V' ||
+        entityChar == 'W' ||
+        entityChar == 'X' ||
+        entityChar == 'Y' ||
+        entityChar == 'q' ||
+        entityChar == 'Z';
+
 }

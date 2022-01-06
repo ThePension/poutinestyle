@@ -16,6 +16,7 @@ Player::~Player()
 Player::Player(int live, int ammunition) : Player()
 {
 	this->live = 1;
+	this->nbChargers = 1;
 	this->ammunition = ammunition;
 	this->currentAmmunition = 0;
 }
@@ -25,45 +26,27 @@ Weapon* Player::setWeapon(Weapon* w) {
 
 	if (typeid(*w).name() == typeid(Pistol).name())
 	{
-		if (this->chargerCapacity == 1)
-		{
-			this->ammunition *= 12;
-		}
-		else if (this->chargerCapacity == 2)
-		{
-			this->ammunition *= 6;
-		}
-
 		this->currentAmmunition = 12;
 		this->chargerCapacity = 12;
+		this->ammunition = this->nbChargers * 12;
 	}
 	else if (typeid(*w).name() == typeid(Shotgun).name())
 	{
-		if (this->chargerCapacity == 12)
-		{
-			this->ammunition /= 6;
-		}
-		else if (this->chargerCapacity == 1)
-		{
-			this->ammunition *= 2;
-		}
-
 		this->currentAmmunition = 2;
 		this->chargerCapacity = 2;
+		this->ammunition = this->nbChargers * 2;
+	}
+	else if (typeid(*w).name() == typeid(Uzi).name())
+	{
+		this->currentAmmunition = 30;
+		this->chargerCapacity = 30;
+		this->ammunition = this->nbChargers * 30;
 	}
 	else if (typeid(*w).name() == typeid(GrenadeLauncher).name())
 	{
-		if (this->chargerCapacity == 12)
-		{
-			this->ammunition /= 12;
-		}
-		else if (this->chargerCapacity == 2)
-		{
-			this->ammunition /= 2;
-		}
-
 		this->currentAmmunition = 1;
 		this->chargerCapacity = 1;
+		this->ammunition = this->nbChargers;
 	}
 
 	this->secondaryWeapon = w;
@@ -108,6 +91,17 @@ std::stack<Bullet*> Player::shoot(sf::Vector2f direction){
 	return bullets;
 }
 
+std::stack<Bullet*> Player::burstShooting(sf::Vector2f direction) {
+	std::stack<Bullet*> bullets;
+	if (Player::currentAmmunition > 0)
+	{
+		bullets = dynamic_cast <Uzi*>(currentWeapon)->burstShooting (direction, this->position);
+		currentAmmunition -= bullets.size();
+		return bullets;
+	}
+	return bullets;
+}
+
 void Player::switchWeapon()
 {
 	if (this->secondaryWeapon != nullptr && this->secondaryWeapon != this->currentWeapon) {
@@ -128,6 +122,8 @@ void Player::reload()
 {
 	if (ammunition > 0)
 	{		
+		nbChargers--;
+
 		if (ammunition >= this->chargerCapacity)
 		{
 			currentAmmunition = this->chargerCapacity;
@@ -164,4 +160,5 @@ void Player::increaseLife()
 void Player::increaseAmmo()
 {
 	this->ammunition += this->chargerCapacity;
+	this->nbChargers++;
 }

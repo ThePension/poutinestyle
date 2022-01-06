@@ -179,6 +179,7 @@
     <ClCompile Include="StatePauseMenu.cpp" />
     <ClCompile Include="StatePlayGame.cpp" />
     <ClCompile Include="AnimatedVertexArray.cpp" />
+    <ClCompile Include="Uzi.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
@@ -209,6 +210,7 @@
     <ClInclude Include="StatePauseMenu.h" />
     <ClInclude Include="StatePlayGame.h" />
     <ClInclude Include="AnimatedVertexArray.h" />
+    <ClInclude Include="Uzi.h" />
     <ClInclude Include="Wall.h" />
     <ClInclude Include="Weapon.h" />
   </ItemGroup>

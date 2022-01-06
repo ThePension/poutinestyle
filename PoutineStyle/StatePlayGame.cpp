@@ -18,7 +18,8 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
     case 0:
         mapFilePath = "Map_Example3.txt";
         mapSize = 32;
-        // this->levels.insert(std::pair<std::string, int>("Map_Example3.txt", 32));
+        //this->levels.insert(std::pair<std::string, int>("Map_Example3.txt", 32));
+        this->levels.insert(std::pair<std::string, int>("Lvl1.txt", 16));
         this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
         this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
         this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
@@ -88,7 +89,7 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
 	parseMap2D();
 
     wallTextures = sf::Texture();    
-    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures3.png");
+    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures4.png");
 
     // Load cursor texture
     imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
@@ -172,6 +173,7 @@ void StatePlayGame::handleInput(double deltatime)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) aPressed = true;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) sPressed = true;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dPressed = true;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) qPressed = !qPressed; //Change Weapon mode (burstshot-oneshot)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) movingSpeed = 5;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) InteractedEntity = getInteractedEntity();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) pause();
@@ -186,6 +188,7 @@ void StatePlayGame::handleInput(double deltatime)
             if (event.key.code == sf::Keyboard::S) sPressed = false;
             if (event.key.code == sf::Keyboard::LShift) movingSpeed = 3;
         }
+        if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) { isBursting = false; }
 
         if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
         {
@@ -207,9 +210,14 @@ void StatePlayGame::handleInput(double deltatime)
                     }
                 }
             }
-            else{
+
+            else if (typeid(* player->getCurrentWeapon()).name() == typeid(Uzi).name() && qPressed == true) {
+                isBursting = true;
+            }
+            else 
+            {
                 std::stack<Bullet*> bullets = player->shoot(player->direction);
-                while(!bullets.empty()) {
+                while (!bullets.empty()) {
                     Bullet* bullet = bullets.top();
                     if (bullet != nullptr) {
                         entities.push_back(bullet);
@@ -280,6 +288,18 @@ void StatePlayGame::update(float deltaTime)
     {
         newPlayerPos = sf::Vector2f(player->position.x - player->direction.x * movingSpeed * deltaTime, player->position.y - player->direction.y * movingSpeed * deltaTime);
         updatePlayerPosition(newPlayerPos);
+    }
+
+    if (isBursting)
+    {
+        std::stack<Bullet*> bullets = player->burstShooting(player->direction);
+        while (!bullets.empty()) {
+            Bullet* bullet = bullets.top();
+            if (bullet != nullptr) {
+                entities.push_back(bullet);
+            }
+            bullets.pop();
+        }
     }
 
     draw(deltaTime);
@@ -358,16 +378,24 @@ void StatePlayGame::drawMap2D()
         {
             block.setPosition(float(j * blockWidth), float(i * blockHeight));
 
-            if (map[i][j] == '1') // needs a fastest way to test if there's more cases. [ O(n^2) ]
+            if (map[i][j] == 'E' || map[i][j] == 'G' || map[i][j] == 'C' || map[i][j] == 'L') // needs a fastest way to test if there's more cases. [ O(n^2) ]
             {
-                block.setFillColor(sf::Color::Red);
+                block.setFillColor(sf::Color::Blue);
+            }
+            else if (map[i][j] == 'd' || map[i][j] == 'D' || map[i][j] == 'v' || map[i][j] == 'V' || map[i][j] == 'w' || map[i][j] == 'W' || map[i][j] == 'x' || map[i][j] == 'X' || map[i][j] == 'y' || map[i][j] == 'Y' || map[i][j] == 'z' || map[i][j] == 'Z')
+            {
+                block.setFillColor(sf::Color::Yellow);
             }
             else if (map[i][j] == '0')
             {
                 block.setFillColor(sf::Color::Black);
             }
+            else if (map[i][j] == 'T' || map[i][j] == 'S')
+            {
+                block.setFillColor(sf::Color::White);
+            }
             else {
-                block.setFillColor(sf::Color::Blue);
+                block.setFillColor(sf::Color::Red);
             }
 
             gameManager->getRenderWindow()->draw(block);
@@ -742,7 +770,8 @@ void StatePlayGame::renderingEntities(double dt) {
                 this->isFinished = true;
             }
         }
-        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name()) {
+
+        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(Uzi).name() || typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name()) {
             Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
             Weapon* oldWeapon = player->setWeapon(weapon);
         
@@ -943,7 +972,7 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(chest);
                 entityMap[indexY][indexX] = chest;
             }
-            else if(Entity::isWall(map[indexX][indexY]) || map[indexX][indexY] == 'B')
+            else if(Entity::isWall(map[indexX][indexY]) || map[indexX][indexY] == 'b')
             {
                 int y = 0;
                 int nbFrames = 1;
@@ -951,57 +980,115 @@ void StatePlayGame::parseMap2D()
                 bool isSecretPassage = false;
                 switch (map[indexX][indexY])
                 {
-                case '1':
+                //Basement
+                case '1': // Basic
                     y = 0;
                     break;
-                case '2':
+                case '2': // Lightening Torch
                     y = 1;
+                    nbFrames = 7;
                     break;
-                case '3':
+                case '3': // Torch
                     y = 2;
                     break;
-                case '4':
+                case '4': // Poster
                     y = 3;
                     break;
-                case '5':
+                case 'V': // Door
+                    isDoor = true;
                     y = 4;
                     break;
-                case '6':
+                case '5': // Elevator
                     y = 5;
                     break;
-                case 'B':
-                case '7':
-                    nbFrames = 4;
-                    isSecretPassage = true;
-                    isDoor = true;
+                //Regular
+                case '6': // Basic
                     y = 6;
                     break;
-                case '8':
+                case '7': // URRS 1
                     y = 7;
                     break;
-                case 'D':
+                case '8': // URSS 2
                     y = 8;
-                    isDoor = true;
                     break;
-                case 'V':
+                case '9': // URSS 3
                     y = 9;
-                    isDoor = true;
                     break;
-                case 'W':
+                case 'a': // URSS 4
                     y = 10;
-                    isDoor = true;
                     break;
-                case 'X':
+                case 'A': // Tableau
                     y = 11;
-                    isDoor = true;
                     break;
-                case 'Y':
+                case 'b': // passage secret
                     y = 12;
+                    nbFrames = 6;
+                    isSecretPassage = true;
                     isDoor = true;
                     break;
-                case 'Z':
-                    y = 13;
+                case 'q': // Tableau 1
+                    y = 14;
+                    break;
+                case 'f': // Tableau 2
+                    y = 15;
+                    break;
+                case 'F': // Tableau 3
+                    y = 16;
+                    break;
+                case 'h': // Affiche 1
+                    y = 17;
+                    break;
+                case 'H': // Affiche 2
+                    y = 18;
+                    break;
+                case 'i': // Affiche 3
+                    y = 19;
+                    break;
+                case 'I': // Affiche 4
+                    y = 20; 
+                    break;
+                case 'j': // Affiche 5
+                    y = 21;
+                    break;
+                case 'J': // Affiche 6
+                    y = 22;
+                    break;
+                case 'k': // Useless
+                    y = 23; 
+                    break;
+                case 'W': // Door 1
+                    y = 24;
                     isDoor = true;
+                    break;
+                case 'X': // Door 2
+                    y = 25;
+                    isDoor = true;
+                    break;
+                case 'Y': // Door 3
+                    y = 26;
+                    isDoor = true;
+                    break;
+                case 'Z': // Door 4
+                    y = 27;
+                    isDoor = true;
+                    break;
+                case 'm': // Elevator 
+                    y = 28;
+                    break;
+                case 'M': // Bookshell 1
+                    y = 29;
+                    break;
+                case 'n': // Bookshell 2
+                    y = 30;
+                    break;
+                case 'N': // Wood Basic
+                    y = 31;
+                    break;
+                case 'o': // Wood with poster 1
+                    y = 32;
+                    break;
+                case 'O': // Wood with poster 2
+                    y = 33;
                     break;
                 }
                 Wall* wall;
@@ -1010,33 +1097,28 @@ void StatePlayGame::parseMap2D()
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
             }
-            else if (map[indexX][indexY] == 'd') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 0, 1), 'D');
-                entityMap[indexY][indexX] = key;
-                entities.push_back(key);
-            }
             else if (map[indexX][indexY] == 'v') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 1, 1), 'V');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 0, 1), 'V');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'w'){
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 2, 1), 'W');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 1, 1), 'W');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'x') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 3, 1), 'X');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 2, 1), 'X');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'y') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 4, 1), 'Y');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 3, 1), 'Y');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'z'){
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 64, 64, 5, 1), 'Z');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 4, 1), 'Z');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
@@ -1046,7 +1128,9 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(pnj);
             }
             else if (map[indexX][indexY] == 'L') {
-                rnd = (rand() % 5); // Between 0 and 2
+
+                rnd = (rand() % 6); // between 0-5
+
                 Entity* entity;
                 switch (rnd)
                 {
@@ -1073,6 +1157,12 @@ void StatePlayGame::parseMap2D()
                     entities.push_back(entity);
                     break;
                 case 4:
+                    entity = new Uzi();
+                    entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
+                    entityMap[indexY][indexX] = entity;
+                    entities.push_back(entity);
+                    break;
+                case 5:
                     entity = new GrenadeLauncher();
                     entity->mapPos = sf::Vector2f((float)indexY, (float)indexX);
                     entityMap[indexY][indexX] = entity;
@@ -1161,16 +1251,16 @@ void StatePlayGame::displayHud()
     sf::Font font = gameManager->getFont();
     sf::Color fontCol = sf::Color::Red;
 
-    sf::Text liveText("Live : ", font, 15);
+    sf::Text liveText("Live", font, 15);
     sf::Text live("", font, 15);
     live.setString(std::to_string(player->getLive()));
-    sf::Text health("Health :", font, 15);
+    sf::Text health("Health", font, 15);
     sf::RectangleShape visualHealth;
     sf::Text arme("Weapon", font, 15);
-    sf::Text ammunition("Ammo :", font, 15);
+    sf::Text ammunition("Ammo", font, 15);
     sf::Text currentAmmunition("", font, 15);
     currentAmmunition.setString(std::to_string(player->getCurrentAmmunition()) + " / " + std::to_string(player->getAmmunition()));
-    sf::Text score("Score :", font, 15);
+    sf::Text score("Score", font, 15);
     sf::Text currentScore("", font, 15);
     currentScore.setString(std::to_string(player->getScore()));
 

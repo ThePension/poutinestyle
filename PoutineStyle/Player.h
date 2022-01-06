@@ -5,7 +5,9 @@
 #include "Pistol.h"
 #include "Shotgun.h"
 #include "GrenadeLauncher.h"
+#include "Uzi.h"
 #include "Key.h"
+
 class Bullet;
 #include <list>
 class Player
@@ -19,9 +21,10 @@ private:
 	bool isDead = false;
 	int live = 3;
 	int health = 100;
-	int ammunition = 50;
+	int ammunition = 0;
 	int currentAmmunition= 0; // modify
 	int chargerCapacity = 0; // new
+	int nbChargers = 4; // new
 	int score = 0;
 
 public:
@@ -36,6 +39,9 @@ public:
 	void draw(sf::RenderTarget& target) const;
 	void update(float dt);
 	std::stack<Bullet*> shoot(sf::Vector2f direction);
+
+	std::stack<Bullet*> burstShooting(sf::Vector2f direction);
+
 	void reload();
 	void loseLife();
 	void increaseLife();
@@ -63,5 +69,6 @@ public:
 	sf::Vector2f position = sf::Vector2f(50.f, 50.f); // Default player position
 	sf::Vector2f direction = sf::Vector2f(0.f, 0.75f);
 	sf::Vector2f planeVec = sf::Vector2f(-0.495f, 0.f); // Must be perpendicular to direction vector (2*atan(0.495/0.75) = 66° FOV)
+
 };
 
