@@ -1005,6 +1005,7 @@ void StatePlayGame::parseMap2D()
                 int nbFrames = 1;
                 bool isDoor = false;
                 bool isSecretPassage = false;
+                bool isDestructible = false;
                 switch (map[indexX][indexY])
                 {
                 //Basement
@@ -1103,24 +1104,29 @@ void StatePlayGame::parseMap2D()
                     y = 28;
                     break;
                 case 'M': // Bookshell 1
+                    isDestructible = true;
                     y = 29;
                     break;
                 case 'n': // Bookshell 2
+                    isDestructible = true;
                     y = 30;
                     break;
                 case 'N': // Wood Basic
+                    isDestructible = true;
                     y = 31;
                     break;
                 case 'o': // Wood with poster 1
+                    isDestructible = true;
                     y = 32;
                     break;
                 case 'O': // Wood with poster 2
+                    isDestructible = true;
                     y = 33;
                     break;
                 }
                 Wall* wall;
                 if (isDoor) wall = new Door(sf::Vector2f((float)indexY, (float)indexX), 4, y, 0.1, false, isSecretPassage);
-                else wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, true);
+                else wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, isDestructible);
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
             }
