@@ -63,12 +63,12 @@ void Player::draw(sf::RenderTarget& target) const {
 	for (Key* key : playerKeys) {
 		sf::Sprite keySprite = key->getFirstSprite();
 		// Scale the sprite
-		double wantedSpriteSize = target.getSize().x / 25.0;
+		double wantedSpriteSize = target.getSize().x / 5.0;
 		double ratio = wantedSpriteSize / keySprite.getTextureRect().width;
 		keySprite.scale(sf::Vector2f(ratio, ratio));
 
 		// Set position
-		keySprite.setPosition(target.getSize().x / 2 - wantedSpriteSize - 10, count * wantedSpriteSize + 30);
+		keySprite.setPosition(target.getSize().x / 2.0 - wantedSpriteSize + 40, count * wantedSpriteSize / 2.0 - wantedSpriteSize / 2.0);
 
 		target.draw(keySprite);
 
