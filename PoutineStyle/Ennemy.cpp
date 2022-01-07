@@ -16,7 +16,7 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray* shootAnimVA, Anima
             droppedEntity->mapPos = this->mapPos;
             break;
         case 3: // 50 %
-            nothing = true;
+            droppedEntity = nullptr;
             break;
     }
 }

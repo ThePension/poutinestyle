@@ -685,6 +685,7 @@ void StatePlayGame::renderingEntities(double dt) {
 
             // Increase Player's life
             player->increaseLife();
+            player->increaseScore(2);
         }
         else if (typeid(*InteractedEntity).name() == typeid(Ammo).name()) {
             // Delete Ammo Entity
@@ -695,6 +696,7 @@ void StatePlayGame::renderingEntities(double dt) {
 
             // Increase player's Ammo
             player->increaseAmmo();
+            player->increaseScore(2);
         }
         else if (typeid(*InteractedEntity).name() == typeid(Key).name()) {
             // Delete Key Entity
@@ -704,6 +706,7 @@ void StatePlayGame::renderingEntities(double dt) {
 
             Key* key = static_cast<Key*>(InteractedEntity);
             player->addKey(key);
+            player->increaseScore(2);
 
             InteractedEntity = nullptr;
         }
@@ -740,6 +743,7 @@ void StatePlayGame::renderingEntities(double dt) {
                 map = nullptr;
 
                 player->clearKeys();
+                player->increaseScore(20);
 
                 cleanAllEntitys();
 
@@ -773,17 +777,7 @@ void StatePlayGame::renderingEntities(double dt) {
 
         else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(Uzi).name() || typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name())
         {
-            bool sameWeaponType = false;
-
-            Shotgun* try_shotgun = dynamic_cast<Shotgun*>(player->getCurrentWeapon());
-            Pistol* try_pistol = dynamic_cast<Pistol*>(player->getCurrentWeapon());
-            Uzi* try_uzi = dynamic_cast<Uzi*>(player->getCurrentWeapon());
-            GrenadeLauncher* try_grenadeLauncher = dynamic_cast<GrenadeLauncher*>(player->getCurrentWeapon());
-
-            if (try_shotgun != nullptr && typeid(*InteractedEntity).name() == typeid(Shotgun).name())  sameWeaponType = true;
-            else if (try_pistol != nullptr && typeid(*InteractedEntity).name() == typeid(Pistol).name()) sameWeaponType = true;
-            else if (try_uzi != nullptr && typeid(*InteractedEntity).name() == typeid(Uzi).name()) sameWeaponType = true;
-            else if (try_grenadeLauncher != nullptr && typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name()) sameWeaponType = true;
+            bool sameWeaponType = typeid(*InteractedEntity).name() == typeid(*player->getCurrentWeapon()).name();            
 
             if (sameWeaponType)
             {
@@ -874,9 +868,8 @@ void StatePlayGame::renderingEntities(double dt) {
                 if (typeid(*entity).name() == typeid(Guard).name() || typeid(*entity).name() == typeid(General).name()) {
                     Ennemy* ennemy = static_cast<Ennemy*>(entity);
                     if (ennemy->getToRemove()) {
-                        if (!ennemy->nothing)
-                        {
-                            Entity* droppedEntity = ennemy->getDroppedEntity();
+                        Entity* droppedEntity = ennemy->getDroppedEntity();
+                        if(droppedEntity != nullptr){
                             entityMap[(int)ennemy->mapPos.x][(int)ennemy->mapPos.y] = droppedEntity;
                             entities.push_back(droppedEntity);
                             map[(int)ennemy->mapPos.y][(int)ennemy->mapPos.x] = 'L';
@@ -888,6 +881,7 @@ void StatePlayGame::renderingEntities(double dt) {
                         }
                         entities.remove(ennemy);
                         delete ennemy; ennemy = nullptr;
+                        player->increaseScore(10);
                     }
                 }
                 else if (typeid(*entity).name() == typeid(Chest).name()) {
@@ -900,6 +894,7 @@ void StatePlayGame::renderingEntities(double dt) {
                         map[(int)chest->mapPos.y][(int)chest->mapPos.x] = 'L';
                         entities.remove(chest);
                         delete chest; chest = nullptr;
+                        player->increaseScore(5);
                     }
                 }
                 else if (typeid(*entity).name() == typeid(Door).name()) {
@@ -909,6 +904,7 @@ void StatePlayGame::renderingEntities(double dt) {
                         map[(int)entity->mapPos.y][(int)entity->mapPos.x] = '0';
                         entities.remove(entity);
                         delete entity; entity = nullptr;
+                        player->increaseScore(5);
                     }
                 }
             }

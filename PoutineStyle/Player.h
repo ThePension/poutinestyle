@@ -53,15 +53,16 @@ public:
 	Weapon* setWeapon(Weapon* w);
 	void addKey(Key* key) { this->playerKeys.push_back(key); }
 	void removeKey(Key* key) { this->playerKeys.remove(key); }
+	void increaseScore(int bonus) { this->score += bonus; }
 
 	// Getters
 	std::list<Key*> getPlayerKeys() { return this->playerKeys; }
-	int getLive() { return live; }
-	int getHealth() { return health; }
-	int getAmmunition() { return ammunition; }
-	int getCurrentAmmunition() { return currentAmmunition; }
+	int getScore() { return this->score; }
+	int getLive() { return this->live; }
+	int getHealth() { return this->health; }
+	int getAmmunition() { return this->ammunition; }
+	int getCurrentAmmunition() { return this->currentAmmunition; }
 	int setCurrentAmmoReloading(int newAmmo) { currentAmmunition = newAmmo; }
-	int getScore() { return score; }
 	Weapon* getCurrentWeapon() { return this->currentWeapon; }
 	Weapon* getSecondaryWeapon() { return this->secondaryWeapon; }
 	bool getIsDead() { return this->isDead; }

@@ -36,5 +36,4 @@ public:
 	// AnimatedVertexArray walkAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 64, 0, 8);
 	AnimatedVertexArray* shootAnimVA = nullptr; // = AnimatedVertexArray("../PoutineStyle/pics/shootingEnnemy.png", 64, 64, 0, 5, 0.3);
 	AnimatedVertexArray* dieAnimVA = nullptr; // = AnimatedVertexArray("../PoutineStyle/pics/dyingEnnemy.png", 64, 64, 0, 4, 0.3);
-	bool nothing = false;
 };
