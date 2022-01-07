@@ -771,20 +771,47 @@ void StatePlayGame::renderingEntities(double dt) {
             }
         }
 
-        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(Uzi).name() || typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name()) {
-            Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
-            Weapon* oldWeapon = player->setWeapon(weapon);
-        
-            entities.remove(weapon);
-            if (oldWeapon != nullptr) {
-                entities.push_back(oldWeapon);
-                oldWeapon->mapPos = weapon->mapPos;
+        else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(Uzi).name() || typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name())
+        {
+            bool sameWeaponType = false;
+
+            Shotgun* try_shotgun = dynamic_cast<Shotgun*>(player->getCurrentWeapon());
+            Pistol* try_pistol = dynamic_cast<Pistol*>(player->getCurrentWeapon());
+            Uzi* try_uzi = dynamic_cast<Uzi*>(player->getCurrentWeapon());
+            GrenadeLauncher* try_grenadeLauncher = dynamic_cast<GrenadeLauncher*>(player->getCurrentWeapon());
+
+            if (try_shotgun != nullptr && typeid(*InteractedEntity).name() == typeid(Shotgun).name())  sameWeaponType = true;
+            else if (try_pistol != nullptr && typeid(*InteractedEntity).name() == typeid(Pistol).name()) sameWeaponType = true;
+            else if (try_uzi != nullptr && typeid(*InteractedEntity).name() == typeid(Uzi).name()) sameWeaponType = true;
+            else if (try_grenadeLauncher != nullptr && typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name()) sameWeaponType = true;
+
+            if (sameWeaponType)
+            {
+                entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
                 map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
+                entities.remove(InteractedEntity);
+                delete InteractedEntity;
+
+                player->increaseAmmo();
             }
-            entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = oldWeapon;
+            else
+            {
+                Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
+                Weapon* oldWeapon = player->setWeapon(weapon);
+
+                entities.remove(weapon);
+                if (oldWeapon != nullptr) {
+                    entities.push_back(oldWeapon);
+                    oldWeapon->mapPos = weapon->mapPos;
+                    map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
+                }
+                entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = oldWeapon;
+            }
+           
             InteractedEntity = nullptr;
         }
     }
+
     InteractedEntity = nullptr;
 #pragma endregion
 
