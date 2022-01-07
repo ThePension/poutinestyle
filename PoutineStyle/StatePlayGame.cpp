@@ -89,10 +89,10 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
 	parseMap2D();
 
     wallTextures = sf::Texture();    
-    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures4.png");
+    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures.png");
 
     // Load cursor texture
-    imgAimCursor.loadFromFile("Cursor/cursorAim3.png");
+    imgAimCursor.loadFromFile("../PoutineStyle/pics/cursorAim.png");
     setHud();
 }
 
