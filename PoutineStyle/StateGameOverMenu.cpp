@@ -15,7 +15,14 @@ StateGameOverMenu::StateGameOverMenu(GameManager* game, bool win) {
 			bgSprite.setTexture(bgTexture);
 			bgSprite.setScale(0.5, 0.5);
 		}
-		else std::cout << "Failed to load GameOverMenu background image" << std::endl;
+		else std::cout << "Failed to load GameOverMenu failed background image" << std::endl;
+	}
+	else {
+		if (bgTexture.loadFromFile("../PoutineStyle/pics/WinningBackground.jpg"))
+		{
+			bgSprite.setTexture(bgTexture);
+		}
+		else std::cout << "Failed to load GameOverMenu victory background image" << std::endl;
 	}
 }
 StateGameOverMenu::~StateGameOverMenu() {
