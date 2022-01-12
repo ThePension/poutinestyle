@@ -8,8 +8,6 @@ private:
 	Button replayButton;
 	Button quitButton;
 	sf::Text text;
-	sf::Texture bgTexture;
-	sf::Sprite bgSprite;
 
 	bool win;
 
