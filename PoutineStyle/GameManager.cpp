@@ -16,10 +16,24 @@ GameManager::GameManager()
     StateMainMenu* stateMainMenu = new StateMainMenu(this);
     states.push(stateMainMenu);
 
+
     window->setPosition(sf::Vector2i(500, 0));
 
     font = sf::Font();
     font.loadFromFile("CollegiateBlackFLF.ttf");
+
+    // Music
+    gameMusic = new sf::Music();
+    menuMusic = new sf::Music();
+    menuMusic->openFromFile("../PoutineStyle/Music/MainMenuMusic.wav");
+    menuMusic->play();
+
+}
+
+GameManager::~GameManager()
+{
+    gameMusic->stop(); menuMusic->stop();
+    delete gameMusic; delete menuMusic;
 }
 
 void GameManager::gameLoop()

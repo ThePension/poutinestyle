@@ -9,6 +9,7 @@
 #include "Ammo.h"
 #include "Pistol.h"
 #include "Shotgun.h"
+#include <SFML/Audio.hpp>
 
 
 class Ennemy : public Entity
@@ -20,6 +21,13 @@ protected:
 	Entity* droppedEntity = nullptr;
 	double shootCooldown = 1.0;
 	int oldFrameNum = -1;
+
+	// Sound
+	sf::SoundBuffer guardBuffer;
+	sf::SoundBuffer generalBuffer;
+	sf::Sound guardShot;
+	sf::Sound generalShot;
+
 public:
 	Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray* shootAnimVA, AnimatedVertexArray* dieAnimVA, int dropNumber = 0);
 	~Ennemy() override;
