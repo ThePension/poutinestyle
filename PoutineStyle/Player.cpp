@@ -5,6 +5,20 @@ Player::Player() {
 	this->knife = new Knife();
 	this->currentWeapon = this->knife;
 	this->secondaryWeapon = nullptr;
+
+	// Sound
+	knifeBuffer.loadFromFile("../PoutineStyle/Sound/PlayerKnife.wav");
+	emptyGunBuffer.loadFromFile("../PoutineStyle/Sound/EmptyGun.wav");
+	gunShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerGunShot.wav");
+	shotgunShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerShotgun.wav");
+	uziSingleShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerUziSingle.wav");
+	uziMultipleShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerUziMultiple.wav");
+	knifeSound.setBuffer(knifeBuffer);
+	emptyGun.setBuffer(emptyGunBuffer);
+	gunShot.setBuffer(gunShotBuffer);
+	shotgunShot.setBuffer(shotgunShotBuffer);
+	uziSingleShot.setBuffer(uziSingleShotBuffer);
+	uziMultipleShot.setBuffer(uziMultipleShotBuffer);
 }
 
 Player::~Player()
@@ -82,10 +96,36 @@ void Player::update(float dt) {
 
 std::stack<Bullet*> Player::shoot(sf::Vector2f direction){
 	std::stack<Bullet*> bullets;
-	if (Player::currentAmmunition > 0 || typeid(*this->currentWeapon).name() == typeid(Knife).name())
+	if (Player::currentAmmunition == 0 && typeid(*this->currentWeapon).name() != typeid(Knife).name())
+	{
+		emptyGun.play();
+	}
+	else if (Player::currentAmmunition > 0 && typeid(*this->currentWeapon).name() == typeid(Pistol).name())
 	{
 		bullets = currentWeapon->shoot(direction, this->position);
 		currentAmmunition -= bullets.size();
+		gunShot.play();
+		return bullets;
+	}
+	else if (Player::currentAmmunition > 0 && typeid(*this->currentWeapon).name() == typeid(Shotgun).name())
+	{
+		bullets = currentWeapon->shoot(direction, this->position);
+		currentAmmunition -= bullets.size();
+		shotgunShot.play();
+		return bullets;
+	}
+	else if (Player::currentAmmunition > 0 && typeid(*this->currentWeapon).name() == typeid(Uzi).name())
+	{
+		bullets = currentWeapon->shoot(direction, this->position);
+		currentAmmunition -= bullets.size();
+		uziSingleShot.play();
+		return bullets;
+	}
+	else if (typeid(*this->currentWeapon).name() == typeid(Knife).name())
+	{
+		bullets = currentWeapon->shoot(direction, this->position);
+		currentAmmunition -= bullets.size();
+		knifeSound.play();
 		return bullets;
 	}
 	return bullets;
@@ -97,6 +137,7 @@ std::stack<Bullet*> Player::burstShooting(sf::Vector2f direction) {
 	{
 		bullets = dynamic_cast <Uzi*>(currentWeapon)->burstShooting (direction, this->position);
 		currentAmmunition -= bullets.size();
+		uziMultipleShot.play();
 		return bullets;
 	}
 	return bullets;

@@ -7,6 +7,7 @@
 #include "GrenadeLauncher.h"
 #include "Uzi.h"
 #include "Key.h"
+#include <SFML/Audio.hpp>
 
 class Bullet;
 #include <list>
@@ -26,6 +27,20 @@ private:
 	int chargerCapacity = 0; // new
 	int nbChargers = 4; // new
 	int score = 0;
+
+	//sound
+	sf::SoundBuffer emptyGunBuffer;
+	sf::SoundBuffer gunShotBuffer;
+	sf::SoundBuffer shotgunShotBuffer;
+	sf::SoundBuffer uziSingleShotBuffer;
+	sf::SoundBuffer uziMultipleShotBuffer;
+	sf::SoundBuffer knifeBuffer;
+	sf::Sound emptyGun;
+	sf::Sound gunShot;
+	sf::Sound shotgunShot;
+	sf::Sound uziSingleShot;
+	sf::Sound uziMultipleShot;
+	sf::Sound knifeSound;
 
 public:
 	// Constructors

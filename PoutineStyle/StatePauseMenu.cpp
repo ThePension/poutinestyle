@@ -28,6 +28,8 @@ void StatePauseMenu::handleInput(double deltatime)
 	{
 		if (playButton.isClicked())
 		{
+			gameManager->gameMusic->play();
+			gameManager->menuMusic->stop();
 			StatePlayGame* playGame = dynamic_cast<StatePlayGame*>(this->gameManager->peekState(1));
 			playGame->resume();
 			this->gameManager->popState();

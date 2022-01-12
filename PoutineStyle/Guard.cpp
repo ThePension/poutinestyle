@@ -21,11 +21,16 @@ std::stack<Bullet*> Guard::shoot(sf::Vector2f direction, sf::Vector2f playerPos,
 		yNoise = AnimatedVertexArray::map(yNoise, 0, 0.1, -0.1, 0.1);
 		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise, direction.y + yNoise);
 
+		// Sound
+		guardShot.play();
+
 		// Create a bullet
 		sf::Vector2f bulletPos = sf::Vector2f((this->mapPos.x), (this->mapPos.y));
 		Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, false);
 		bullets.push(bullet);
 		return bullets;
+
+		
 	}
 	return bullets;
 }

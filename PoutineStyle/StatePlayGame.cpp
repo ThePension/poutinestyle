@@ -11,7 +11,13 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
         hard = true;
     }
 
-    // this->settings.getVolume(); // pas encore utile
+    // Music
+    game->gameMusic->Stopped();
+    game->menuMusic->pause();
+    game->gameMusic->openFromFile("../PoutineStyle/Music/GameMusic1.wav");
+    game->gameMusic->play();
+    game->gameMusic->setVolume(this->settings.getVolume());
+    game->menuMusic->setVolume(this->settings.getVolume());
 
     switch (this->settings.getLevel())
     {
@@ -176,7 +182,12 @@ void StatePlayGame::handleInput(double deltatime)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) qPressed = !qPressed; //Change Weapon mode (burstshot-oneshot)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) movingSpeed = 5;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) InteractedEntity = getInteractedEntity();
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) pause();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+            {
+                gameManager->gameMusic->pause();
+                gameManager->menuMusic->play();
+                pause();
+            }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) player->switchWeapon();
         }
 
@@ -262,6 +273,24 @@ void StatePlayGame::reset()
 void StatePlayGame::update(float deltaTime)
 {
     handleInput(deltaTime);
+
+    // Music 
+    if (gameManager->gameMusic->getStatus() == sf::SoundSource::Status::Stopped)
+    {
+        if (gameManager->isfirstMusic == true)
+        {
+            gameManager->isfirstMusic != gameManager->isfirstMusic;
+            gameManager->gameMusic->openFromFile("../PoutineStyle/Music/GameMusic2.wav");
+            gameManager->gameMusic->play();
+        }
+        else
+        {
+            gameManager->isfirstMusic != gameManager->isfirstMusic;
+            gameManager->gameMusic->openFromFile("../PoutineStyle/Music/GameMusic1.wav");
+            gameManager->gameMusic->play();
+
+        }
+    }
 
     // Player controls
     sf::Vector2f newPlayerPos;
@@ -378,7 +407,11 @@ void StatePlayGame::drawMap2D()
         {
             block.setPosition(float(j * blockWidth), float(i * blockHeight));
 
-            if (map[i][j] == 'E' || map[i][j] == 'G' || map[i][j] == 'C' || map[i][j] == 'L') // needs a fastest way to test if there's more cases. [ O(n^2) ]
+            if (map[i][j] == 'C' || map[i][j] == 'L') 
+            {
+                block.setFillColor(sf::Color::Green);
+            }
+            else if (map[i][j] == 'E' || map[i][j] == 'G')
             {
                 block.setFillColor(sf::Color::Blue);
             }
@@ -390,9 +423,9 @@ void StatePlayGame::drawMap2D()
             {
                 block.setFillColor(sf::Color::Black);
             }
-            else if (map[i][j] == 'T' || map[i][j] == 'S')
+            else if (map[i][j] == 'T' || map[i][j] == 'm')
             {
-                block.setFillColor(sf::Color::White);
+                block.setFillColor(sf::Color::Magenta);
             }
             else {
                 block.setFillColor(sf::Color::Red);
