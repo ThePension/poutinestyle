@@ -407,7 +407,11 @@ void StatePlayGame::drawMap2D()
         {
             block.setPosition(float(j * blockWidth), float(i * blockHeight));
 
-            if (map[i][j] == 'E' || map[i][j] == 'G' || map[i][j] == 'C' || map[i][j] == 'L') // needs a fastest way to test if there's more cases. [ O(n^2) ]
+            if (map[i][j] == 'C' || map[i][j] == 'L') 
+            {
+                block.setFillColor(sf::Color::Green);
+            }
+            else if (map[i][j] == 'E' || map[i][j] == 'G')
             {
                 block.setFillColor(sf::Color::Blue);
             }
@@ -419,9 +423,9 @@ void StatePlayGame::drawMap2D()
             {
                 block.setFillColor(sf::Color::Black);
             }
-            else if (map[i][j] == 'T' || map[i][j] == 'S')
+            else if (map[i][j] == 'T' || map[i][j] == 'm')
             {
-                block.setFillColor(sf::Color::White);
+                block.setFillColor(sf::Color::Magenta);
             }
             else {
                 block.setFillColor(sf::Color::Red);
