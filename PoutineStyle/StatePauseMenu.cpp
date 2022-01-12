@@ -8,9 +8,15 @@ StatePauseMenu::StatePauseMenu(GameManager* game)
 	w = gameManager->getWindowWidth();
 	h = gameManager->getWindowHeight();
 
-	playButton = Button(sf::Vector2i(int(w / 2 - 75), int(1.5 * (h / 4) - 25)), 150, 50, sf::Color::Red, L"Reprendre", gameManager->getRenderWindow());
-	backToMainMenu = Button(sf::Vector2i(int(w / 2 - 75), int(2.5 * (h / 4) - 25)), 150, 50, sf::Color::Red, L"Menu principal", gameManager->getRenderWindow());
-	quitButton = Button(sf::Vector2i(int(w / 2 - 75), int(3.5 * (h / 4) - 25)), 150, 50, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
+	playButton = Button(sf::Vector2i(int(w / 2 - 75), int(1.5 * (h / 4) - 25)), 150, 50, sf::Color::Black, L"Reprendre", gameManager->getRenderWindow());
+	backToMainMenu = Button(sf::Vector2i(int(w / 2 - 75), int(2.5 * (h / 4) - 25)), 150, 50, sf::Color::Black, L"Menu principal", gameManager->getRenderWindow());
+	quitButton = Button(sf::Vector2i(int(w / 2 - 75), int(3.5 * (h / 4) - 25)), 150, 50, sf::Color::Black, L"Quitter", gameManager->getRenderWindow());
+
+	if (bgTexture.loadFromFile("../PoutineStyle/pics/mainMenuBackground.jpg"))
+	{
+		bgSprite.setTexture(bgTexture);
+	}
+	else std::cout << "Failed to load GameOverMenu failed background image" << std::endl;
 }
 
 StatePauseMenu::~StatePauseMenu() {}
@@ -48,6 +54,9 @@ void StatePauseMenu::update(float deltaTime)
 
 void StatePauseMenu::draw(double deltaTime)
 {
+	// Draw background image
+	gameManager->getRenderWindow()->draw(bgSprite);
+
 	sf::Font font = gameManager->getFont();
 
 	pause = sf::Text("Pause", font, 35);
