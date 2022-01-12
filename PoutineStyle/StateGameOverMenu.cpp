@@ -6,8 +6,17 @@ StateGameOverMenu::StateGameOverMenu(GameManager* game, bool win) {
 	w = gameManager->getWindowWidth();
 	h = gameManager->getWindowHeight();
 
-	replayButton = Button(sf::Vector2i(w / 2 - 75, 2 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Rejouer", gameManager->getRenderWindow());
-	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
+	replayButton = Button(sf::Vector2i(w / 2 - 75, 2 * (h / 4) + 75), 150, 50, sf::Color::Red, L"Rejouer", gameManager->getRenderWindow());
+	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) + 25), 150, 50, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
+
+	if (!win) {
+		if (bgTexture.loadFromFile("../PoutineStyle/pics/GameOver.png"))
+		{
+			bgSprite.setTexture(bgTexture);
+			bgSprite.setScale(0.5, 0.5);
+		}
+		else std::cout << "Failed to load GameOverMenu background image" << std::endl;
+	}
 }
 StateGameOverMenu::~StateGameOverMenu() {
 
@@ -42,6 +51,9 @@ void StateGameOverMenu::update(float deltaTime)
 
 void StateGameOverMenu::draw(double deltatime)
 {
+	// Draw background image
+	gameManager->getRenderWindow()->draw(bgSprite);
+
 	sf::Font font = gameManager->getFont();
 
 	text.setFont(font);
@@ -49,15 +61,10 @@ void StateGameOverMenu::draw(double deltatime)
 	if (win)
 	{
 		text.setString("VICTOIRE !!!");
-	}
-	else
-	{
-		text.setString("DEFAITE ...");
-	}
-	
-	text.setFillColor(sf::Color::White);
-	text.setPosition(sf::Vector2f(w / 2 - 57.f, 1 * (h / 4) - 25.f));
-	gameManager->getRenderWindow()->draw(text);
+		text.setFillColor(sf::Color::White);
+		text.setPosition(sf::Vector2f(w / 2 - 57.f, 1 * (h / 4) - 25.f));
+		gameManager->getRenderWindow()->draw(text);
+	}	
 
 	replayButton.draw();
 	quitButton.draw();
