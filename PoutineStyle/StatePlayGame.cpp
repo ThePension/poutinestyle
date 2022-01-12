@@ -73,8 +73,8 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
     lines = new sf::VertexArray(sf::Lines, 2 * gameManager->getWindowWidth()); // Must be bigger if we want to draw floors and ceilings
     linesOverride = new sf::VertexArray(sf::Lines, 2);
 
-    blockWidth = gameManager->getWindowWidth() / mapSize;
-    blockHeight = gameManager->getWindowHeight() / mapSize;
+    blockWidth = gameManager->getWindowWidth() / (mapSize*1.f);
+    blockHeight = gameManager->getWindowHeight() / (mapSize*1.f);
 
     map = new char*[mapSize];
     for (int i = 0; i < mapSize; i++)

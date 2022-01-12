@@ -49,8 +49,8 @@ private:
 	int mapSize;
 	int movingSpeed = 3;
 	int movingSpeedSPrint = 150;
-	int blockWidth;
-	int blockHeight;
+	float blockWidth;
+	float blockHeight;
 	int textureSize = 256;
 	int yOffset = 50;
 	float speedFactor = 5;
