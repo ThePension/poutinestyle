@@ -1,9 +1,10 @@
 #include "Door.h"
 
-Door::Door(sf::Vector2f pos, int frameCount, int y, double frameDuration, bool isDestructible, bool isSecretPassage)
+Door::Door(sf::Vector2f pos, int frameCount, int y, double frameDuration, bool isDestructible, bool isSecretPassage, bool isLift)
 	: Wall(pos, frameCount, y, frameDuration, isDestructible)
 {
 	this->isSecretPassage = isSecretPassage;
+	this->isLift = isLift;
 	this->isTransparent = false;
 }
 

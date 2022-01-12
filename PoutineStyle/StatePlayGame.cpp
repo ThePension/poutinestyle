@@ -712,7 +712,7 @@ void StatePlayGame::renderingEntities(double dt) {
         }
         else if (typeid(*InteractedEntity).name() == typeid(Door).name()) {
             Door* door = static_cast<Door*>(InteractedEntity);
-            if (door->getIsSecretPassage()) {
+            if (door->getIsSecretPassage() || door->getIsLift()) {
                 door->setOpening();
             }
             else {
@@ -733,48 +733,6 @@ void StatePlayGame::renderingEntities(double dt) {
             }
             InteractedEntity = nullptr;
         }
-        else if (typeid(*InteractedEntity).name() == typeid(PNJ).name())
-        {
-            // from a level to another 
-            if (this->actualLevel != this->levels.end())
-            {
-                delete[] *(this->map);
-                delete[] this->map;
-                map = nullptr;
-
-                player->clearKeys();
-                player->increaseScore(20);
-
-                cleanAllEntitys();
-
-                this->mapFilePath = "Map/" + this->actualLevel->first;
-                this->mapSize = this->actualLevel->second;
-
-                this->actualLevel++;
-
-                this->blockWidth = gameManager->getWindowWidth() / mapSize;
-                this->blockHeight = gameManager->getWindowHeight() / mapSize;
-
-                map = new char* [mapSize];
-                for (int i = 0; i < mapSize; i++)
-                {
-                    map[i] = new char[mapSize];
-                    for (int j = 0; j < mapSize; j++)
-                    {
-                        map[i][j] = '0';
-                    }
-                }
-                parseMap2D();
-
-                InteractedEntity = nullptr;
-                return;
-            }
-            else
-            {
-                this->isFinished = true;
-            }
-        }
-
         else if (typeid(*InteractedEntity).name() == typeid(Pistol).name() || typeid(*InteractedEntity).name() == typeid(Shotgun).name() || typeid(*InteractedEntity).name() == typeid(Uzi).name() || typeid(*InteractedEntity).name() == typeid(GrenadeLauncher).name())
         {
             bool sameWeaponType = typeid(*InteractedEntity).name() == typeid(*player->getCurrentWeapon()).name();            
@@ -899,12 +857,56 @@ void StatePlayGame::renderingEntities(double dt) {
                 }
                 else if (typeid(*entity).name() == typeid(Door).name()) {
                     // Remove open door
+                    Door* door = dynamic_cast<Door*>(entity);
                     if (entity->getToRemove()) {
-                        entityMap[(int)entity->mapPos.x][(int)entity->mapPos.y] = nullptr;
-                        map[(int)entity->mapPos.y][(int)entity->mapPos.x] = '0';
-                        entities.remove(entity);
-                        delete entity; entity = nullptr;
                         player->increaseScore(5);
+                        if (door->getIsLift()) {
+                            // Pass to the next  level
+                            // from a level to another 
+                            if (this->actualLevel != this->levels.end())
+                            {
+                                delete[] * (this->map);
+                                delete[] this->map;
+                                map = nullptr;
+
+                                player->clearKeys();
+                                player->increaseScore(20);
+
+                                cleanAllEntitys();
+
+                                this->mapFilePath = "Map/" + this->actualLevel->first;
+                                this->mapSize = this->actualLevel->second;
+
+                                this->actualLevel++;
+
+                                this->blockWidth = gameManager->getWindowWidth() / mapSize;
+                                this->blockHeight = gameManager->getWindowHeight() / mapSize;
+
+                                map = new char* [mapSize];
+                                for (int i = 0; i < mapSize; i++)
+                                {
+                                    map[i] = new char[mapSize];
+                                    for (int j = 0; j < mapSize; j++)
+                                    {
+                                        map[i][j] = '0';
+                                    }
+                                }
+                                parseMap2D();
+
+                                InteractedEntity = nullptr;
+                                return;
+                            }
+                            else
+                            {
+                                this->isFinished = true;
+                            }
+                        }
+                        else {
+                            entityMap[(int)entity->mapPos.x][(int)entity->mapPos.y] = nullptr;
+                            map[(int)entity->mapPos.y][(int)entity->mapPos.x] = '0';
+                            entities.remove(entity);
+                            delete entity; entity = nullptr;
+                        }
                     }
                 }
             }
@@ -1001,6 +1003,7 @@ void StatePlayGame::parseMap2D()
                 int nbFrames = 1;
                 bool isDoor = false;
                 bool isSecretPassage = false;
+                bool isLift = false;
                 bool isDestructible = false;
                 switch (map[indexX][indexY])
                 {
@@ -1023,6 +1026,8 @@ void StatePlayGame::parseMap2D()
                     y = 4;
                     break;
                 case '5': // Elevator
+                    isDoor = true;
+                    isLift = true;
                     y = 5;
                     break;
                 //Regular
@@ -1097,6 +1102,8 @@ void StatePlayGame::parseMap2D()
                     isDoor = true;
                     break;
                 case 'm': // Elevator 
+                    isDoor = true;
+                    isLift = true;
                     y = 28;
                     break;
                 case 'M': // Bookshell 1
@@ -1121,7 +1128,7 @@ void StatePlayGame::parseMap2D()
                     break;
                 }
                 Wall* wall;
-                if (isDoor) wall = new Door(sf::Vector2f((float)indexY, (float)indexX), 4, y, 0.1, false, isSecretPassage);
+                if (isDoor) wall = new Door(sf::Vector2f((float)indexY, (float)indexX), 4, y, 0.3, false, isSecretPassage, isLift);
                 else wall = new Wall(sf::Vector2f((float)indexY, (float)indexX), nbFrames, y, 0.3, isDestructible);
                 entityMap[indexY][indexX] = wall;
                 entities.push_back(wall);
@@ -1150,11 +1157,6 @@ void StatePlayGame::parseMap2D()
                 Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 4, 1), 'Z');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
-            }
-            else if (map[indexX][indexY] == 'S') {
-                PNJ* pnj = new PNJ(sf::Vector2f((float)indexY, (float)indexX));
-                entityMap[indexY][indexX] = pnj;
-                entities.push_back(pnj);
             }
             else if (map[indexX][indexY] == 'L') {
 

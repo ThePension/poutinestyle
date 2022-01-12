@@ -15,7 +15,6 @@
 #include "StatePauseMenu.h"
 #include "StateGameOverMenu.h"
 #include "Key.h"
-#include "PNJ.h"
 #include "StateMainMenu.h"
 #include "Shotgun.h"
 #include "Guard.h"
