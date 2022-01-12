@@ -1,5 +1,11 @@
 #include "StateMainMenu.h"
 StateMainMenu::StateMainMenu(GameManager * game) {
+
+	// Music
+	sf::Music mainMenuMusic;
+	mainMenuMusic.openFromFile("../PoutineStyle/Music/MainMenuMusic.wav");
+	mainMenuMusic.play();
+
 	this->gameManager = game;
 
 	// Create buttons

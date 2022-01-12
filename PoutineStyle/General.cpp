@@ -22,6 +22,8 @@ std::stack<Bullet*> General::shoot(sf::Vector2f direction, sf::Vector2f playerPo
 		yNoise = AnimatedVertexArray::map(yNoise, 0, 0.1, -0.1, 0.1);
 		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise, direction.y + yNoise);
 
+		generalShot.play();
+
 		// Create a bullet
 		sf::Vector2f bulletPos1 = sf::Vector2f((this->mapPos.x), (this->mapPos.y));
 		Bullet* bullet1 = new Bullet(1, bulletPos1, directionWithNoise, false);
