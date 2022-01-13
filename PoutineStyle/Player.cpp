@@ -11,14 +11,22 @@ Player::Player() {
 	emptyGunBuffer.loadFromFile("../PoutineStyle/Sound/EmptyGun.wav");
 	gunShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerGunShot.wav");
 	shotgunShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerShotgun.wav");
-	uziSingleShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerUziSingle.wav");
-	uziMultipleShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerUziMultiple.wav");
+	uziShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerUziShot.wav");
+	grenadLauncherBuffer.loadFromFile("../PoutineStyle/Sound/PlayerGrenadLauncher.wav");
+	gunReloadBuffer.loadFromFile("../PoutineStyle/Sound/ReloadGun.wav");
+	shotgunReloadBuffer.loadFromFile("../PoutineStyle/Sound/ReloadShotgun.wav");
+	uziReloadBuffer.loadFromFile("../PoutineStyle/Sound/ReloadUzi.wav");
+	grenadeLauncherReloadBuffer.loadFromFile("../PoutineStyle/Sound/ReloadGrenadLauncher.wav");
 	knifeSound.setBuffer(knifeBuffer);
 	emptyGun.setBuffer(emptyGunBuffer);
 	gunShot.setBuffer(gunShotBuffer);
 	shotgunShot.setBuffer(shotgunShotBuffer);
-	uziSingleShot.setBuffer(uziSingleShotBuffer);
-	uziMultipleShot.setBuffer(uziMultipleShotBuffer);
+	uziShot.setBuffer(uziShotBuffer);
+	grenadLauncher.setBuffer(grenadLauncherBuffer);
+	gunReload.setBuffer(gunReloadBuffer);
+	shotgunReload.setBuffer(shotgunReloadBuffer);
+	uziReload.setBuffer(uziReloadBuffer);
+	grenadeLauncherReload.setBuffer(grenadeLauncherReloadBuffer);
 }
 
 Player::~Player()
@@ -118,7 +126,14 @@ std::stack<Bullet*> Player::shoot(sf::Vector2f direction){
 	{
 		bullets = currentWeapon->shoot(direction, this->position);
 		currentAmmunition -= bullets.size();
-		uziSingleShot.play();
+		uziShot.play();
+		return bullets;
+	}
+	else if (Player::currentAmmunition > 0 && typeid(*this->currentWeapon).name() == typeid(GrenadeLauncher).name())
+	{
+		bullets = currentWeapon->shoot(direction, this->position);
+		currentAmmunition -= bullets.size();
+		grenadLauncher.play();
 		return bullets;
 	}
 	else if (typeid(*this->currentWeapon).name() == typeid(Knife).name())
@@ -133,11 +148,12 @@ std::stack<Bullet*> Player::shoot(sf::Vector2f direction){
 
 std::stack<Bullet*> Player::burstShooting(sf::Vector2f direction) {
 	std::stack<Bullet*> bullets;
+	if (Player::currentAmmunition == 0 ) emptyGun.play();
 	if (Player::currentAmmunition > 0)
 	{
 		bullets = dynamic_cast <Uzi*>(currentWeapon)->burstShooting (direction, this->position);
 		currentAmmunition -= bullets.size();
-		uziMultipleShot.play();
+		uziShot.play();
 		return bullets;
 	}
 	return bullets;
@@ -164,6 +180,11 @@ void Player::reload()
 	if (ammunition > 0)
 	{		
 		nbChargers--;
+		
+		if(typeid(*this->currentWeapon).name() == typeid(Pistol).name()) gunReload.play();
+		else if (typeid(*this->currentWeapon).name() == typeid(Shotgun).name()) shotgunReload.play();
+		else if (typeid(*this->currentWeapon).name() == typeid(Uzi).name()) uziReload.play();
+		else if (typeid(*this->currentWeapon).name() == typeid(GrenadeLauncher).name()) grenadeLauncherReload.play();
 
 		if (ammunition >= this->chargerCapacity)
 		{

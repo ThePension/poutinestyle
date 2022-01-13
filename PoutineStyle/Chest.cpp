@@ -17,6 +17,9 @@ Chest::Chest(sf::Vector2f pos, int dropNumber) : Entity(1, pos, true) {
 			droppedEntity->mapPos = this->mapPos;
 			break;
 	}
+
+	openingChestBuffer.loadFromFile("../PoutineStyle/Sound/ChestOpening.wav");
+	openingChest.setBuffer(openingChestBuffer);
 }
 Chest::~Chest()
 {
@@ -27,6 +30,7 @@ void Chest::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f 
 	if (toDraw) {
 		if (isOpening) { // Opening chest
 			this->OpeningAnimVA->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
+
 		}
 		else if (!isOpen) { // Closed chest
 			this->ClosedChestAnimVA->draw(target, this->mapPos, playerPos, playerDir, playerPlaneVec, ZBuffer, viewWidth, viewHeight);
@@ -41,4 +45,10 @@ void Chest::update(float dt) {
 			this->toRemove = true;
 		}
 	}
+}
+
+void Chest::setIsOpening()
+{
+	isOpening = true;
+	openingChest.play();
 }

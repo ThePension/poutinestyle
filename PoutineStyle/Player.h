@@ -28,19 +28,17 @@ private:
 	int nbChargers = 4; // new
 	int score = 0;
 
-	//sound
+	// Sound 
+	// Shot
+	sf::SoundBuffer gunShotBuffer, shotgunShotBuffer, uziShotBuffer, grenadLauncherBuffer, knifeBuffer;
+	sf::Sound gunShot, shotgunShot, uziShot, knifeSound, grenadLauncher;
+	// Reloading
+	sf::SoundBuffer gunReloadBuffer, shotgunReloadBuffer, uziReloadBuffer, grenadeLauncherReloadBuffer;
+	sf::Sound gunReload, shotgunReload, uziReload, grenadeLauncherReload;
+	// Other
 	sf::SoundBuffer emptyGunBuffer;
-	sf::SoundBuffer gunShotBuffer;
-	sf::SoundBuffer shotgunShotBuffer;
-	sf::SoundBuffer uziSingleShotBuffer;
-	sf::SoundBuffer uziMultipleShotBuffer;
-	sf::SoundBuffer knifeBuffer;
 	sf::Sound emptyGun;
-	sf::Sound gunShot;
-	sf::Sound shotgunShot;
-	sf::Sound uziSingleShot;
-	sf::Sound uziMultipleShot;
-	sf::Sound knifeSound;
+
 
 public:
 	// Constructors

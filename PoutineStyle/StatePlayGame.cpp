@@ -19,13 +19,27 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
     game->gameMusic->setVolume(this->settings.getVolume());
     game->menuMusic->setVolume(this->settings.getVolume());
 
+    // Sound
+    openingDoorBuffer.loadFromFile("../PoutineStyle/Sound/DoorOpening.wav");
+    openingElevatorBuffer.loadFromFile("../PoutineStyle/Sound/ElevatorOpening.wav");
+    lockedDoorBuffer.loadFromFile("../PoutineStyle/Sound/DoorLocked.wav");
+    secretPassageBuffer.loadFromFile("../PoutineStyle/Sound/SecretDoorOpening.wav");
+    pickUpObjectBuffer.loadFromFile("../PoutineStyle/Sound/PickUp.wav");
+    pickUpKeyBuffer.loadFromFile("../PoutineStyle/Sound/KeyPickUp.wav");
+    pickUpAmmoBuffer.loadFromFile("../PoutineStyle/Sound/PickUpAmmo.wav");
+    openingDoor.setBuffer(openingDoorBuffer);
+    openingElevator.setBuffer(openingElevatorBuffer);
+    lockedDoor.setBuffer(lockedDoorBuffer);
+    secretPassage.setBuffer(secretPassageBuffer);
+    pickUpObject.setBuffer(pickUpObjectBuffer);
+    pickUpKey.setBuffer(pickUpKeyBuffer);
+    pickUpAmmo.setBuffer(pickUpAmmoBuffer);
+
     switch (this->settings.getLevel())
     {
     case 0:
-        mapFilePath = "Map_Example3.txt";
+        mapFilePath = "Lvl1.txt";
         mapSize = 32;
-        //this->levels.insert(std::pair<std::string, int>("Map_Example3.txt", 32));
-        this->levels.insert(std::pair<std::string, int>("Lvl1.txt", 16));
         this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
         this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
         this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
@@ -423,7 +437,7 @@ void StatePlayGame::drawMap2D()
             {
                 block.setFillColor(sf::Color::Black);
             }
-            else if (map[i][j] == 'T' || map[i][j] == 'm')
+            else if (map[i][j] == 'T' || map[i][j] == 'm' || map[i][j] == '5')
             {
                 block.setFillColor(sf::Color::Magenta);
             }
@@ -478,14 +492,17 @@ void StatePlayGame::drawMiniMap()
                 else {
                     cell.setFillColor(sf::Color::White);
                 }
-                if (charCell == 'D' ||
-                    charCell == 'V' ||
+                if (charCell == 'V' ||
                     charCell == 'W' ||
                     charCell == 'X' ||
                     charCell == 'Y' ||
                     charCell == 'Z') 
                 {
-                    cell.setFillColor(sf::Color(125, 125, 125, 255));
+                    cell.setFillColor(sf::Color::Yellow);
+                }
+                else if (charCell == 'T' || charCell == 'm' || charCell == '5')
+                {
+                    cell.setFillColor(sf::Color::Magenta);
                 }
             }else{
                 cell.setFillColor(sf::Color::Black);
@@ -710,6 +727,8 @@ void StatePlayGame::renderingEntities(double dt) {
             InteractedEntity = nullptr;
         }
         else if (typeid(*InteractedEntity).name() == typeid(Medikit).name()) {
+            pickUpObject.play();
+
             // Delete Medikit Entity
             entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
             map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
@@ -721,6 +740,8 @@ void StatePlayGame::renderingEntities(double dt) {
             player->increaseScore(2);
         }
         else if (typeid(*InteractedEntity).name() == typeid(Ammo).name()) {
+            pickUpAmmo.play();
+
             // Delete Ammo Entity
             entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
             map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
@@ -732,6 +753,8 @@ void StatePlayGame::renderingEntities(double dt) {
             player->increaseScore(2);
         }
         else if (typeid(*InteractedEntity).name() == typeid(Key).name()) {
+            pickUpKey.play();
+
             // Delete Key Entity
             entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
             map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
@@ -745,7 +768,13 @@ void StatePlayGame::renderingEntities(double dt) {
         }
         else if (typeid(*InteractedEntity).name() == typeid(Door).name()) {
             Door* door = static_cast<Door*>(InteractedEntity);
-            if (door->getIsSecretPassage() || door->getIsLift()) {
+            lockedDoor.play();
+            if (door->getIsSecretPassage()) {
+                secretPassage.play();
+                door->setOpening();
+            }
+            else if (door->getIsLift()){
+                openingElevator.play();
                 door->setOpening();
             }
             else {
@@ -753,6 +782,7 @@ void StatePlayGame::renderingEntities(double dt) {
                 for (Key* key : player->getPlayerKeys()) {
                     if (map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] == key->getKeyCode())
                     {
+                        openingDoor.play();
                         door->setOpening();
                         keyToRemove = key;
                     }
@@ -772,6 +802,8 @@ void StatePlayGame::renderingEntities(double dt) {
 
             if (sameWeaponType)
             {
+                pickUpAmmo.play();
+
                 entityMap[(int)InteractedEntity->mapPos.x][(int)InteractedEntity->mapPos.y] = nullptr;
                 map[(int)InteractedEntity->mapPos.y][(int)InteractedEntity->mapPos.x] = '0';
                 entities.remove(InteractedEntity);
@@ -781,6 +813,8 @@ void StatePlayGame::renderingEntities(double dt) {
             }
             else
             {
+                pickUpObject.play();
+
                 Weapon* weapon = static_cast<Weapon*>(InteractedEntity);
                 Weapon* oldWeapon = player->setWeapon(weapon);
 

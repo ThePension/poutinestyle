@@ -81,6 +81,10 @@ private:
 	// HUD static stuff
 	sf::RectangleShape * hudUp, * hudDownL, * hudDownML, * hudDownM, * hudDownMR, * hudDownR;
 
+	// Sound
+	sf::SoundBuffer openingDoorBuffer, openingElevatorBuffer, lockedDoorBuffer, secretPassageBuffer, pickUpObjectBuffer, pickUpKeyBuffer, pickUpAmmoBuffer;
+	sf::Sound openingDoor, openingElevator, lockedDoor, secretPassage, pickUpObject, pickUpKey, pickUpAmmo;
+
 
 	void draw(double dt) override;
 	void handleInput(double deltatime) override;

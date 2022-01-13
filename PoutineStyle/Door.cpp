@@ -6,6 +6,8 @@ Door::Door(sf::Vector2f pos, int frameCount, int y, double frameDuration, bool i
 	this->isSecretPassage = isSecretPassage;
 	this->isLift = isLift;
 	this->isTransparent = false;
+
+
 }
 
 Door::~Door()

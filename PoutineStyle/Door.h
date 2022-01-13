@@ -1,5 +1,7 @@
 #pragma once
 #include "Wall.h"
+#include <SFML/Audio.hpp>
+
 class Door : public Wall
 {
 public:
@@ -14,5 +16,6 @@ private:
 	bool isOpening = false;
 	bool isSecretPassage = false;
 	bool isLift = false;
+
 };
 
