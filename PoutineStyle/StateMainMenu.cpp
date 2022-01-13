@@ -12,32 +12,38 @@ StateMainMenu::StateMainMenu(GameManager * game) {
 	int w = gameManager->getWindowWidth();
 	int h = gameManager->getWindowHeight();
 
-	playButton = Button(sf::Vector2i(w / 2 - 75, 1*(h / 4) - 25), 150, 50, sf::Color::Red, L"Jouer", gameManager->getRenderWindow());
-	settingsButton = Button(sf::Vector2i(w / 2 - 75, 2 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Parametres", gameManager->getRenderWindow());
-	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) - 25), 150, 50, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
+	playButton = Button(sf::Vector2i(w / 2 - 75, 1*(h / 4) - 25), 150, 50, sf::Color::Black, L"Jouer", gameManager->getRenderWindow());
+	settingsButton = Button(sf::Vector2i(w / 2 - 75, 2 * (h / 4) - 25), 150, 50, sf::Color::Black, L"Parametres", gameManager->getRenderWindow());
+	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) - 25), 150, 50, sf::Color::Black, L"Quitter", gameManager->getRenderWindow());
 
-	this->btnLevelAuto = Button(sf::Vector2i(w / 2 - 160, 1 * (h / 7) - 25), 70, 50, sf::Color::Red, L"auto", gameManager->getRenderWindow());
-	this->btnLevel1 = Button(sf::Vector2i(w / 2 - 160 + 90, 1 * (h / 7) - 25), 40, 50, sf::Color::Red, L"1", gameManager->getRenderWindow());
-	this->btnLevel2 = Button(sf::Vector2i(w / 2 - 160 + 90 + 60, 1 * (h / 7) - 25), 40, 50, sf::Color::Red, L"2", gameManager->getRenderWindow());
-	this->btnLevel3 = Button(sf::Vector2i(w / 2 - 160 + 90 + 2*60, 1 * (h / 7) - 25), 40, 50, sf::Color::Red, L"3", gameManager->getRenderWindow());
-	this->btnLevel4 = Button(sf::Vector2i(w / 2 - 160 + 90 + 3*60, 1 * (h / 7) - 25), 40, 50, sf::Color::Red, L"4", gameManager->getRenderWindow());
-	this->btnLevel5 = Button(sf::Vector2i(w / 2 - 160 + 90 + 4*60, 1 * (h / 7) - 25), 40, 50, sf::Color::Red, L"5", gameManager->getRenderWindow());
+	this->btnLevelAuto = Button(sf::Vector2i(w / 2 - 160, 1 * (h / 7) - 25), 70, 50, sf::Color::Black, L"auto", gameManager->getRenderWindow());
+	this->btnLevel1 = Button(sf::Vector2i(w / 2 - 160 + 90, 1 * (h / 7) - 25), 40, 50, sf::Color::Black, L"1", gameManager->getRenderWindow());
+	this->btnLevel2 = Button(sf::Vector2i(w / 2 - 160 + 90 + 60, 1 * (h / 7) - 25), 40, 50, sf::Color::Black, L"2", gameManager->getRenderWindow());
+	this->btnLevel3 = Button(sf::Vector2i(w / 2 - 160 + 90 + 2*60, 1 * (h / 7) - 25), 40, 50, sf::Color::Black, L"3", gameManager->getRenderWindow());
+	this->btnLevel4 = Button(sf::Vector2i(w / 2 - 160 + 90 + 3*60, 1 * (h / 7) - 25), 40, 50, sf::Color::Black, L"4", gameManager->getRenderWindow());
+	this->btnLevel5 = Button(sf::Vector2i(w / 2 - 160 + 90 + 4*60, 1 * (h / 7) - 25), 40, 50, sf::Color::Black, L"5", gameManager->getRenderWindow());
 
-	this->btnMetaDataON = Button(sf::Vector2i(w / 2 - 25, 2 * (h / 7) - 25), 60, 50, sf::Color::Red, L"ON", gameManager->getRenderWindow());
-	this->btnMetaDataOFF = Button(sf::Vector2i(w / 2 - 25 + 80, 2 * (h / 7) - 25), 60, 50, sf::Color::Red, L"OFF", gameManager->getRenderWindow());
+	this->btnMetaDataON = Button(sf::Vector2i(w / 2 - 25, 2 * (h / 7) - 25), 60, 50, sf::Color::Black, L"ON", gameManager->getRenderWindow());
+	this->btnMetaDataOFF = Button(sf::Vector2i(w / 2 - 25 + 80, 2 * (h / 7) - 25), 60, 50, sf::Color::Black, L"OFF", gameManager->getRenderWindow());
 
-	this->btnSensibilitySlow = Button(sf::Vector2i(w / 2 - 120, 3 * (h / 7) - 25), 80, 50, sf::Color::Red, L"Lent", gameManager->getRenderWindow());
-	this->btnSensibilityNormal = Button(sf::Vector2i(w / 2 - 120 + 100, 3 * (h / 7) - 25), 90, 50, sf::Color::Red, L"Normal", gameManager->getRenderWindow());
-	this->btnSensibility4k = Button(sf::Vector2i(w / 2 - 120 + 100 + 110, 3 * (h / 7) - 25), 120, 50, sf::Color::Red, L"Special 4k", gameManager->getRenderWindow());
+	this->btnSensibilitySlow = Button(sf::Vector2i(w / 2 - 120, 3 * (h / 7) - 25), 80, 50, sf::Color::Black, L"Lent", gameManager->getRenderWindow());
+	this->btnSensibilityNormal = Button(sf::Vector2i(w / 2 - 120 + 100, 3 * (h / 7) - 25), 90, 50, sf::Color::Black, L"Normal", gameManager->getRenderWindow());
+	this->btnSensibility4k = Button(sf::Vector2i(w / 2 - 120 + 100 + 110, 3 * (h / 7) - 25), 120, 50, sf::Color::Black, L"Special 4k", gameManager->getRenderWindow());
 
-	this->btnDifficultyNoob = Button(sf::Vector2i(w / 2 - 120, 4 * (h / 7) - 25), 155, 50, sf::Color::Red, L"Sans talent", gameManager->getRenderWindow());
-	this->btnDifficultyPro = Button(sf::Vector2i(w / 2 - 120 + 175, 4 * (h / 7) - 25), 155, 50, sf::Color::Red, L"Fais moi mal", gameManager->getRenderWindow());
+	this->btnDifficultyNoob = Button(sf::Vector2i(w / 2 - 120, 4 * (h / 7) - 25), 155, 50, sf::Color::Black, L"Sans talent", gameManager->getRenderWindow());
+	this->btnDifficultyPro = Button(sf::Vector2i(w / 2 - 120 + 175, 4 * (h / 7) - 25), 155, 50, sf::Color::Black, L"Fais moi mal", gameManager->getRenderWindow());
 
-	this->btnVolume0 = Button(sf::Vector2i(w / 2 - 120, 5 * (h / 7) - 25), 50, 50, sf::Color::Red, L"0", gameManager->getRenderWindow());
-	this->btnVolume25 = Button(sf::Vector2i(w / 2 - 120 + 70, 5 * (h / 7) - 25), 50, 50, sf::Color::Red, L"25", gameManager->getRenderWindow());
-	this->btnVolume50 = Button(sf::Vector2i(w / 2 - 120 + 2*70, 5 * (h / 7) - 25), 50, 50, sf::Color::Red, L"50", gameManager->getRenderWindow());
-	this->btnVolume75 = Button(sf::Vector2i(w / 2 - 120 + 3*70, 5 * (h / 7) - 25), 50, 50, sf::Color::Red, L"75", gameManager->getRenderWindow());
-	this->btnVolume100 = Button(sf::Vector2i(w / 2 - 120 + 4*70, 5 * (h / 7) - 25), 50, 50, sf::Color::Red, L"100", gameManager->getRenderWindow());
+	this->btnVolume0 = Button(sf::Vector2i(w / 2 - 120, 5 * (h / 7) - 25), 50, 50, sf::Color::Black, L"0", gameManager->getRenderWindow());
+	this->btnVolume25 = Button(sf::Vector2i(w / 2 - 120 + 70, 5 * (h / 7) - 25), 50, 50, sf::Color::Black, L"25", gameManager->getRenderWindow());
+	this->btnVolume50 = Button(sf::Vector2i(w / 2 - 120 + 2*70, 5 * (h / 7) - 25), 50, 50, sf::Color::Black, L"50", gameManager->getRenderWindow());
+	this->btnVolume75 = Button(sf::Vector2i(w / 2 - 120 + 3*70, 5 * (h / 7) - 25), 50, 50, sf::Color::Black, L"75", gameManager->getRenderWindow());
+	this->btnVolume100 = Button(sf::Vector2i(w / 2 - 120 + 4*70, 5 * (h / 7) - 25), 50, 50, sf::Color::Black, L"100", gameManager->getRenderWindow());
+
+	if (bgTexture.loadFromFile("../PoutineStyle/pics/mainMenuBackground.jpg"))
+	{
+		bgSprite.setTexture(bgTexture);
+	}
+	else std::cout << "Failed to load GameOverMenu failed background image" << std::endl;
 }	
 
 StateMainMenu::~StateMainMenu() {
@@ -51,7 +57,7 @@ void StateMainMenu::handleInput(double deltatime) {
 		{
 			if (quitButton.isClicked())
 			{
-				this->quitButton = Button(sf::Vector2i(gameManager->getWindowWidth() / 2 - 75, 3 * (gameManager->getWindowHeight() / 4) - 25), 150, 50, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
+				this->quitButton = Button(sf::Vector2i(gameManager->getWindowWidth() / 2 - 75, 3 * (gameManager->getWindowHeight() / 4) - 25), 150, 50, sf::Color::Black, L"Quitter", gameManager->getRenderWindow());
 				this->settingsMode = false;
 			}
 			else if (btnLevelAuto.isClicked())
@@ -140,7 +146,7 @@ void StateMainMenu::handleInput(double deltatime) {
 			}
 			else if (settingsButton.isClicked()) {
 				this->settingsMode = true;
-				this->quitButton = Button(sf::Vector2i(gameManager->getWindowWidth() / 2 - 75, 6 * (gameManager->getWindowHeight() / 7)), 150, 50, sf::Color::Red, L"Enregistrer", gameManager->getRenderWindow());
+				this->quitButton = Button(sf::Vector2i(gameManager->getWindowWidth() / 2 - 75, 6 * (gameManager->getWindowHeight() / 7)), 150, 50, sf::Color::Black, L"Enregistrer", gameManager->getRenderWindow());
 			}
 			else if (quitButton.isClicked())
 			{
@@ -155,6 +161,9 @@ void StateMainMenu::update(float deltaTime) {
 	handleInput(deltaTime);
 }
 void StateMainMenu::draw(double deltatime) {
+	// Draw background image
+	gameManager->getRenderWindow()->draw(bgSprite);
+
 	if (this->settingsMode)
 	{
 		btnLevelAuto.draw();

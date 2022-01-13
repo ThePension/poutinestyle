@@ -12,7 +12,7 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
     }
 
     // Music
-    game->gameMusic->Stopped();
+    game->gameMusic->stop();
     game->menuMusic->pause();
     game->gameMusic->openFromFile("../PoutineStyle/Music/GameMusic1.wav");
     game->gameMusic->play();
