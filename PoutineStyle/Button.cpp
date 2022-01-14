@@ -92,10 +92,10 @@ void Button::selected(bool state)
 {
 	if (state)
 	{
-		bottomBorder.setFillColor(sf::Color::Green);
-		leftBorder.setFillColor(sf::Color::Green);
-		rightBorder.setFillColor(sf::Color::Green);
-		topBorder.setFillColor(sf::Color::Green);
+		bottomBorder.setFillColor(sf::Color::Color(255, 187,0));
+		leftBorder.setFillColor(sf::Color::Color(255, 187, 0));
+		rightBorder.setFillColor(sf::Color::Color(255, 187, 0));
+		topBorder.setFillColor(sf::Color::Color(255, 187, 0));
 	}
 	else
 	{

@@ -12,9 +12,10 @@ StatePauseMenu::StatePauseMenu(GameManager* game)
 	backToMainMenu = Button(sf::Vector2i(int(w / 2 - 75), int(2.5 * (h / 4) - 25)), 150, 50, sf::Color::Black, L"Menu principal", gameManager->getRenderWindow());
 	quitButton = Button(sf::Vector2i(int(w / 2 - 75), int(3.5 * (h / 4) - 25)), 150, 50, sf::Color::Black, L"Quitter", gameManager->getRenderWindow());
 
-	if (bgTexture.loadFromFile("../PoutineStyle/pics/mainMenuBackground.jpg"))
+	if (bgTexture.loadFromFile("../PoutineStyle/pics/mainMenuBackground.png"))
 	{
 		bgSprite.setTexture(bgTexture);
+		bgSprite.setScale(0.5, 0.5);
 	}
 	else std::cout << "Failed to load GameOverMenu failed background image" << std::endl;
 }
