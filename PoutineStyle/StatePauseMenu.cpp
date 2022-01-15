@@ -63,32 +63,52 @@ void StatePauseMenu::handleInput(double deltatime)
 		{
 			if (!bSettings)
 			{
-				if (playButton.isClicked())
+				if (!bWaitCommand)
 				{
-					gameManager->gameMusic->play();
-					gameManager->menuMusic->stop();
-					StatePlayGame* playGame = dynamic_cast<StatePlayGame*>(this->gameManager->peekState(1));
-					playGame->resume();
-					this->gameManager->popState();
-					return;
+					if (!bWaitSettings)
+					{
+						if (playButton.isClicked())
+						{
+							gameManager->gameMusic->play();
+							gameManager->menuMusic->stop();
+							StatePlayGame* playGame = dynamic_cast<StatePlayGame*>(this->gameManager->peekState(1));
+							playGame->resume();
+							this->gameManager->popState();
+							return;
+						}
+						else if (backToMainMenu.isClicked()) {
+							StateMainMenu* stateMainMenu = new StateMainMenu(this->gameManager);
+							this->gameManager->changeState(stateMainMenu);
+							return;
+						}
+						else if (quitButton.isClicked())
+						{
+							// Quit application
+							exit(0);
+						}
+						else if (btnSettings.isClicked())
+						{
+							bSettings = true;
+						}
+						else if (btnCommands.isClicked())
+						{
+							bCommands = true;
+						}
+					}
+					else
+					{
+						if (btnSave.isReleased())
+						{
+							bWaitSettings = false;
+						}
+					}
 				}
-				else if (backToMainMenu.isClicked()) {
-					StateMainMenu* stateMainMenu = new StateMainMenu(this->gameManager);
-					this->gameManager->changeState(stateMainMenu);
-					return;
-				}
-				else if (quitButton.isClicked())
+				else
 				{
-					// Quit application
-					exit(0);
-				}
-				else if (btnSettings.isClicked())
-				{
-					bSettings = true;
-				}
-				else if (btnCommands.isClicked())
-				{
-					bCommands = true;
+					if (btnReturn.isReleased())
+					{
+						bWaitCommand = false;
+					}
 				}
 			}
 			else
@@ -138,6 +158,7 @@ void StatePauseMenu::handleInput(double deltatime)
 				else if (btnSave.isClicked())
 				{
 					bSettings = false;
+					bWaitSettings = true;
 				}
 
 				this->play->setSettings(this->settings);
@@ -149,6 +170,7 @@ void StatePauseMenu::handleInput(double deltatime)
 			if (btnReturn.isClicked())
 			{
 				bCommands = false;
+				bWaitCommand = true;
 			}
 		}
 	}

@@ -13,7 +13,7 @@ class StatePauseMenu : public GameState
 		StatePlayGame* play;
 		int w, h;
 		Settings settings;
-		bool bCommands = false, bSettings = false;
+		bool bCommands = false, bSettings = false, bWaitCommand = false, bWaitSettings = false;
 
 		Button playButton;
 		Button backToMainMenu;

@@ -67,11 +67,25 @@ void Button::draw() {
 	this->window->draw(sfText);
 }
 bool Button::isClicked() {
-	if (this->isHovering()) {
-		return sf::Mouse::isButtonPressed(sf::Mouse::Left);
+	if (this->isHovering())
+	{
+		pressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+		return pressed;
 	}
 	else {
 		return false;
+	}
+}
+bool Button::isReleased()
+{
+	if (!pressed)
+	{
+		return true;
+	}
+	else
+	{
+		pressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+		return !sf::Mouse::isButtonPressed(sf::Mouse::Left);
 	}
 }
 
