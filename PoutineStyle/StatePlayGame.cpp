@@ -2,22 +2,18 @@
 
 StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string mapFilePath, int mapSize)
 {
-    // Settings
-    this->settings = settings;
-    this->speedFactor = float(this->settings.getSensibility());
-
-    if (this->settings.getDifficulty() == 2)
-    {
-        hard = true;
-    }
+    this->gameManager = game;
 
     // Music
-    game->gameMusic->stop();
-    game->menuMusic->pause();
-    game->gameMusic->openFromFile("../PoutineStyle/Music/GameMusic1.wav");
-    game->gameMusic->play();
-    game->gameMusic->setVolume(this->settings.getVolume());
-    game->menuMusic->setVolume(this->settings.getVolume());
+    this->gameManager->gameMusic->stop();
+    this->gameManager->menuMusic->pause();
+    this->gameManager->gameMusic->openFromFile("../PoutineStyle/Music/GameMusic1.wav");
+    this->gameManager->gameMusic->play();
+
+    // Settings
+    this->setSettings(settings);
+    this->settings = settings;
+    
 
     // Sound
     openingDoorBuffer.loadFromFile("../PoutineStyle/Sound/DoorOpening.wav");
@@ -76,8 +72,7 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
         player = new Player();
     }
     
-
-    this->gameManager = game;
+    
     this->mapFilePath = "Map/" + mapFilePath;
     this->mapSize = mapSize;
 
@@ -129,6 +124,28 @@ sf::Vector2f StatePlayGame::rotateVectorMatrix(sf::Vector2f v, double a) {
     resVec.x /= vecLen;
     resVec.y /= vecLen;*/
     return resVec;
+}
+
+void StatePlayGame::setSettings(Settings settings)
+{
+    this->speedFactor = float(settings.getSensibility());
+
+    if (settings.getDifficulty() == 2)
+    {
+        hard = true;
+    }
+
+    this->gameManager->gameMusic->setVolume(settings.getVolume());
+    this->gameManager->menuMusic->setVolume(settings.getVolume());
+
+    this->settings.setSensibility(settings.getSensibility());
+    this->settings.setDifficulty(settings.getDifficulty());
+    this->settings.setVolume(settings.getVolume());
+}
+
+Settings StatePlayGame::getSettings()
+{
+    return this->settings;
 }
 
 StatePlayGame::~StatePlayGame()
@@ -260,7 +277,7 @@ void StatePlayGame::pause()
     {
         isGamePaused = true;
         reset();
-        StatePauseMenu* statePauseMenu = new StatePauseMenu(this->gameManager);
+        StatePauseMenu* statePauseMenu = new StatePauseMenu(this->gameManager, this);
         this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
         this->gameManager->pushState(statePauseMenu);
     }

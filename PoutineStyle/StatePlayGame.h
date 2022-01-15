@@ -104,7 +104,7 @@ private:
 	int lootManagment(int *proba, int length);
 	sf::Vector2f rotateVectorMatrix(sf::Vector2f v, double angle);
 	Entity* getInteractedEntity();
-
+	
 	void cleanAllEntitys();
 	void bulletExplosion(int nextX, int nextY, int damage);
 
@@ -115,5 +115,9 @@ public:
 
 	void update(float deltaTime) override;
 	void resume();
+
+	Settings getSettings();
+	void setSettings(Settings settings);
+
 };
 

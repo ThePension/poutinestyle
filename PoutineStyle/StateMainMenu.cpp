@@ -136,6 +136,8 @@ void StateMainMenu::handleInput(double deltatime) {
 				settings.setVolume(100);
 			}
 
+			this->gameManager->gameMusic->setVolume(settings.getVolume());
+			this->gameManager->menuMusic->setVolume(settings.getVolume());
 			updateSelection();
 		}
 		else
