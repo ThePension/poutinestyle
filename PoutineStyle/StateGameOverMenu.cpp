@@ -67,6 +67,7 @@ void StateGameOverMenu::draw(double deltatime)
 
 	text.setFont(font);
 	text.setCharacterSize(34);
+	/*
 	if (win)
 	{
 		text.setString("VICTOIRE !!!");
@@ -74,6 +75,8 @@ void StateGameOverMenu::draw(double deltatime)
 		text.setPosition(sf::Vector2f(w / 2 - 57.f, 1 * (h / 4) - 25.f));
 		gameManager->getRenderWindow()->draw(text);
 	}	
+	*/
+	
 
 	replayButton.draw();
 	quitButton.draw();
