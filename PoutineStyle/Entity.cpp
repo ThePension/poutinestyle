@@ -36,6 +36,7 @@ bool Entity::isWall(char entityChar)
         entityChar == 'a' ||
         entityChar == 'A' ||
         entityChar == 'b' ||
+        entityChar == 'B' ||
         entityChar == 'd' ||
         entityChar == 'D' ||
         entityChar == 'f' ||

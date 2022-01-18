@@ -7,10 +7,10 @@ Guard::Guard(sf::Vector2f pos, int dropNumber)
 	this->HP = 5;
 }
 
-std::stack<Bullet*> Guard::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map)
+std::stack<Bullet*> Guard::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map, int mapSize)
 {
 	std::stack<Bullet*> bullets;
-	bool bIsPlayerVisible = isPlayerVisible(playerPos, map);
+	bool bIsPlayerVisible = isPlayerVisible(playerPos, map, mapSize);
 	if (shootAnimVA->getIsAnimationOver() && bIsPlayerVisible && !isDying) {
 		isShooting = true;
 		

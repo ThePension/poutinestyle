@@ -6,9 +6,9 @@ General::General(sf::Vector2f pos, int dropNumber)
 	this->HP = 10;
 }
 
-std::stack<Bullet*> General::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map)
+std::stack<Bullet*> General::shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map, int mapSize)
 {
-	bool bIsPlayerVisible = isPlayerVisible(playerPos, map);
+	bool bIsPlayerVisible = isPlayerVisible(playerPos, map, mapSize);
 	std::stack<Bullet*> bullets;
 	int currentRenderedFrameNum = this->getCurrentRenderedFrame();
 

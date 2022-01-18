@@ -62,7 +62,7 @@ void Ennemy::update(float dt) {
     }
 }
 
-bool Ennemy::isPlayerVisible(sf::Vector2f playerPos, char** map) {
+bool Ennemy::isPlayerVisible(sf::Vector2f playerPos, char** map, int mapSize) {
     // Get the player position relative to the ennemy position
     double playerMapPosX = playerPos.x; // = (double)this->mapPos.x - (double)playerPos.x;
     double playerMapPosY = playerPos.y; // = (double)this->mapPos.y - (double)playerPos.y;
@@ -102,7 +102,7 @@ bool Ennemy::isPlayerVisible(sf::Vector2f playerPos, char** map) {
     }
     
     // DDA algorithm
-    while (entityMapPos.x > 0 && entityMapPos.x < 32 && entityMapPos.y > 0 && entityMapPos.y < 32) {
+    while (entityMapPos.x > 0 && entityMapPos.x < mapSize  && entityMapPos.y > 0 && entityMapPos.y < mapSize) {
         if (sideDistX < sideDistY) {
             sideDistX += deltaDistX; // Always the same
             entityMapPos.x += stepX;

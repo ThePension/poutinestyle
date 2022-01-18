@@ -1018,7 +1018,7 @@ void StatePlayGame::renderingEntities(double dt) {
             double norm = sqrt(pow(bulletDir.x, 2) + pow(bulletDir.y, 2));
             // Get the unit vector
             sf::Vector2f bulletDirUnit = sf::Vector2f(bulletDir.x / float(norm), bulletDir.y / float(norm));
-            std::stack<Bullet*> bullets = ennemy->shoot(bulletDirUnit, this->player->position, this->map);
+            std::stack<Bullet*> bullets = ennemy->shoot(bulletDirUnit, this->player->position, this->map, this->mapSize);
             while (!bullets.empty()) {
                 Bullet* bullet = bullets.top();
                 if (bullet != nullptr) entities.push_back(bullet);
@@ -1135,7 +1135,7 @@ void StatePlayGame::parseMap2D()
                     break;
                 case 'b': // passage secret
                     y = 12;
-                    nbFrames = 6;
+                    nbFrames = 4;
                     isSecretPassage = true;
                     isDoor = true;
                     break;

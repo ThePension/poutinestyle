@@ -33,8 +33,8 @@ public:
 	~Ennemy() override;
 	void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) override;
 	void update(float dt) override;
-	virtual std::stack<Bullet*> shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map) = 0;
-	bool isPlayerVisible(sf::Vector2f playerPos, char** map);
+	virtual std::stack<Bullet*> shoot(sf::Vector2f direction, sf::Vector2f playerPos, char** map, int mapSize) = 0;
+	bool isPlayerVisible(sf::Vector2f playerPos, char** map, int mapSize);
 	void setIsDying() { this->isDying = true; this->isShooting = false; this->isWalking = false; }
 	bool getIsDying() { return this->isDying; }
 	Entity* getDroppedEntity() { return this->droppedEntity; }
