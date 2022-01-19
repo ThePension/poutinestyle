@@ -421,7 +421,7 @@ void StatePlayGame::endGameManagment()
 {
     if (player->getIsDead())
     {
-        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false);
+        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false, this->player->getScore());
         this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
         this->gameManager->changeState(gameOverMenu);
         return;
@@ -429,7 +429,7 @@ void StatePlayGame::endGameManagment()
 
     if (this->isFinished)
     {
-        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, true);
+        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, true, this->player->getScore());
         this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
         this->gameManager->changeState(gameOverMenu);
         return;

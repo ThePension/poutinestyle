@@ -8,6 +8,7 @@ private:
 	Button replayButton;
 	Button quitButton;
 	sf::Text text;
+	int player_score;
 
 	bool win;
 
@@ -18,7 +19,7 @@ protected:
 	void draw(double deltatime) override;
 
 public:
-	StateGameOverMenu(GameManager* game, bool win);
+	StateGameOverMenu(GameManager* game, bool win, int player_score);
 	~StateGameOverMenu();
 	void update(float deltaTime) override;
 };

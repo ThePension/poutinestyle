@@ -1,7 +1,9 @@
 #include "StateGameOverMenu.h"
-StateGameOverMenu::StateGameOverMenu(GameManager* game, bool win) {
+StateGameOverMenu::StateGameOverMenu(GameManager* game, bool win, int player_score)
+{
 	this->gameManager = game;
 	this->win = win;
+	this->player_score = player_score;
 
 	w = gameManager->getWindowWidth();
 	h = gameManager->getWindowHeight();
@@ -64,20 +66,25 @@ void StateGameOverMenu::draw(double deltatime)
 	gameManager->getRenderWindow()->draw(bgSprite);
 
 	sf::Font font = gameManager->getFont();
-
 	text.setFont(font);
-	text.setCharacterSize(34);
-	/*
+	text.setCharacterSize(30);
+
+	// Display score
+	std::string score = std::to_string(player_score);
+	sf::Text lblScore = sf::Text("Score : " + score, font);
+	lblScore.setFillColor(sf::Color::White);
+	lblScore.setPosition(sf::Vector2f(0, 0));
+
 	if (win)
 	{
-		text.setString("VICTOIRE !!!");
-		text.setFillColor(sf::Color::White);
-		text.setPosition(sf::Vector2f(w / 2 - 57.f, 1 * (h / 4) - 25.f));
-		gameManager->getRenderWindow()->draw(text);
-	}	
-	*/
-	
+		lblScore.setPosition(sf::Vector2f(300, 200));
+	}
+	else
+	{
+		lblScore.setPosition(sf::Vector2f(20, 20));
+	}
 
+	gameManager->getRenderWindow()->draw(lblScore);
 	replayButton.draw();
 	quitButton.draw();
 }
