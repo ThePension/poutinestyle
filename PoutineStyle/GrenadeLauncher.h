@@ -6,7 +6,7 @@ class Bullet;
 class GrenadeLauncher : public Weapon
 {
 private:
-	AnimatedVertexArray* grenadeLauncherAnim = new AnimatedVertexArray("../PoutineStyle/pics/GrenadeLauncher.png", 64, 64, 2, 1);
+	AnimatedVertexArray* grenadeLauncherAnim = new AnimatedVertexArray("Ressource/Picture/GrenadeLauncher.png", 64, 64, 2, 1);
 public:
 	GrenadeLauncher();
 	~GrenadeLauncher() override;

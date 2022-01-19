@@ -3,7 +3,7 @@ StateMainMenu::StateMainMenu(GameManager * game) {
 
 	// Music
 	sf::Music mainMenuMusic;
-	mainMenuMusic.openFromFile("../PoutineStyle/Music/MainMenuMusic.wav");
+	mainMenuMusic.openFromFile("Ressource/Music/MainMenuMusic.wav");
 	mainMenuMusic.play();
 
 	this->gameManager = game;
@@ -39,7 +39,7 @@ StateMainMenu::StateMainMenu(GameManager * game) {
 	this->btnVolume75 = Button(sf::Vector2i(w / 2 - 120 + 3*70, 5 * (h / 7) - 25), 50, 50, sf::Color::Black, L"75", gameManager->getRenderWindow());
 	this->btnVolume100 = Button(sf::Vector2i(w / 2 - 120 + 4*70, 5 * (h / 7) - 25), 50, 50, sf::Color::Black, L"100", gameManager->getRenderWindow());
 
-	if (bgTexture.loadFromFile("../PoutineStyle/pics/mainMenuBackground.png"))
+	if (bgTexture.loadFromFile("Ressource/Picture/BackGround_MainMenu.png"))
 	{
 		bgSprite.setTexture(bgTexture);
 		bgSprite.setScale(0.5, 0.5);

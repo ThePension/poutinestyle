@@ -1,6 +1,6 @@
 #include "Pistol.h"
 #include "Bullet.h"
-Pistol::Pistol() : Weapon(4, Animation(0, 0, 105, 105, 4, "../PoutineStyle/pics/pistolTexture.png")) {
+Pistol::Pistol() : Weapon(4, Animation(0, 0, 105, 105, 4, "Ressource/Picture/PistolTexture.png")) {
 	weaponSprite.scale(1.2, 1.2);
 	weaponSprite.setPosition(300, 320);
 }

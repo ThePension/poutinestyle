@@ -6,7 +6,7 @@ class Bullet;
 class Shotgun : public Weapon
 {
 private:
-	AnimatedVertexArray* shotgunAnim = new AnimatedVertexArray("../PoutineStyle/pics/shotgunStatic.png", 64, 64, 0, 1);
+	AnimatedVertexArray* shotgunAnim = new AnimatedVertexArray("Ressource/Picture/ShotGunStatic.png", 64, 64, 0, 1);
 public:
 	Shotgun();
 	~Shotgun() override;

@@ -68,7 +68,7 @@ private:
 	sf::VertexArray* lines = nullptr;
 	sf::VertexArray* linesOverride = nullptr;
 
-	std::string mapFilePath;
+	std::string mapFilePath, currentWeaponName;
 	std::map<std::string, int> levels;
 	std::map<std::string, int>::iterator actualLevel;
 
@@ -83,6 +83,10 @@ private:
 
 	// Sound
 	sf::SoundBuffer openingDoorBuffer, openingElevatorBuffer, lockedDoorBuffer, secretPassageBuffer, pickUpObjectBuffer, pickUpKeyBuffer, pickUpAmmoBuffer;
+	sf::SoundBuffer guardBuffer;
+	sf::SoundBuffer generalBuffer;
+	sf::Sound guardShot;
+	sf::Sound generalShot;
 	sf::Sound openingDoor, openingElevator, lockedDoor, secretPassage, pickUpObject, pickUpKey, pickUpAmmo;
 
 

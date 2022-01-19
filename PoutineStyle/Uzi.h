@@ -6,7 +6,7 @@ class Bullet;
 class Uzi : public Weapon
 {
 private:
-	AnimatedVertexArray uziAnim = AnimatedVertexArray("../PoutineStyle/pics/IconeUzi.png", 64, 64, 0, 1);
+	AnimatedVertexArray uziAnim = AnimatedVertexArray("Ressource/Picture/UziStatic.png", 64, 64, 0, 1);
 public:
 	Uzi();
 	void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) override;

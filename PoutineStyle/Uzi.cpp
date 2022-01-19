@@ -1,7 +1,7 @@
 #include "Uzi.h"
 #include "Bullet.h"
 
-Uzi::Uzi() : Weapon(1, Animation(0, 0, 150, 150, 4, "../PoutineStyle/pics/testUzi.png")) {
+Uzi::Uzi() : Weapon(1, Animation(0, 0, 150, 150, 4, "Ressource/Picture/Uzi.png")) {
 	weaponSprite.scale(1, 1);
 	weaponSprite.setPosition(100, 300);
 }

@@ -16,7 +16,7 @@ protected:
 	int oldFrameNum = -1;
 
 public:
-	Weapon(int bulletDamage, Animation shootAnim = Animation(0, 0, 105, 105, 4, "../PoutineStyle/pics/gunTexture.png"));
+	Weapon(int bulletDamage, Animation shootAnim = Animation(0, 0, 105, 105, 4, "Ressource/Picture/gunTexture.png"));
 	virtual ~Weapon() override = 0;
 	virtual void draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) = 0;
 	virtual void draw(sf::RenderTarget& target) = 0;

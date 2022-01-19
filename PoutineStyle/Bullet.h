@@ -19,7 +19,7 @@ public:
 	int getDamage() { return this->damage; }
 	bool isTravelling = true;
 	bool isExplosing = false;
-	AnimatedVertexArray* travellingAnimVA = new AnimatedVertexArray("../PoutineStyle/pics/bullet.png", 64, 64, 0, 1);
-	AnimatedVertexArray* explosingAnimVA = new AnimatedVertexArray("../PoutineStyle/pics/bulletExplosing.png", 64, 64, 0, 7);
+	AnimatedVertexArray* travellingAnimVA = new AnimatedVertexArray("Ressource/Picture/Bullet.png", 64, 64, 0, 1);
+	AnimatedVertexArray* explosingAnimVA = new AnimatedVertexArray("Ressource/picture/BulletExploding.png", 64, 64, 0, 7);
 };
 

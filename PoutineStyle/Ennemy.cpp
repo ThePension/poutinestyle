@@ -6,10 +6,7 @@ Ennemy::Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray* shootAnimVA, Anima
     this->dieAnimVA = dieAnimVA;
 
     // Sound
-    guardBuffer.loadFromFile("../PoutineStyle/Sound/GunShot2.wav");
-    generalBuffer.loadFromFile("../PoutineStyle/Sound/GunShot3.wav");
-    guardShot.setBuffer(guardBuffer);
-    generalShot.setBuffer(generalBuffer);
+
     
     // Create random entity for drop
     switch (dropNumber)

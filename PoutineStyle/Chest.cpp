@@ -18,7 +18,7 @@ Chest::Chest(sf::Vector2f pos, int dropNumber) : Entity(1, pos, true) {
 			break;
 	}
 
-	openingChestBuffer.loadFromFile("../PoutineStyle/Sound/ChestOpening.wav");
+	openingChestBuffer.loadFromFile("Ressource/Sound/ChestOpening.wav");
 	openingChest.setBuffer(openingChestBuffer);
 }
 Chest::~Chest()

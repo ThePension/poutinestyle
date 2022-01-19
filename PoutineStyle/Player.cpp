@@ -7,16 +7,16 @@ Player::Player() {
 	this->secondaryWeapon = nullptr;
 
 	// Sound
-	knifeBuffer.loadFromFile("../PoutineStyle/Sound/PlayerKnife.wav");
-	emptyGunBuffer.loadFromFile("../PoutineStyle/Sound/EmptyGun.wav");
-	gunShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerGunShot.wav");
-	shotgunShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerShotgun.wav");
-	uziShotBuffer.loadFromFile("../PoutineStyle/Sound/PlayerUziShot.wav");
-	grenadLauncherBuffer.loadFromFile("../PoutineStyle/Sound/PlayerGrenadLauncher.wav");
-	gunReloadBuffer.loadFromFile("../PoutineStyle/Sound/ReloadGun.wav");
-	shotgunReloadBuffer.loadFromFile("../PoutineStyle/Sound/ReloadShotgun.wav");
-	uziReloadBuffer.loadFromFile("../PoutineStyle/Sound/ReloadUzi.wav");
-	grenadeLauncherReloadBuffer.loadFromFile("../PoutineStyle/Sound/ReloadGrenadLauncher.wav");
+	knifeBuffer.loadFromFile("Ressource/Sound/PlayerKnife.wav");
+	emptyGunBuffer.loadFromFile("Ressource/Sound/EmptyGun.wav");
+	gunShotBuffer.loadFromFile("Ressource/Sound/PlayerGunShot.wav");
+	shotgunShotBuffer.loadFromFile("Ressource/Sound/PlayerShotgun.wav");
+	uziShotBuffer.loadFromFile("Ressource/Sound/PlayerUziShot.wav");
+	grenadLauncherBuffer.loadFromFile("Ressource/Sound/PlayerGrenadLauncher.wav");
+	gunReloadBuffer.loadFromFile("Ressource/Sound/ReloadGun.wav");
+	shotgunReloadBuffer.loadFromFile("Ressource/Sound/ReloadShotgun.wav");
+	uziReloadBuffer.loadFromFile("Ressource/Sound/ReloadUzi.wav");
+	grenadeLauncherReloadBuffer.loadFromFile("Ressource/Sound/ReloadGrenadLauncher.wav");
 	knifeSound.setBuffer(knifeBuffer);
 	emptyGun.setBuffer(emptyGunBuffer);
 	gunShot.setBuffer(gunShotBuffer);

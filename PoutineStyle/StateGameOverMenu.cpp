@@ -10,21 +10,21 @@ StateGameOverMenu::StateGameOverMenu(GameManager* game, bool win) {
 	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) + 0), 150, 50, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
 
 	if (!win) {
-		if (bgTexture.loadFromFile("../PoutineStyle/pics/GameOver.png"))
+		if (bgTexture.loadFromFile("Ressource/Picture/BackGround_GameOver.png"))
 		{
 			bgSprite.setTexture(bgTexture);
 			bgSprite.setScale(0.5, 0.5);
 		}
-		else std::cout << "Failed to load GameOverMenu failed background image" << std::endl;
+		else std::cout << "Failed to load GameOverMenu background image" << std::endl;
 	}
 	else {
-		if (bgTexture.loadFromFile("../PoutineStyle/pics/Victory.png"))
+		if (bgTexture.loadFromFile("Ressource/Picture/BackGround_Victory.png"))
 		{
 			bgSprite.setTexture(bgTexture);
 			bgSprite.setScale(0.5, 0.5);
 			
 		}
-		else std::cout << "Failed to load GameOverMenu victory background image" << std::endl;
+		else std::cout << "Failed to load victory background image" << std::endl;
 	}
 }
 StateGameOverMenu::~StateGameOverMenu() {

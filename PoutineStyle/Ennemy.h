@@ -22,12 +22,6 @@ protected:
 	double shootCooldown = 1.0;
 	int oldFrameNum = -1;
 
-	// Sound
-	sf::SoundBuffer guardBuffer;
-	sf::SoundBuffer generalBuffer;
-	sf::Sound guardShot;
-	sf::Sound generalShot;
-
 public:
 	Ennemy(int hp, sf::Vector2f pos, AnimatedVertexArray* shootAnimVA, AnimatedVertexArray* dieAnimVA, int dropNumber = 0);
 	~Ennemy() override;
@@ -41,7 +35,7 @@ public:
 	int getCurrentRenderedFrame();
 	void resetAnimations() { this->shootAnimVA->resetAnimation(); this->dieAnimVA->resetAnimation(); }
 
-	// AnimatedVertexArray walkAnimVA = AnimatedVertexArray("../PoutineStyle/pics/ennemyTextures.png", 64, 64, 0, 8);
-	AnimatedVertexArray* shootAnimVA = nullptr; // = AnimatedVertexArray("../PoutineStyle/pics/shootingEnnemy.png", 64, 64, 0, 5, 0.3);
-	AnimatedVertexArray* dieAnimVA = nullptr; // = AnimatedVertexArray("../PoutineStyle/pics/dyingEnnemy.png", 64, 64, 0, 4, 0.3);
+	AnimatedVertexArray* shootAnimVA = nullptr; 
+	AnimatedVertexArray* dieAnimVA = nullptr;
 };
+

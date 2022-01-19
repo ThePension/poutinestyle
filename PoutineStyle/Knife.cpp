@@ -1,13 +1,12 @@
 #include "Knife.h"
 #include "Bullet.h"
-Knife::Knife() : Weapon(1, Animation(0, 0, 64, 64, 8, "../PoutineStyle/pics/knife.png")) {
+Knife::Knife() : Weapon(1, Animation(0, 0, 64, 64, 8, "Ressource/Picture/Knife.png")) 
+{
 	weaponSprite.scale(2, 2);
 	weaponSprite.setPosition(300, 320);
 }
 
-void Knife::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {
-	// To do
-}
+void Knife::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {}
 
 void Knife::draw(sf::RenderTarget& target)
 {

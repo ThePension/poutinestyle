@@ -1,8 +1,8 @@
 #include "Guard.h"
 
 Guard::Guard(sf::Vector2f pos, int dropNumber)
-    : Ennemy(1, pos, new AnimatedVertexArray("../PoutineStyle/pics/BasicEnnemy.png", 64, 64, 0, 5, 0.3), 
-		new AnimatedVertexArray("../PoutineStyle/pics/BasicEnnemy.png", 64, 64, 1, 4, 0.3), dropNumber)
+    : Ennemy(1, pos, new AnimatedVertexArray("Ressource/Picture/Guard.png", 64, 64, 0, 5, 0.3), 
+		new AnimatedVertexArray("Ressource/Picture/Guard.png", 64, 64, 1, 4, 0.3), dropNumber)
 {
 	this->HP = 5;
 }
@@ -20,9 +20,6 @@ std::stack<Bullet*> Guard::shoot(sf::Vector2f direction, sf::Vector2f playerPos,
 		double yNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
 		yNoise = AnimatedVertexArray::map(yNoise, 0, 0.1, -0.1, 0.1);
 		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise, direction.y + yNoise);
-
-		// Sound
-		guardShot.play();
 
 		// Create a bullet
 		sf::Vector2f bulletPos = sf::Vector2f((this->mapPos.x), (this->mapPos.y));

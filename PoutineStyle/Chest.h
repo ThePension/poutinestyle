@@ -27,7 +27,7 @@ public:
 	void setIsOpening();
 	Entity* getDroppedEntity() { return this->droppedEntity; }
 
-	AnimatedVertexArray* OpeningAnimVA = new AnimatedVertexArray("../PoutineStyle/pics/chest.png", 32, 32, 0, 8);
-	AnimatedVertexArray* ClosedChestAnimVA = new AnimatedVertexArray("../PoutineStyle/pics/chest.png", 32, 32, 0, 1);
+	AnimatedVertexArray* OpeningAnimVA = new AnimatedVertexArray("Ressource/Picture/Chest.png", 32, 32, 0, 8);
+	AnimatedVertexArray* ClosedChestAnimVA = new AnimatedVertexArray("Ressource/Picture/Chest.png", 32, 32, 0, 1);
 };
 

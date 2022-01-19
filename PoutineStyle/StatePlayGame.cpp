@@ -7,7 +7,7 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
     // Music
     this->gameManager->gameMusic->stop();
     this->gameManager->menuMusic->pause();
-    this->gameManager->gameMusic->openFromFile("../PoutineStyle/Music/GameMusic1.wav");
+    this->gameManager->gameMusic->openFromFile("Ressource/Music/GameMusic1.wav");
     this->gameManager->gameMusic->play();
 
     // Settings
@@ -16,13 +16,13 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
     
 
     // Sound
-    openingDoorBuffer.loadFromFile("../PoutineStyle/Sound/DoorOpening.wav");
-    openingElevatorBuffer.loadFromFile("../PoutineStyle/Sound/ElevatorOpening.wav");
-    lockedDoorBuffer.loadFromFile("../PoutineStyle/Sound/DoorLocked.wav");
-    secretPassageBuffer.loadFromFile("../PoutineStyle/Sound/SecretDoorOpening.wav");
-    pickUpObjectBuffer.loadFromFile("../PoutineStyle/Sound/PickUp.wav");
-    pickUpKeyBuffer.loadFromFile("../PoutineStyle/Sound/KeyPickUp.wav");
-    pickUpAmmoBuffer.loadFromFile("../PoutineStyle/Sound/PickUpAmmo.wav");
+    openingDoorBuffer.loadFromFile("Ressource/Sound/DoorOpening.wav");
+    openingElevatorBuffer.loadFromFile("Ressource/Sound/ElevatorOpening.wav");
+    lockedDoorBuffer.loadFromFile("Ressource/Sound/DoorLocked.wav");
+    secretPassageBuffer.loadFromFile("Ressource/Sound/SecretDoorOpening.wav");
+    pickUpObjectBuffer.loadFromFile("Ressource/Sound/PickUp.wav");
+    pickUpKeyBuffer.loadFromFile("Ressource/Sound/KeyPickUp.wav");
+    pickUpAmmoBuffer.loadFromFile("Ressource/Sound/PickUpAmmo.wav");
     openingDoor.setBuffer(openingDoorBuffer);
     openingElevator.setBuffer(openingElevatorBuffer);
     lockedDoor.setBuffer(lockedDoorBuffer);
@@ -31,11 +31,16 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
     pickUpKey.setBuffer(pickUpKeyBuffer);
     pickUpAmmo.setBuffer(pickUpAmmoBuffer);
 
+    guardBuffer.loadFromFile("Ressource/Sound/GunShot2.wav");
+    generalBuffer.loadFromFile("Ressource/Sound/GunShot3.wav");
+    guardShot.setBuffer(guardBuffer);
+    generalShot.setBuffer(generalBuffer);
+
     switch (this->settings.getLevel())
     {
     case 0:
         mapFilePath = "Lvl1.txt";
-        mapSize = 32;
+        mapSize = 16;
         this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
         this->levels.insert(std::pair<std::string, int>("Lvl3.txt", 32));
         this->levels.insert(std::pair<std::string, int>("Lvl4.txt", 32));
@@ -72,14 +77,14 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
         player = new Player();
     }
     
-    
-    this->mapFilePath = "Map/" + mapFilePath;
+    this->mapFilePath = "Ressource/Map/" + mapFilePath;
     this->mapSize = mapSize;
 
     this->actualLevel = this->levels.begin();
     
     gameManager->getRenderWindow()->setMouseCursorVisible(false);
     gameManager->getRenderWindow()->setMouseCursorGrabbed(true); // The mouse can't leave the window
+
 
     oldMouseX = sf::Mouse::getPosition().x;
     sf::Mouse::setPosition(sf::Vector2i(gameManager->getWindowWidth() / 2, gameManager->getWindowHeight() / 2));
@@ -104,10 +109,10 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
 	parseMap2D();
 
     wallTextures = sf::Texture();    
-    wallTextures.loadFromFile("../PoutineStyle/pics/wallTextures.png");
+    wallTextures.loadFromFile("Ressource/Picture/WallTextures.png");
 
     // Load cursor texture
-    imgAimCursor.loadFromFile("../PoutineStyle/pics/cursorAim.png");
+    imgAimCursor.loadFromFile("Ressource/Picture/CursorAim.png");
     setHud();
 }
 
@@ -304,6 +309,17 @@ void StatePlayGame::reset()
 void StatePlayGame::update(float deltaTime)
 {
     handleInput(deltaTime);
+    if (typeid(*this->player->getCurrentWeapon()).name() == typeid(Knife).name()) currentWeaponName = "Knife";
+    else if (typeid(*this->player->getCurrentWeapon()).name() == typeid(Pistol).name()) currentWeaponName = "Pistol";
+    else if (typeid(*this->player->getCurrentWeapon()).name() == typeid(Shotgun).name()) currentWeaponName = "Shotgun";
+    else if (typeid(*this->player->getCurrentWeapon()).name() == typeid(Uzi).name() && qPressed == false) currentWeaponName = "Uzi";
+    else if (typeid(*this->player->getCurrentWeapon()).name() == typeid(Uzi).name() && qPressed == true) currentWeaponName = "Uzi burst";
+    else if (typeid(*this->player->getCurrentWeapon()).name() == typeid(GrenadeLauncher).name()) currentWeaponName = "Grenade";
+
+    // Avoid the mouse to leave the screen
+    if (sf::Mouse::getPosition().y > 900) {
+        sf::Mouse::setPosition(sf::Vector2i(1200, 400));
+    }
 
     // Music 
     if (gameManager->gameMusic->getStatus() == sf::SoundSource::Status::Stopped)
@@ -311,13 +327,13 @@ void StatePlayGame::update(float deltaTime)
         if (gameManager->isfirstMusic == true)
         {
             gameManager->isfirstMusic != gameManager->isfirstMusic;
-            gameManager->gameMusic->openFromFile("../PoutineStyle/Music/GameMusic2.wav");
+            gameManager->gameMusic->openFromFile("Ressource/Music/GameMusic2.wav");
             gameManager->gameMusic->play();
         }
         else
         {
             gameManager->isfirstMusic != gameManager->isfirstMusic;
-            gameManager->gameMusic->openFromFile("../PoutineStyle/Music/GameMusic1.wav");
+            gameManager->gameMusic->openFromFile("Ressource/Music/GameMusic1.wav");
             gameManager->gameMusic->play();
 
         }
@@ -375,13 +391,13 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
     newPosMapX = int(newPos.y);
 
     // Check X axis
-    if (!Entity::isWall(map[newPosMapX][oldPosMapY]))
+    if (!Entity::isWall(map[newPosMapX][oldPosMapY]) && map[newPosMapX][oldPosMapY] != 'E' && map[newPosMapX][oldPosMapY] != 'G' && map[newPosMapX][oldPosMapY] != 'C')
     {
         // Update player position on the Y axis
         player->position.y = newPos.y;
     }
     // Check Y axis
-    if (!Entity::isWall(map[oldPosMapX][newPosMapY]))
+    if (!Entity::isWall(map[oldPosMapX][newPosMapY]) && map[oldPosMapX][newPosMapY] != 'E' && map[oldPosMapX][newPosMapY] != 'G' && map[oldPosMapX][newPosMapY] != 'C')
     {
         // Update the player position on the X axis
         player->position.x = newPos.x;
@@ -428,8 +444,9 @@ void StatePlayGame::drawMap2D()
     block.setOutlineColor(sf::Color::Black);
 
     sf::CircleShape player_circle;
-    player_circle.setRadius(5);
-    player_circle.setPosition(sf::Vector2f(player->position.x * (blockWidth) - player_circle.getRadius(), player->position.y * (blockHeight - 1.f) - player_circle.getRadius() / 2.f));
+    
+    player_circle.setRadius(0.48 * blockWidth);
+    player_circle.setPosition(sf::Vector2f(player->position.x * (blockWidth) - player_circle.getRadius(), (player->position.y * (blockHeight)-2.f) - player_circle.getRadius() / 2.f));
     player_circle.setFillColor(sf::Color::Green);
 
     for (int i = 0; i < mapSize; i++)
@@ -471,7 +488,7 @@ void StatePlayGame::drawMap2D()
     sf::Vertex playerDirLine[] =
     {
         sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius(), player_circle.getPosition().y + player_circle.getRadius())),
-        sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius() + 16 * player->direction.x, player_circle.getPosition().y + player_circle.getRadius() + 16 * player->direction.y))
+        sf::Vertex(sf::Vector2f(player_circle.getPosition().x + player_circle.getRadius() + blockHeight * player->direction.x, player_circle.getPosition().y + player_circle.getRadius() + blockHeight * player->direction.y))
     };
 
     gameManager->getRenderWindow()->draw(playerDirLine, 2, sf::Lines);
@@ -958,7 +975,7 @@ void StatePlayGame::renderingEntities(double dt) {
 
                                 cleanAllEntitys();
 
-                                this->mapFilePath = "Map/" + this->actualLevel->first;
+                                this->mapFilePath = "Ressource/Map/" + this->actualLevel->first;
                                 this->mapSize = this->actualLevel->second;
 
                                 this->actualLevel++;
@@ -1023,6 +1040,8 @@ void StatePlayGame::renderingEntities(double dt) {
                 Bullet* bullet = bullets.top();
                 if (bullet != nullptr) entities.push_back(bullet);
                 bullets.pop();
+                if (typeid(*entity).name() == typeid(Guard).name()) guardShot.play();
+                else if (typeid(*entity).name() == typeid(General).name()) generalShot.play();
             }
         }
         entity->draw(*gameManager->getRenderWindow(), player->position, player->direction, player->planeVec, ZBuffer, gameManager->getWindowWidth(), gameManager->getWindowHeight());
@@ -1218,27 +1237,27 @@ void StatePlayGame::parseMap2D()
                 entities.push_back(wall);
             }
             else if (map[indexX][indexY] == 'v') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 0, 1), 'V');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("Ressource/Picture/Key.png", 128, 128, 0, 1), 'V');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'w'){
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 1, 1), 'W');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("Ressource/Picture/Key.png", 128, 128, 1, 1), 'W');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'x') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 2, 1), 'X');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("Ressource/Picture/Key.png", 128, 128, 2, 1), 'X');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'y') {
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 3, 1), 'Y');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("Ressource/Picture/Key.png", 128, 128, 3, 1), 'Y');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
             else if (map[indexX][indexY] == 'z'){
-                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("../PoutineStyle/pics/key.png", 128, 128, 4, 1), 'Z');
+                Key* key = new Key(sf::Vector2f((float)indexY, (float)indexX), new AnimatedVertexArray("Ressource/Picture/Key.png", 128, 128, 4, 1), 'Z');
                 entityMap[indexY][indexX] = key;
                 entities.push_back(key);
             }
@@ -1373,7 +1392,8 @@ void StatePlayGame::displayHud()
     live.setString(std::to_string(player->getLive()));
     sf::Text health("Health", font, 15);
     sf::RectangleShape visualHealth;
-    sf::Text arme("Weapon", font, 15);
+    sf::Text weapon("Weapon", font, 15);
+    sf::Text currentWeapon(currentWeaponName, font, 15);
     sf::Text ammunition("Ammo", font, 15);
     sf::Text currentAmmunition("", font, 15);
     currentAmmunition.setString(std::to_string(player->getCurrentAmmunition()) + " / " + std::to_string(player->getAmmunition()));
@@ -1401,8 +1421,11 @@ void StatePlayGame::displayHud()
     visualHealth.setFillColor(sf::Color::Green);
     visualHealth.setPosition(sf::Vector2f(hudDownWidth+ 3, gameManager->getWindowHeight() - heightPos * 28));
 
-    arme.setFillColor(fontCol);
-    arme.setPosition(sf::Vector2f(hudDownWidth * 2 + 9, gameManager->getWindowHeight() - heightPos * 50));
+    weapon.setFillColor(fontCol);
+    weapon.setPosition(sf::Vector2f(hudDownWidth * 2 + 9, gameManager->getWindowHeight() - heightPos * 50));
+
+    currentWeapon.setFillColor(fontCol);
+    currentWeapon.setPosition(sf::Vector2f(hudDownWidth * 2 + 9, gameManager->getWindowHeight() - heightPos * 25));
 
     ammunition.setFillColor(fontCol);
     ammunition.setPosition(sf::Vector2f(hudDownWidth * 3 + 12, gameManager->getWindowHeight() - heightPos * 50));
@@ -1420,7 +1443,8 @@ void StatePlayGame::displayHud()
     gameManager->getRenderWindow()->draw(live);
     gameManager->getRenderWindow()->draw(health);
     gameManager->getRenderWindow()->draw(visualHealth);
-    gameManager->getRenderWindow()->draw(arme); //TODO remplacere le text par une image de l'arme utilisé
+    gameManager->getRenderWindow()->draw(weapon);
+    gameManager->getRenderWindow()->draw(currentWeapon);
     gameManager->getRenderWindow()->draw(ammunition);
     gameManager->getRenderWindow()->draw(currentAmmunition);
     gameManager->getRenderWindow()->draw(score);

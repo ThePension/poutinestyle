@@ -25,7 +25,7 @@ GameManager::GameManager()
     // Music
     gameMusic = new sf::Music();
     menuMusic = new sf::Music();
-    menuMusic->openFromFile("../PoutineStyle/Music/MainMenuMusic.wav");
+    menuMusic->openFromFile("Ressource/Music/MainMenuMusic.wav");
     menuMusic->play();
 
 }
