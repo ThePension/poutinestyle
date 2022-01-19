@@ -71,20 +71,21 @@ void StateGameOverMenu::draw(double deltatime)
 
 	// Display score
 	std::string score = std::to_string(player_score);
-	sf::Text lblScore = sf::Text("Score : " + score, font);
-	lblScore.setFillColor(sf::Color::White);
-	lblScore.setPosition(sf::Vector2f(0, 0));
+	sf::Text lvlScore = sf::Text("SCORE : " + score, font, 20);
+	lvlScore.setFillColor(sf::Color::White);
+	lvlScore.setPosition(sf::Vector2f(0, 0));
 
 	if (win)
 	{
-		lblScore.setPosition(sf::Vector2f(300, 200));
+		lvlScore.setPosition(sf::Vector2f(340, 180));
 	}
 	else
 	{
-		lblScore.setPosition(sf::Vector2f(20, 20));
+		lvlScore.setFillColor(sf::Color::Black);
+		lvlScore.setPosition(sf::Vector2f(15, 60));
 	}
 
-	gameManager->getRenderWindow()->draw(lblScore);
+	gameManager->getRenderWindow()->draw(lvlScore);
 	replayButton.draw();
 	quitButton.draw();
 }
