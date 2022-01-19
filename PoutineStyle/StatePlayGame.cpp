@@ -390,17 +390,20 @@ void StatePlayGame::updatePlayerPosition(sf::Vector2f newPos)
     oldPosMapX = int(floor(player->position.y));
     newPosMapX = int(newPos.y);
 
-    // Check X axis
-    if (!Entity::isWall(map[newPosMapX][oldPosMapY]) && map[newPosMapX][oldPosMapY] != 'E' && map[newPosMapX][oldPosMapY] != 'G' && map[newPosMapX][oldPosMapY] != 'C')
+    if (isMapDisplayed == false) 
     {
-        // Update player position on the Y axis
-        player->position.y = newPos.y;
-    }
-    // Check Y axis
-    if (!Entity::isWall(map[oldPosMapX][newPosMapY]) && map[oldPosMapX][newPosMapY] != 'E' && map[oldPosMapX][newPosMapY] != 'G' && map[oldPosMapX][newPosMapY] != 'C')
-    {
-        // Update the player position on the X axis
-        player->position.x = newPos.x;
+        // Check X axis
+        if (!Entity::isWall(map[newPosMapX][oldPosMapY]) && map[newPosMapX][oldPosMapY] != 'E' && map[newPosMapX][oldPosMapY] != 'G' && map[newPosMapX][oldPosMapY] != 'C')
+        {
+            // Update player position on the Y axis
+            player->position.y = newPos.y;
+        }
+        // Check Y axis
+        if (!Entity::isWall(map[oldPosMapX][newPosMapY]) && map[oldPosMapX][newPosMapY] != 'E' && map[oldPosMapX][newPosMapY] != 'G' && map[oldPosMapX][newPosMapY] != 'C')
+        {
+            // Update the player position on the X axis
+            player->position.x = newPos.x;
+        }
     }
 }
 
