@@ -923,8 +923,8 @@ void StatePlayGame::renderingEntities(double dt) {
     }
 
     // Clear dead ennemies and opened chests and doors
-    for (int x = 0; x < 32; x++) {
-        for (int y = 0; y < 32; y++) {
+    for (int x = 0; x < mapSize; x++) {
+        for (int y = 0; y < mapSize; y++) {
             Entity* entity = entityMap[x][y];
             if (entity != nullptr) {
                 if (typeid(*entity).name() == typeid(Guard).name() || typeid(*entity).name() == typeid(General).name()) {
