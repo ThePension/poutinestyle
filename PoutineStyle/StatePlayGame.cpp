@@ -450,7 +450,7 @@ void StatePlayGame::drawMap2D()
     
     player_circle.setRadius(0.48 * blockWidth);
     player_circle.setPosition(sf::Vector2f(player->position.x * (blockWidth) - player_circle.getRadius(), (player->position.y * (blockHeight)-2.f) - player_circle.getRadius() / 2.f));
-    player_circle.setFillColor(sf::Color::Green);
+    player_circle.setFillColor(sf::Color::White);
 
     for (int i = 0; i < mapSize; i++)
     {
@@ -774,7 +774,7 @@ void StatePlayGame::renderingEntities(double dt) {
 
             // Increase Player's life
             player->increaseLife();
-            player->increaseScore(2);
+            player->increaseScore(1 * mapSize/16);
         }
         else if (typeid(*InteractedEntity).name() == typeid(Ammo).name()) {
             pickUpAmmo.play();
@@ -787,7 +787,7 @@ void StatePlayGame::renderingEntities(double dt) {
 
             // Increase player's Ammo
             player->increaseAmmo();
-            player->increaseScore(2);
+            player->increaseScore(2 * mapSize / 16);
         }
         else if (typeid(*InteractedEntity).name() == typeid(Key).name()) {
             pickUpKey.play();
@@ -799,7 +799,7 @@ void StatePlayGame::renderingEntities(double dt) {
 
             Key* key = static_cast<Key*>(InteractedEntity);
             player->addKey(key);
-            player->increaseScore(2);
+            player->increaseScore(5 * mapSize / 16);
 
             InteractedEntity = nullptr;
         }
@@ -943,7 +943,7 @@ void StatePlayGame::renderingEntities(double dt) {
                         }
                         entities.remove(ennemy);
                         delete ennemy; ennemy = nullptr;
-                        player->increaseScore(10);
+                        player->increaseScore(15 * mapSize / 16);
                     }
                 }
                 else if (typeid(*entity).name() == typeid(Chest).name()) {
@@ -956,14 +956,14 @@ void StatePlayGame::renderingEntities(double dt) {
                         map[(int)chest->mapPos.y][(int)chest->mapPos.x] = 'L';
                         entities.remove(chest);
                         delete chest; chest = nullptr;
-                        player->increaseScore(5);
+                        player->increaseScore(6 * mapSize / 16);
                     }
                 }
                 else if (typeid(*entity).name() == typeid(Door).name()) {
                     // Remove open door
                     Door* door = dynamic_cast<Door*>(entity);
                     if (entity->getToRemove()) {
-                        player->increaseScore(5);
+                        player->increaseScore(5 * mapSize / 16);
                         if (door->getIsLift()) {
                             // Pass to the next  level
                             // from a level to another 
@@ -974,7 +974,7 @@ void StatePlayGame::renderingEntities(double dt) {
                                 map = nullptr;
 
                                 player->clearKeys();
-                                player->increaseScore(20);
+                                player->increaseScore(20 * mapSize / 16);
 
                                 cleanAllEntitys();
 
