@@ -140,8 +140,8 @@ void StatePlayGame::setSettings(Settings settings)
         hard = true;
     }
 
-    this->gameManager->gameMusic->setVolume(settings.getVolume());
-    this->gameManager->menuMusic->setVolume(settings.getVolume());
+    this->gameManager->gameMusic->setVolume(float(settings.getVolume()));
+    this->gameManager->menuMusic->setVolume(float(settings.getVolume()));
 
     this->settings.setSensibility(settings.getSensibility());
     this->settings.setDifficulty(settings.getDifficulty());
@@ -324,15 +324,15 @@ void StatePlayGame::update(float deltaTime)
     // Music 
     if (gameManager->gameMusic->getStatus() == sf::SoundSource::Status::Stopped)
     {
-        if (gameManager->isfirstMusic == true)
+        if (gameManager->isfirstMusic)
         {
-            gameManager->isfirstMusic != gameManager->isfirstMusic;
+            gameManager->isfirstMusic = !gameManager->isfirstMusic;
             gameManager->gameMusic->openFromFile("Ressource/Music/GameMusic2.wav");
             gameManager->gameMusic->play();
         }
         else
         {
-            gameManager->isfirstMusic != gameManager->isfirstMusic;
+            gameManager->isfirstMusic = !gameManager->isfirstMusic;
             gameManager->gameMusic->openFromFile("Ressource/Music/GameMusic1.wav");
             gameManager->gameMusic->play();
 
@@ -448,7 +448,7 @@ void StatePlayGame::drawMap2D()
 
     sf::CircleShape player_circle;
     
-    player_circle.setRadius(0.48 * blockWidth);
+    player_circle.setRadius(0.48f * blockWidth);
     player_circle.setPosition(sf::Vector2f(player->position.x * (blockWidth) - player_circle.getRadius(), (player->position.y * (blockHeight)-2.f) - player_circle.getRadius() / 2.f));
     player_circle.setFillColor(sf::Color::White);
 
@@ -983,8 +983,8 @@ void StatePlayGame::renderingEntities(double dt) {
 
                                 this->actualLevel++;
 
-                                this->blockWidth = gameManager->getWindowWidth() / mapSize;
-                                this->blockHeight = gameManager->getWindowHeight() / mapSize;
+                                this->blockWidth = float(gameManager->getWindowWidth() / mapSize);
+                                this->blockHeight = float(gameManager->getWindowHeight() / mapSize);
 
                                 map = new char* [mapSize];
                                 for (int i = 0; i < mapSize; i++)
@@ -1069,7 +1069,7 @@ void StatePlayGame::parseMap2D()
 
     mapFile.open(this->mapFilePath);
 
-    srand(time(NULL)); // Randomize seed
+    srand(unsigned int(time(NULL))); // Randomize seed
     int rnd = 0;
 
     int indexX = 0, indexY = 0;
