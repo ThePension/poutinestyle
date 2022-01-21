@@ -17,7 +17,7 @@ private:
 	sf::Clock clock;
 	float deltaTime;
 	sf::Font font;
-	bool drawFPS = true;
+	bool drawFPS = false;
 public:
 	int getWindowWidth() { return this->windowWidth; }
 	int getWindowHeight() { return this->windowHeight; }

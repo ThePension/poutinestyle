@@ -7,6 +7,7 @@ StateMainMenu::StateMainMenu(GameManager * game) {
 	mainMenuMusic.play();
 
 	this->gameManager = game;
+	this->settings = Settings();
 
 	// Create buttons
 	int w = gameManager->getWindowWidth();
@@ -88,12 +89,10 @@ void StateMainMenu::handleInput(double deltatime) {
 			else if (btnMetaDataON.isClicked())
 			{
 				settings.setShowMetaData(true);
-				this->gameManager->setDrawFPS(true);
 			}
 			else if (btnMetaDataOFF.isClicked())
 			{
 				settings.setShowMetaData(false);
-				this->gameManager->setDrawFPS(false);
 			}
 			else if (btnSensibilitySlow.isClicked())
 			{
@@ -252,6 +251,15 @@ void StateMainMenu::updateSelection()
 	btnVolume75.selected(false);
 	btnVolume100.selected(false);
 	btnMetaDataOFF.selected(false);
+
+	if (settings.getShowMetaData())
+	{
+		this->gameManager->setDrawFPS(true);
+	}
+	else
+	{
+		this->gameManager->setDrawFPS(false);
+	}
 
 	switch (settings.getDifficulty())
 	{
