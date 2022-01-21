@@ -39,6 +39,7 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
     switch (this->settings.getLevel())
     {
     case 0:
+        timer.restart();
         mapFilePath = "Lvl1.txt";
         mapSize = 16;
         this->levels.insert(std::pair<std::string, int>("Lvl2.txt", 16));
@@ -47,22 +48,27 @@ StatePlayGame::StatePlayGame(GameManager* game, Settings settings, std::string m
         this->levels.insert(std::pair<std::string, int>("Lvl5.txt", 64));
         break;
     case 1:
+        timer.restart();
         mapFilePath = "Lvl1.txt";
         mapSize = 16;
         break;
     case 2:
+        timer.restart();
         mapFilePath = "Lvl2.txt";
         mapSize = 16;
         break;
     case 3:
+        timer.restart();
         mapFilePath = "Lvl3.txt";
         mapSize = 32;
         break;
     case 4:
+        timer.restart();
         mapFilePath = "Lvl4.txt";
         mapSize = 32;
         break;
     case 5:
+        timer.restart();
         mapFilePath = "Lvl5.txt";
         mapSize = 64;
         break;
@@ -424,7 +430,7 @@ void StatePlayGame::endGameManagment()
 {
     if (player->getIsDead())
     {
-        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false, this->player->getScore());
+        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, false, this->player->getScore(), timer);
         this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
         this->gameManager->changeState(gameOverMenu);
         return;
@@ -432,7 +438,7 @@ void StatePlayGame::endGameManagment()
 
     if (this->isFinished)
     {
-        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, true, this->player->getScore());
+        StateGameOverMenu* gameOverMenu = new StateGameOverMenu(this->gameManager, true, this->player->getScore(), timer);
         this->gameManager->getRenderWindow()->setMouseCursorVisible(true);
         this->gameManager->changeState(gameOverMenu);
         return;

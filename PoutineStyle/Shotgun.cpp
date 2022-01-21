@@ -33,10 +33,9 @@ std::stack<Bullet*> Shotgun::shoot(sf::Vector2f direction, sf::Vector2f position
 	if (shootAnimation.isAnimationOver) {
 		isShooting = true;
 		// Add noise to the bullet direction
-		double xNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
+		double xNoise = (double)rand() / (RAND_MAX * 100.0); // Between 0 and 0.01
 		xNoise = AnimatedVertexArray::map(xNoise, 0, 0.1, -0.1, 0.1);
-		double yNoise = (double)rand() / (RAND_MAX * 10.0); // Between 0 and 0.1
-
+		double yNoise = (double)rand() / (RAND_MAX * 100.0); // Between 0 and 0.01
 		yNoise = AnimatedVertexArray::map(yNoise, 0, 0.1, -0.1, 0.1);
 		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise / 10, direction.y + yNoise / 10);
 		double shotgunDirX = AnimatedVertexArray::map(direction.x, -1, 1, 1.015, 1.02);

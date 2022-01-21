@@ -89,6 +89,9 @@ private:
 	sf::Sound generalShot;
 	sf::Sound openingDoor, openingElevator, lockedDoor, secretPassage, pickUpObject, pickUpKey, pickUpAmmo;
 
+	// Timer
+	sf::Clock timer;
+
 
 	void draw(double dt) override;
 	void handleInput(double deltatime) override;

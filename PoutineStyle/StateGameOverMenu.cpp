@@ -1,9 +1,10 @@
 #include "StateGameOverMenu.h"
-StateGameOverMenu::StateGameOverMenu(GameManager* game, bool win, int player_score)
+StateGameOverMenu::StateGameOverMenu(GameManager* game, bool win, int player_score, sf::Clock timer)
 {
 	this->gameManager = game;
 	this->win = win;
 	this->player_score = player_score;
+	currentTime = timer.getElapsedTime();
 
 	w = gameManager->getWindowWidth();
 	h = gameManager->getWindowHeight();
@@ -75,17 +76,33 @@ void StateGameOverMenu::draw(double deltatime)
 	lvlScore.setFillColor(sf::Color::White);
 	lvlScore.setPosition(sf::Vector2f(0, 0));
 
+	// Display time
+	int currentTimeMinutes = int(currentTime.asSeconds() / 60);
+	int currentTimeSeconds = int(currentTime.asSeconds() - currentTimeMinutes * 60);
+	std::string timeMinute = std::to_string(currentTimeMinutes);
+	std::string TimeSeconds = std::to_string(currentTimeSeconds);
+	sf::Text lvlTime = sf::Text("TIME : " + timeMinute + "m" + TimeSeconds + "s", font, 20);
+	lvlTime.setFillColor(sf::Color::White);
+	lvlTime.setPosition(sf::Vector2f(0, 0));
+
+	// Display both
+	sf::Text lvlBoth = sf::Text("SCORE : " + score + "    TIME : " + timeMinute + "m" + TimeSeconds + "s", font, 20);
+	lvlBoth.setFillColor(sf::Color::Black);
+	lvlBoth.setPosition(sf::Vector2f(0, 0));
+
 	if (win)
 	{
 		lvlScore.setPosition(sf::Vector2f(340, 180));
+		lvlTime.setPosition(sf::Vector2f(340, 205));
+		gameManager->getRenderWindow()->draw(lvlScore);
+		gameManager->getRenderWindow()->draw(lvlTime);
 	}
 	else
 	{
-		lvlScore.setFillColor(sf::Color::Black);
-		lvlScore.setPosition(sf::Vector2f(15, 60));
+		lvlBoth.setPosition(sf::Vector2f(15, 60));
+		gameManager->getRenderWindow()->draw(lvlBoth);
 	}
 
-	gameManager->getRenderWindow()->draw(lvlScore);
 	replayButton.draw();
 	quitButton.draw();
 }
