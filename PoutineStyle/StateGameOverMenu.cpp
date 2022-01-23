@@ -9,14 +9,16 @@ StateGameOverMenu::StateGameOverMenu(GameManager* game, bool win, int player_sco
 	w = gameManager->getWindowWidth();
 	h = gameManager->getWindowHeight();
 
-	replayButton = Button(sf::Vector2i(w / 2 - 75, 2 * (h / 4) + 50), 150, 50, sf::Color::Red, L"Rejouer", gameManager->getRenderWindow());
-	quitButton = Button(sf::Vector2i(w / 2 - 75, 3 * (h / 4) + 0), 150, 50, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
+	float ratio = w / 500.f;
+
+	replayButton = Button(sf::Vector2i(w / 2 - 75 * ratio, 2 * (h / 4) + 50), 150 * ratio, 50 * ratio, sf::Color::Red, L"Rejouer", gameManager->getRenderWindow());
+	quitButton = Button(sf::Vector2i(w / 2 - 75 * ratio, 3 * (h / 4) + 0), 150 * ratio, 50 * ratio, sf::Color::Red, L"Quitter", gameManager->getRenderWindow());
 
 	if (!win) {
 		if (bgTexture.loadFromFile("Ressource/Picture/BackGround_GameOver.png"))
 		{
 			bgSprite.setTexture(bgTexture);
-			bgSprite.setScale(0.5, 0.5);
+			bgSprite.setScale(0.5 * ratio, 0.5 * ratio);
 		}
 		else std::cout << "Failed to load GameOverMenu background image" << std::endl;
 	}
@@ -24,7 +26,7 @@ StateGameOverMenu::StateGameOverMenu(GameManager* game, bool win, int player_sco
 		if (bgTexture.loadFromFile("Ressource/Picture/BackGround_Victory.png"))
 		{
 			bgSprite.setTexture(bgTexture);
-			bgSprite.setScale(0.5, 0.5);
+			bgSprite.setScale(0.5 * ratio, 0.5 * ratio);
 			
 		}
 		else std::cout << "Failed to load victory background image" << std::endl;
@@ -68,11 +70,12 @@ void StateGameOverMenu::draw(double deltatime)
 
 	sf::Font font = gameManager->getFont();
 	text.setFont(font);
-	text.setCharacterSize(30);
+	text.setCharacterSize(60);
+	float ratio = w / 500.f;
 
 	// Display score
 	std::string score = std::to_string(player_score);
-	sf::Text lvlScore = sf::Text("SCORE : " + score, font, 20);
+	sf::Text lvlScore = sf::Text("SCORE : " + score, font, 40);
 	lvlScore.setFillColor(sf::Color::White);
 	lvlScore.setPosition(sf::Vector2f(0, 0));
 
@@ -81,25 +84,25 @@ void StateGameOverMenu::draw(double deltatime)
 	int currentTimeSeconds = int(currentTime.asSeconds() - currentTimeMinutes * 60);
 	std::string timeMinute = std::to_string(currentTimeMinutes);
 	std::string TimeSeconds = std::to_string(currentTimeSeconds);
-	sf::Text lvlTime = sf::Text("TIME : " + timeMinute + "m" + TimeSeconds + "s", font, 20);
+	sf::Text lvlTime = sf::Text("TIME : " + timeMinute + "m" + TimeSeconds + "s", font, 40);
 	lvlTime.setFillColor(sf::Color::White);
 	lvlTime.setPosition(sf::Vector2f(0, 0));
 
 	// Display both
-	sf::Text lvlBoth = sf::Text("SCORE : " + score + "    TIME : " + timeMinute + "m" + TimeSeconds + "s", font, 20);
+	sf::Text lvlBoth = sf::Text("SCORE : " + score + "    TIME : " + timeMinute + "m" + TimeSeconds + "s", font, 40);
 	lvlBoth.setFillColor(sf::Color::Black);
 	lvlBoth.setPosition(sf::Vector2f(0, 0));
 
 	if (win)
 	{
-		lvlScore.setPosition(sf::Vector2f(340, 180));
-		lvlTime.setPosition(sf::Vector2f(340, 205));
+		lvlScore.setPosition(sf::Vector2f(340 * ratio, 180 * ratio));
+		lvlTime.setPosition(sf::Vector2f(340 * ratio, 205 * ratio));
 		gameManager->getRenderWindow()->draw(lvlScore);
 		gameManager->getRenderWindow()->draw(lvlTime);
 	}
 	else
 	{
-		lvlBoth.setPosition(sf::Vector2f(15, 60));
+		lvlBoth.setPosition(sf::Vector2f(15 * ratio, 60 * ratio));
 		gameManager->getRenderWindow()->draw(lvlBoth);
 	}
 

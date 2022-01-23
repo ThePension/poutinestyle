@@ -2,8 +2,8 @@
 #include "Bullet.h"
 
 Uzi::Uzi() : Weapon(1, Animation(0, 0, 150, 150, 4, "Ressource/Picture/Uzi.png")) {
-	weaponSprite.scale(1, 1);
-	weaponSprite.setPosition(100, 300);
+	weaponSprite.scale(2, 2);
+	weaponSprite.setPosition(200, 600);
 }
 
 void Uzi::draw(sf::RenderTarget& target, sf::Vector2f playerPos, sf::Vector2f playerDir, sf::Vector2f playerPlaneVec, double* ZBuffer, int viewWidth, int viewHeight) {

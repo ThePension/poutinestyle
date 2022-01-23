@@ -2,8 +2,8 @@
 #include "Bullet.h"
 
 Shotgun::Shotgun() : Weapon(3, Animation(0, 0, 64, 64, 11, "Ressource/Picture/ShotGun.png", 0.05)) {
-	weaponSprite.scale(2, 2);
-	weaponSprite.setPosition(300, 320);
+	weaponSprite.scale(4, 4);
+	weaponSprite.setPosition(600, 640);
 }
 
 

@@ -1391,62 +1391,65 @@ void StatePlayGame::displayHud()
 
     float widthPos = 1.f;
     float hudDownWidth = widthPos * (gameManager->getWindowWidth() / 5.f) - 3.f;
-    float heightPos = float(gameManager->getWindowHeight()) / gameManager->getWindowHeight();
+    float heightPos = float(gameManager->getWindowHeight());
 
     sf::Font font = gameManager->getFont();
     sf::Color fontCol = sf::Color::Red;
-
-    sf::Text liveText("Live", font, 15);
-    sf::Text live("", font, 15);
+    int charSize = 30;
+    sf::Text liveText("Live", font, charSize);
+    sf::Text live("", font, charSize);
     live.setString(std::to_string(player->getLive()));
-    sf::Text health("Health", font, 15);
+    sf::Text health("Health", font, charSize);
     sf::RectangleShape visualHealth;
-    sf::Text weapon("Weapon", font, 15);
-    sf::Text currentWeapon(currentWeaponName, font, 15);
-    sf::Text ammunition("Ammo", font, 15);
-    sf::Text currentAmmunition("", font, 15);
+    sf::Text weapon("Weapon", font, charSize);
+    sf::Text currentWeapon(currentWeaponName, font, charSize);
+    sf::Text ammunition("Ammo", font, charSize);
+    sf::Text currentAmmunition("", font, charSize);
     currentAmmunition.setString(std::to_string(player->getCurrentAmmunition()) + " / " + std::to_string(player->getAmmunition()));
-    sf::Text score("Score", font, 15);
-    sf::Text currentScore("", font, 15);
+    sf::Text score("Score", font, charSize);
+    sf::Text currentScore("", font, charSize);
     currentScore.setString(std::to_string(player->getScore()));
 
+    float titleConst = 3.2f;
+    float valueConst = 1.7f;
+
     liveText.setFillColor(fontCol);
-    liveText.setPosition(sf::Vector2f(5, gameManager->getWindowHeight() - heightPos * 50));
+    liveText.setPosition(sf::Vector2f(5, heightPos - titleConst * charSize));
 
     live.setFillColor(fontCol);
-    live.setPosition(sf::Vector2f(5, gameManager->getWindowHeight() - heightPos * 25));
+    live.setPosition(sf::Vector2f(5, heightPos - valueConst * charSize));
 
     health.setFillColor(fontCol);
-    health.setPosition(sf::Vector2f(hudDownWidth+6, gameManager->getWindowHeight() - heightPos * 50));
+    health.setPosition(sf::Vector2f(hudDownWidth+6, heightPos - titleConst * charSize));
 
     if (player->getHealth() <= 0)
     {
-        visualHealth.setSize(sf::Vector2f(1, 25));
+        visualHealth.setSize(sf::Vector2f(1, 50));
     }
     else
     {
-        visualHealth.setSize(sf::Vector2f((hudDownWidth / 100) * player->getHealth(), 25));
+        visualHealth.setSize(sf::Vector2f((hudDownWidth / 100) * player->getHealth(), 40));
     }
     visualHealth.setFillColor(sf::Color::Green);
-    visualHealth.setPosition(sf::Vector2f(hudDownWidth+ 3, gameManager->getWindowHeight() - heightPos * 28));
+    visualHealth.setPosition(sf::Vector2f(hudDownWidth+ 3, heightPos - valueConst * charSize));
 
     weapon.setFillColor(fontCol);
-    weapon.setPosition(sf::Vector2f(hudDownWidth * 2 + 9, gameManager->getWindowHeight() - heightPos * 50));
+    weapon.setPosition(sf::Vector2f(hudDownWidth * 2 + 9, heightPos - titleConst * charSize));
 
     currentWeapon.setFillColor(fontCol);
-    currentWeapon.setPosition(sf::Vector2f(hudDownWidth * 2 + 9, gameManager->getWindowHeight() - heightPos * 25));
+    currentWeapon.setPosition(sf::Vector2f(hudDownWidth * 2 + 9, heightPos - valueConst * charSize));
 
     ammunition.setFillColor(fontCol);
-    ammunition.setPosition(sf::Vector2f(hudDownWidth * 3 + 12, gameManager->getWindowHeight() - heightPos * 50));
+    ammunition.setPosition(sf::Vector2f(hudDownWidth * 3 + 12, heightPos - titleConst * charSize));
 
     currentAmmunition.setFillColor(fontCol);
-    currentAmmunition.setPosition(sf::Vector2f(hudDownWidth * 3 + 12, gameManager->getWindowHeight() - heightPos * 25));
+    currentAmmunition.setPosition(sf::Vector2f(hudDownWidth * 3 + 12, heightPos - valueConst * charSize));
 
     score.setFillColor(fontCol);
-    score.setPosition(sf::Vector2f(hudDownWidth * 4 + 15, gameManager->getWindowHeight() - heightPos * 50));
+    score.setPosition(sf::Vector2f(hudDownWidth * 4 + 15, heightPos - titleConst * charSize));
 
     currentScore.setFillColor(fontCol);
-    currentScore.setPosition(sf::Vector2f(hudDownWidth * 4 + 15 , gameManager->getWindowHeight() - heightPos * 25));
+    currentScore.setPosition(sf::Vector2f(hudDownWidth * 4 + 15 , heightPos - valueConst * charSize));
 
     gameManager->getRenderWindow()->draw(liveText);
     gameManager->getRenderWindow()->draw(live);
@@ -1465,7 +1468,7 @@ void StatePlayGame::showCursor()
     yOffset = 60;
     sf::Sprite aimCursor;
     aimCursor.setTexture(imgAimCursor);
-    aimCursor.setScale(0.5, 0.5);
+    aimCursor.setScale(1.0, 1.0);
 
     sf::Vector2u cursorSize = imgAimCursor.getSize();
     int cursorWidth = cursorSize.x, cursorHeigth = cursorSize.y;

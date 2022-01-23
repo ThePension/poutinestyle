@@ -11,43 +11,45 @@ StatePauseMenu::StatePauseMenu(GameManager* game, StatePlayGame *statePlayGame)
 	w = gameManager->getWindowWidth();
 	h = gameManager->getWindowHeight();
 
+	int ratio = w / 500;
+
 	// Buttons for pause
-	playButton = Button(sf::Vector2i(int(w / 2 - 75), int(1.5 * (h / 4) - 25)), 150, 50, sf::Color::Black, L"Reprendre", gameManager->getRenderWindow());
-	btnCommands = Button(sf::Vector2i(int(w / 2 - 75), int(2 * (h / 4) - 25)), 150, 50, sf::Color::Black, L"Commandes", gameManager->getRenderWindow());
-	backToMainMenu = Button(sf::Vector2i(int(w / 2 - 75), int(2.5 * (h / 4) - 25)), 150, 50, sf::Color::Black, L"Menu principal", gameManager->getRenderWindow());
-	btnSettings = Button(sf::Vector2i(int(w / 2 - 75), int(3 * (h / 4) - 25)), 150, 50, sf::Color::Black, L"Parametres", gameManager->getRenderWindow());
-	quitButton = Button(sf::Vector2i(int(w / 2 - 75), int(3.5 * (h / 4) - 25)), 150, 50, sf::Color::Black, L"Quitter", gameManager->getRenderWindow());
+	playButton = Button(sf::Vector2i(int(w / 2 - 75* ratio), int(1.5 * (h / 4) - 25)), 150 * ratio, 50 * ratio, sf::Color::Black, L"Reprendre", gameManager->getRenderWindow());
+	btnCommands = Button(sf::Vector2i(int(w / 2 - 75 * ratio), int(2 * (h / 4) - 25)), 150 * ratio, 50 * ratio, sf::Color::Black, L"Commandes", gameManager->getRenderWindow());
+	backToMainMenu = Button(sf::Vector2i(int(w / 2 - 75 * ratio), int(2.5 * (h / 4) - 25)), 150 * ratio, 50 * ratio, sf::Color::Black, L"Menu principal", gameManager->getRenderWindow());
+	btnSettings = Button(sf::Vector2i(int(w / 2 - 75 * ratio), int(3 * (h / 4) - 25)), 150 * ratio, 50 * ratio, sf::Color::Black, L"Parametres", gameManager->getRenderWindow());
+	quitButton = Button(sf::Vector2i(int(w / 2 - 75 * ratio), int(3.5 * (h / 4) - 25)), 150 * ratio, 50 * ratio, sf::Color::Black, L"Quitter", gameManager->getRenderWindow());
 
 	// Buttons for commands
-	btnReturn = Button(sf::Vector2i(int(w / 2 - 75), int(3.5 * (h / 4) - 25)), 150, 50, sf::Color::Black, L"Retour", gameManager->getRenderWindow());
+	btnReturn = Button(sf::Vector2i(int(w / 2 - 75 * ratio), int(3.5 * (h / 4) - 25)), 150 * ratio, 50 * ratio, sf::Color::Black, L"Retour", gameManager->getRenderWindow());
 
 	// Buttons for settings
-	this->btnSave = Button(sf::Vector2i(w / 2 - 75, 6 * (h / 7)), 150, 50, sf::Color::Black, L"Enregistrer", gameManager->getRenderWindow());
+	this->btnSave = Button(sf::Vector2i(w / 2 - 75 * ratio, 6 * (h / 7)), 150* ratio, 50 * ratio, sf::Color::Black, L"Enregistrer", gameManager->getRenderWindow());
 
-	this->btnMetaDataON = Button(sf::Vector2i(w / 2 - 25, 2 * (h / 7) - 25), 60, 50, sf::Color::Black, L"ON", gameManager->getRenderWindow());
-	this->btnMetaDataOFF = Button(sf::Vector2i(w / 2 - 25 + 80, 2 * (h / 7) - 25), 60, 50, sf::Color::Black, L"OFF", gameManager->getRenderWindow());
+	this->btnMetaDataON = Button(sf::Vector2i(w / 2 - 25 * ratio, 2 * (h / 7) - 25), 60 * ratio, 50 * ratio, sf::Color::Black, L"ON", gameManager->getRenderWindow());
+	this->btnMetaDataOFF = Button(sf::Vector2i(w / 2 - 25 * ratio + 80 * ratio, 2 * (h / 7) - 25), 60 * ratio, 50 * ratio, sf::Color::Black, L"OFF", gameManager->getRenderWindow());
 
-	this->btnSensibilitySlow = Button(sf::Vector2i(w / 2 - 120, 3 * (h / 7) - 25), 80, 50, sf::Color::Black, L"Lent", gameManager->getRenderWindow());
-	this->btnSensibilityNormal = Button(sf::Vector2i(w / 2 - 120 + 100, 3 * (h / 7) - 25), 90, 50, sf::Color::Black, L"Normal", gameManager->getRenderWindow());
-	this->btnSensibility4k = Button(sf::Vector2i(w / 2 - 120 + 100 + 110, 3 * (h / 7) - 25), 120, 50, sf::Color::Black, L"Special 4k", gameManager->getRenderWindow());
+	this->btnSensibilitySlow = Button(sf::Vector2i(w / 2 - 120 * ratio, 3 * (h / 7) - 25), 80 * ratio, 50 * ratio, sf::Color::Black, L"Lent", gameManager->getRenderWindow());
+	this->btnSensibilityNormal = Button(sf::Vector2i(w / 2 - 120 * ratio + 100 * ratio, 3 * (h / 7) - 25), 90 * ratio, 50 * ratio, sf::Color::Black, L"Normal", gameManager->getRenderWindow());
+	this->btnSensibility4k = Button(sf::Vector2i(w / 2 - 120 * ratio + 100 * ratio + 110 * ratio, 3 * (h / 7) - 25), 120 * ratio, 50 * ratio, sf::Color::Black, L"Special 4k", gameManager->getRenderWindow());
 
-	this->btnVolume0 = Button(sf::Vector2i(w / 2 - 120, 4 * (h / 7) - 25), 50, 50, sf::Color::Black, L"0", gameManager->getRenderWindow());
-	this->btnVolume25 = Button(sf::Vector2i(w / 2 - 120 + 70, 4 * (h / 7) - 25), 50, 50, sf::Color::Black, L"25", gameManager->getRenderWindow());
-	this->btnVolume50 = Button(sf::Vector2i(w / 2 - 120 + 2 * 70, 4 * (h / 7) - 25), 50, 50, sf::Color::Black, L"50", gameManager->getRenderWindow());
-	this->btnVolume75 = Button(sf::Vector2i(w / 2 - 120 + 3 * 70, 4 * (h / 7) - 25), 50, 50, sf::Color::Black, L"75", gameManager->getRenderWindow());
-	this->btnVolume100 = Button(sf::Vector2i(w / 2 - 120 + 4 * 70, 4 * (h / 7) - 25), 50, 50, sf::Color::Black, L"100", gameManager->getRenderWindow());
+	this->btnVolume0 = Button(sf::Vector2i(w / 2 - 120 * ratio, 4 * (h / 7) - 25), 50 * ratio, 50 * ratio, sf::Color::Black, L"0", gameManager->getRenderWindow());
+	this->btnVolume25 = Button(sf::Vector2i(w / 2 - 120 * ratio + 70 * ratio, 4 * (h / 7) - 25), 50 * ratio, 50 * ratio, sf::Color::Black, L"25", gameManager->getRenderWindow());
+	this->btnVolume50 = Button(sf::Vector2i(w / 2 - 120 * ratio + 2 * 70 * ratio, 4 * (h / 7) - 25), 50 * ratio, 50 * ratio, sf::Color::Black, L"50", gameManager->getRenderWindow());
+	this->btnVolume75 = Button(sf::Vector2i(w / 2 - 120 * ratio + 3 * 70 * ratio, 4 * (h / 7) - 25), 50 * ratio, 50 * ratio, sf::Color::Black, L"75", gameManager->getRenderWindow());
+	this->btnVolume100 = Button(sf::Vector2i(w / 2 - 120 * ratio + 4 * 70 * ratio, 4 * (h / 7) - 25), 50 * ratio, 50 * ratio, sf::Color::Black, L"100", gameManager->getRenderWindow());
 
 	if (bgTexture.loadFromFile("Ressource/Picture/BackGround_MainMenu.png"))
 	{
 		bgSprite.setTexture(bgTexture);
-		bgSprite.setScale(0.5, 0.5);
+		bgSprite.setScale(0.5 * ratio, 0.5 * ratio);
 	}
 	else std::cout << "Failed to load MainMenu background image" << std::endl;
 
 	if (commandsTexture.loadFromFile("Ressource/Picture/BackGround_UserGuide.png"))
 	{
 		commandsSprite.setTexture(commandsTexture);
-		commandsSprite.setScale(0.5, 0.5);
+		commandsSprite.setScale(0.5 * ratio, 0.5 * ratio);
 	}
 	else std::cout << "Failed to load user guide background image" << std::endl;
 }
@@ -193,9 +195,9 @@ void StatePauseMenu::draw(double deltaTime)
 		{
 			sf::Font font = gameManager->getFont();
 
-			pause = sf::Text("Pause", font, 35);
+			pause = sf::Text("Pause", font, 70);
 			pause.setFillColor(sf::Color::White);
-			pause.setPosition(sf::Vector2f(w / 2 - 57.f, 1 * (h / 4) - 25.f));
+			pause.setPosition(sf::Vector2f(w / 2 - 110.f, 1 * (h / 4) - 50.f));
 			gameManager->getRenderWindow()->draw(pause);
 
 			playButton.draw();
@@ -230,24 +232,25 @@ void StatePauseMenu::draw(double deltaTime)
 
 void StatePauseMenu::showSettingsLabel()
 {
-	int wAlign = gameManager->getWindowWidth() / 2 - 230;
+	float ratio = gameManager->getWindowWidth() / 500.f;
+	int wAlign = gameManager->getWindowWidth() / 2 - 230 * ratio;
 	int hAlign = gameManager->getWindowHeight() / 7;
 
+	float fontSize = 15.f * ratio;
 	sf::Font font = gameManager->getFont();
-
-	sf::Text lblMetaData = sf::Text("Afficher Meta Data : ", font, 15);
+	sf::Text lblMetaData = sf::Text("Afficher Meta Data : ", font, fontSize);
 	lblMetaData.setFillColor(sf::Color::White);
-	lblMetaData.setPosition(sf::Vector2f(wAlign, 2.f * hAlign - 7.f));
+	lblMetaData.setPosition(sf::Vector2f(wAlign, 2.f * hAlign));
 	gameManager->getRenderWindow()->draw(lblMetaData);
 
-	sf::Text lblSensi = sf::Text("Sensibilite :", font, 15);
+	sf::Text lblSensi = sf::Text("Sensibilite :", font, fontSize);
 	lblSensi.setFillColor(sf::Color::White);
-	lblSensi.setPosition(sf::Vector2f(wAlign, 3.f * hAlign - 7.f));
+	lblSensi.setPosition(sf::Vector2f(wAlign, 3.f * hAlign));
 	gameManager->getRenderWindow()->draw(lblSensi);
 
-	sf::Text lblVolume = sf::Text("Volume : ", font, 15);
+	sf::Text lblVolume = sf::Text("Volume : ", font, fontSize);
 	lblVolume.setFillColor(sf::Color::White);
-	lblVolume.setPosition(sf::Vector2f(wAlign, 4.f * hAlign - 7.f));
+	lblVolume.setPosition(sf::Vector2f(wAlign, 4.f * hAlign));
 	gameManager->getRenderWindow()->draw(lblVolume);
 }
 

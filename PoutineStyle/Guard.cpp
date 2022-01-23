@@ -25,9 +25,6 @@ std::stack<Bullet*> Guard::shoot(sf::Vector2f direction, sf::Vector2f playerPos,
 		sf::Vector2f bulletPos = sf::Vector2f((this->mapPos.x), (this->mapPos.y));
 		Bullet* bullet = new Bullet(1, bulletPos, directionWithNoise, false);
 		bullets.push(bullet);
-		return bullets;
-
-		
 	}
 	return bullets;
 }

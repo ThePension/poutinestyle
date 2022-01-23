@@ -11,8 +11,8 @@ class GameManager
 {
 private:
 	std::stack<GameState*> states;
-	int windowWidth = 500;
-	int windowHeight = 500;
+	int windowWidth = 1000;
+	int windowHeight = 1000;
 	sf::RenderWindow* window;
 	sf::Clock clock;
 	float deltaTime;
