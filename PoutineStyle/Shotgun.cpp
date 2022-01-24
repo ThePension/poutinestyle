@@ -38,12 +38,12 @@ std::stack<Bullet*> Shotgun::shoot(sf::Vector2f direction, sf::Vector2f position
 		double yNoise = (double)rand() / (RAND_MAX * 100.0); // Between 0 and 0.01
 		yNoise = AnimatedVertexArray::map(yNoise, 0, 0.1, -0.1, 0.1);
 		sf::Vector2f directionWithNoise = sf::Vector2f(direction.x + xNoise / 10, direction.y + yNoise / 10);
-		double shotgunDirX = AnimatedVertexArray::map(direction.x, -1, 1, 1.015, 1.02);
-		double shotgunDirY = AnimatedVertexArray::map(direction.y, -1, 1, 1.015, 1.02);
+		// double shotgunDirX = AnimatedVertexArray::map(direction.x, -1, 1, 1.015, 1.02);
+		// double shotgunDirY = AnimatedVertexArray::map(direction.y, -1, 1, 1.015, 1.02);
 
 		// Create two bullets
-		sf::Vector2f bulletPos1 = sf::Vector2f((position.x - 0.5) * (shotgunDirX) + 2.0 * direction.x, (position.y - 0.5) * (shotgunDirY) + 2.0 * direction.y);
-		sf::Vector2f bulletPos2 = sf::Vector2f((position.x - 0.5) * (2.0 - shotgunDirX) + 2.0 * direction.x, (position.y - 0.5) * (2.0 - shotgunDirY) + 2.0 * direction.y);
+		sf::Vector2f bulletPos1 = sf::Vector2f(position.x - 0.5 + 2.0 * direction.x, position.y - 0.5 + 2.0 * direction.y);
+		sf::Vector2f bulletPos2 = sf::Vector2f(position.x - 0.5 + 1.9 * direction.x, position.y - 0.5 + 1.9 * direction.y);
 		Bullet* bullet1 = new Bullet(this->bulletDamage, bulletPos1, directionWithNoise, true);
 		Bullet* bullet2 = new Bullet(this->bulletDamage, bulletPos2, directionWithNoise, true);
 		bullets.push(bullet1);

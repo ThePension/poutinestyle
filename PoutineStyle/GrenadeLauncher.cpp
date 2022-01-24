@@ -1,8 +1,8 @@
 #include "GrenadeLauncher.h"
 #include "Bullet.h"
 GrenadeLauncher::GrenadeLauncher() : Weapon(50, Animation(0, 0, 209, 128, 4, "Ressource/Picture/GrenadeLauncher.png")) {
-	weaponSprite.scale(1, 1);
-	weaponSprite.setPosition(300, 320);
+	weaponSprite.scale(2, 2);
+	weaponSprite.setPosition(600, 640);
 }
 
 GrenadeLauncher::~GrenadeLauncher()
