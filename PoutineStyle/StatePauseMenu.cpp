@@ -80,6 +80,7 @@ void StatePauseMenu::handleInput(double deltatime)
 						}
 						else if (backToMainMenu.isClicked()) {
 							StateMainMenu* stateMainMenu = new StateMainMenu(this->gameManager);
+							this->gameManager->popBeforeLastState();
 							this->gameManager->changeState(stateMainMenu);
 							return;
 						}

@@ -29,6 +29,7 @@ public:
 	void pushState(GameState* state);
 	void popState();
 	void changeState(GameState* state);
+	void popBeforeLastState();
 	GameState* peekState(int i=0);
 	sf::Font getFont() { return this->font;  }
 	void setDrawFPS(bool drawFPS) { this->drawFPS = drawFPS; }

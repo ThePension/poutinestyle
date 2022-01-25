@@ -99,6 +99,19 @@ void GameManager::changeState(GameState* state) {
     pushState(state);
 }
 
+void GameManager::popBeforeLastState()
+{
+    if (this->states.size() >= 2) {
+        GameState* topState = this->states.top();
+        this->states.pop();
+        GameState* beforeLastStateToDelete = this->states.top();
+        delete beforeLastStateToDelete;
+        beforeLastStateToDelete = nullptr;
+        this->states.pop();
+        this->states.push(topState);
+    }
+}
+
 GameState* GameManager::peekState(int n)
 {
     int size = this->states.size();
